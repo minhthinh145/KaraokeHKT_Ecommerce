@@ -1,0 +1,150 @@
+# ======================
+# GITIGNORE TỔNG HỢP CHO OOAD PROJECT
+# ======================
+
+# ======================
+# FRONTEND (React/Node.js/Vite)
+# ======================
+
+# Dependencies
+FrontEnd/node_modules/
+FrontEnd/.npm
+FrontEnd/.yarn/
+FrontEnd/yarn-error.log
+FrontEnd/package-lock.json
+FrontEnd/yarn.lock
+
+# Build outputs
+FrontEnd/dist/
+FrontEnd/build/
+FrontEnd/.next/
+FrontEnd/out/
+
+# Environment variables
+FrontEnd/.env
+FrontEnd/.env.local
+FrontEnd/.env.development.local
+FrontEnd/.env.test.local
+FrontEnd/.env.production.local
+
+# Vite
+FrontEnd/.vite/
+FrontEnd/vite.config.js.timestamp-*
+FrontEnd/vite.config.ts.timestamp-*
+
+# IDE/Editor
+FrontEnd/.vscode/
+FrontEnd/.idea/
+FrontEnd/*.swp
+FrontEnd/*.swo
+
+# OS
+FrontEnd/.DS_Store
+FrontEnd/Thumbs.db
+
+# Logs
+FrontEnd/logs/
+FrontEnd/*.log
+FrontEnd/npm-debug.log*
+FrontEnd/yarn-debug.log*
+FrontEnd/yarn-error.log*
+
+# ======================
+# BACKEND 
+# ======================
+
+# Dependencies (adjust based on your backend tech)
+Backend/node_modules/
+Backend/.npm
+Backend/package-lock.json
+Backend/yarn.lock
+
+# Python (if using Python)
+Backend/__pycache__/
+Backend/*.py[cod]
+Backend/*$py.class
+Backend/.Python
+Backend/venv/
+Backend/env/
+Backend/.env
+Backend/.venv/
+
+# Java (if using Java/Spring)
+Backend/target/
+Backend/*.jar
+Backend/*.war
+Backend/*.ear
+Backend/.gradle/
+Backend/build/
+
+# .NET (if using .NET)
+Backend/bin/
+Backend/obj/
+Backend/*.dll
+Backend/*.exe
+
+# Environment variables
+Backend/.env
+Backend/.env.local
+Backend/.env.development
+Backend/.env.production
+
+# Database
+Backend/*.db
+Backend/*.sqlite
+Backend/*.sqlite3
+
+# IDE/Editor
+Backend/.vscode/
+Backend/.idea/
+Backend/*.swp
+Backend/*.swo
+
+# Logs
+Backend/logs/
+Backend/*.log
+
+# OS
+Backend/.DS_Store
+Backend/Thumbs.db
+
+# Configuration files
+Backend/appsettings.json
+Backend/appsettings.*.json
+
+# ======================
+# ROOT LEVEL
+# ======================
+
+# IDE/Editor settings at root
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Archive files
+*.zip
+*.rar
+*.tar
+*.gz
+
+# Secret files
+*.key
+*.pem
+*.p12
+*.pfx
+secrets.json
+
+# Bỏ appsettings (các biến môi trường) và build output
+Backend/QLQuanKaraokeHKT/appsettings*.json
+Backend/QLQuanKaraokeHKT/bin/
+Backend/QLQuanKaraokeHKT/obj/
+Backend/QLQuanKaraokeHKT/appsettings*.json
+Backend/QLQuanKaraokeHKT/bin/
+Backend/QLQuanKaraokeHKT/obj/

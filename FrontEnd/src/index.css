@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark , .dark *));
+/* Định nghĩa màu sắc cho chế độ sáng */
+
+html,body{
+  margin :0;
+  padding :0;
+  font-family: "Space Grotesk", sans-serif;
+}
+/* index.css */
+/* index.css */
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin 10s linear infinite;
+  }
+  .animate-spin-fast {
+    animation: spin 0.01ms linear infinite;
+  }
+  .hover-scale{
+    @apply transition-colors transform hover:scale-[1.02] duration-200;
+  }
+  .animate-slide-in-down {
+    @apply animate-[slide-in-down_0.3s_ease-out];
+  }
+  
+  
+}
+
+@keyframes dots {
+  0% { content: ''; }
+  33% { content: '.'; }
+  66% { content: '..'; }
+  100% { content: '...'; }
+}
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(3, end) infinite;
+}
+
+.form-actions {
+  position: sticky;
+  bottom: 0;
+  background-color: white; /* Để tránh bị ẩn khi cuộn */
+  padding: 10px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Để tạo bóng đổ cho nút */
+  z-index: 1000; /* Đảm bảo nút luôn ở trên */
+}

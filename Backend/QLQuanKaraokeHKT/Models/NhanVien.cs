@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace QLQuanKaraokeHKT.Models;
+
+public partial class NhanVien
+{
+    public Guid MaNv { get; set; }
+
+    public string HoTen { get; set; } = null!;
+
+    public string Email { get; set; } = null!;
+
+    public DateOnly? NgaySinh { get; set; }
+
+    public string? SoDienThoai { get; set; }
+
+    public string? LoaiNhanVien { get; set; }
+
+    public Guid MaTaiKhoan { get; set; }
+
+    public virtual ICollection<CaLamViec> CaLamViecs { get; set; } = new List<CaLamViec>();
+
+    public virtual TaiKhoan MaTaiKhoanNavigation { get; set; } = null!;
+
+    public virtual ICollection<PhieuLuong> PhieuLuongs { get; set; } = new List<PhieuLuong>();
+    public virtual ICollection<PhieuHuyHang> PhieuHuyHangs { get; set; } = new List<PhieuHuyHang>();
+    public virtual ICollection<PhieuNhapHang> PhieuNhapHangs { get; set; } = new List<PhieuNhapHang>();
+    public virtual ICollection<PhieuKiemHang> PhieuKiemHangs { get; set; } = new List<PhieuKiemHang>();
+}

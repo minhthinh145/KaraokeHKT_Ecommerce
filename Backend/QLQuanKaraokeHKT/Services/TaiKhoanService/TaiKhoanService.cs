@@ -1,0 +1,144 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using QLQuanKaraokeHKT.AuthenticationService;
+using QLQuanKaraokeHKT.DTOs.AuthDTOs;
+using QLQuanKaraokeHKT.Helpers;
+using QLQuanKaraokeHKT.Models;
+using QLQuanKaraokeHKT.Repositories.TaiKhoanRepo;
+
+namespace QLQuanKaraokeHKT.Services.TaiKhoanService
+{
+    public class TaiKhoanService : ITaiKhoanService
+    {
+        private readonly ITaiKhoanRepository _taiKhoanRepository;
+        private readonly IMapper _mapper;
+        private readonly IAuthService _authService;
+        private readonly QlkaraokeHktContext _context;
+
+        public TaiKhoanService(ITaiKhoanRepository taiKhoanRepository, IMapper mapper, IAuthService authService, QlkaraokeHktContext context)
+        {
+            _taiKhoanRepository = taiKhoanRepository;
+            _mapper = mapper;
+            _authService = authService;
+            _context = context;
+        }
+
+        public async Task<ServiceResult> CheckPasswordAsync(Guid userId, string password)
+        {
+            var user = await _taiKhoanRepository.FindByUserIDAsync(userId.ToString());
+            if (user == null)
+            {
+                return ServiceResult.Failure("User not found.");
+            }
+            var isPasswordValid = await _taiKhoanRepository.CheckPasswordAsync(user, password);
+            if (isPasswordValid)
+            {
+                return ServiceResult.Success("Password is correct.");
+            }
+            return ServiceResult.Failure("Incorrect password.");
+        }
+
+        public async Task<ServiceResult> FindUserById(Guid userID)
+        {
+            var user = await _taiKhoanRepository.FindByUserIDAsync(userID.ToString());
+            if (user == null)
+            {
+                return ServiceResult.Failure("User not found.");
+            }
+
+            // Load KhachHang data manually since repository doesn't include it
+            await _context.Entry(user)
+                .Collection(u => u.KhachHangs)
+                .LoadAsync();
+
+            var userProfile = _mapper.Map<UserProfileDTO>(user);
+            return ServiceResult.Success("User found.", userProfile);
+        }
+
+        public async Task<ServiceResult> SignInAsync(SignInDTO signin)
+        {
+            var user = await _taiKhoanRepository.FindByEmailAsync(signin.Email);
+            if (user == null || !(await _taiKhoanRepository.CheckPasswordAsync(user, signin.Password)))
+            {
+                return ServiceResult.Failure("Invalid email or password.");
+            }
+            //Check if user is locked out
+
+
+            var (accessToken, refreshToken) = await _authService.GenerateTokensAsync(user);
+            var TokenResponse = new TokenResponseDTO
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+            };
+            return ServiceResult.Success("Login successful.", TokenResponse);
+        }
+
+        public async Task<IdentityResult> SignUpAsync(SignUpDTO signup)
+        {
+            var ApplicationUser = _mapper.Map<QLQuanKaraokeHKT.Models.TaiKhoan>(signup);
+            var result = await _taiKhoanRepository.CreateUserAsync(ApplicationUser, signup.Password);
+
+            if (result.Succeeded)
+            {
+                await AssignCustomerRoleAsync(ApplicationUser);
+
+                // Create KhachHang record
+                var ApplicationKhachHang = _mapper.Map<QLQuanKaraokeHKT.Models.KhachHang>(signup);
+                ApplicationKhachHang.MaTaiKhoan = ApplicationUser.Id;
+                ApplicationKhachHang.MaKhachHang = Guid.NewGuid();
+
+                _context.KhachHangs.Add(ApplicationKhachHang);
+                await _context.SaveChangesAsync();
+            }
+
+            return result;
+        }
+
+        public async Task<ServiceResult> UpdateUserById(Guid userid, UserProfileDTO user)
+        {
+            var userApp = await _taiKhoanRepository.FindByUserIDAsync(userid.ToString());
+            if (userApp == null)
+            {
+                return ServiceResult.Failure("User not found.");
+            }
+
+            // Load KhachHang data
+            await _context.Entry(userApp)
+                .Collection(u => u.KhachHangs)
+                .LoadAsync();
+
+            _mapper.Map(user, userApp);
+
+            // Update KhachHang if exists
+            var khachHang = userApp.KhachHangs.FirstOrDefault();
+            if (khachHang != null)
+            {
+                _mapper.Map(user, khachHang);
+            }
+
+            // Note: Repository doesn't have UpdateAsync, need to add it or use context directly
+            _context.Update(userApp);
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                return ServiceResult.Success("User updated successfully.", _mapper.Map<UserProfileDTO>(userApp));
+            }
+            else
+            {
+                return ServiceResult.Failure("Failed to update user.");
+            }
+        }
+
+        private async Task AssignCustomerRoleAsync(TaiKhoan user)
+        {
+            var roleExists = await _taiKhoanRepository.GetUserRolesAsync(user);
+            if (!roleExists.Contains(ApplicationRole.KhacHang))
+            {
+                await _taiKhoanRepository.AddToRoleAsync(user, ApplicationRole.KhacHang);
+            }
+        }
+    }
+}
