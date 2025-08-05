@@ -23,5 +23,12 @@ namespace QLQuanKaraokeHKT.Repositories.Interfaces
         /// <param name="otpCode"></param>
         /// <returns></returns>
         Task<bool> MarkOtpAsUsedAsync(Guid userId,string otpCode);
+        /// <summary>
+        ///  delete an OTP that has been used.
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="otpCOde"></param>
+        /// <returns></returns>
+        Task<bool> DeleteOtpUsedAsync(Guid userID, string otpCOde);
     }
 }

@@ -10,14 +10,17 @@ interface PublicRouteProps {
 
 export const PublicRoute: React.FC<PublicRouteProps> = ({
   children,
-  redirectTo = "/dashboard",
+  redirectTo = "/",
 }) => {
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, loading } = useSelector(
+    (state: RootState) => state.auth
+  );
 
-  // Nếu đã đăng nhập, redirect đến dashboard
-  //if (isAuthenticated) {
-  //return <Navigate to={redirectTo} replace />;
-  //}
+
+  if (isAuthenticated && !loading) {
+    return <Navigate to={redirectTo} replace />;
+  }
+
 
   return <>{children}</>;
 };

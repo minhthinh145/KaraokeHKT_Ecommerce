@@ -1,91 +1,129 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  signInThunk, // 🔥 Bỏ fetchProfileThunk vì signInThunk đã gọi rồi
-  clearError,
-} from "../../redux/auth/authSlice";
-import type { RootState, AppDispatch } from "../../redux/store";
-import { useToast } from "../../hooks/useToast";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useSignInForm";
+import { LoginOtpModal } from "./OtpVerification/LoginOtpModal";
 
 export const LoginForm: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-  const { loading, error, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth
-  );
-  const { showSuccess, showError } = useToast();
+  const {
+    login,
+    loading,
+    error,
+    clearAuthError,
+    showActivationModal,
+    pendingEmail,
+    handleActivationConfirm,
+    handleActivationCancel,
+  } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showOtpModal, setShowOtpModal] = useState(false);
 
-  // Hiển thị toast khi có lỗi (chỉ show lỗi đăng nhập, không show lỗi hệ thống)
-  useEffect(() => {
-    if (error) {
-      // Chỉ show lỗi đăng nhập, không show lỗi hệ thống backend
-      if (
-        error ===
-          "Sai thông tin đăng nhập hoặc tài khoản chưa được kích hoạt." ||
-        error === "Đăng nhập thất bại" ||
-        error === "Không thể lấy thông tin người dùng"
-      ) {
-        showError(error);
-      }
-      // Luôn clear error trong Redux
-      dispatch(clearError());
-    }
-  }, [error, showError, dispatch]);
-
-  // Hiển thị toast khi đăng nhập thành công
-  useEffect(() => {
-    if (isAuthenticated) {
-      showSuccess("Đăng nhập thành công!", { duration: 3000 });
-    }
-  }, [isAuthenticated, showSuccess]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      showError("Vui lòng điền đầy đủ thông tin!");
-      return;
-    }
+    if (loading) return;
 
-    const formData = { email, password };
+    const result = await login({
+      email: email.trim(),
+      password: password.trim(),
+    });
 
-    try {
-      await dispatch(signInThunk(formData)).unwrap();
-      navigate("/", { replace: true });
-    } catch {
-      // Luôn show 1 lỗi chung, không show lỗi hệ thống
-      showError("Sai thông tin đăng nhập hoặc tài khoản chưa được kích hoạt.");
+    // 🔥 Nếu cần activation và user confirm, show OTP modal
+    if (result.needActivation && showActivationModal) {
+      // Modal sẽ được hiển thị tự động
     }
   };
 
-  return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <Input
-        label="Email"
-        placeholder="Nhập email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+  // 🔥 Handle activation confirmation
+  const handleActivationConfirmAction = () => {
+    const emailForOtp = handleActivationConfirm();
+    setShowOtpModal(true);
+  };
 
-      <Input
-        label="Mật khẩu"
-        placeholder="Nhập mật khẩu"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (error) clearAuthError();
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (error) clearAuthError();
+  };
+
+  return (
+    <>
+      <div className="space-y-6">
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <Input
+              label="Email"
+              placeholder="Nhập email của bạn"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+              required
+            />
+
+            <Input
+              label="Mật khẩu"
+              placeholder="Nhập mật khẩu"
+              type="password"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              disabled={loading || !email.trim() || !password.trim()}
+              variant="primary"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Đang đăng nhập...
+                </span>
+              ) : (
+                "Đăng nhập"
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {showActivationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Kích hoạt tài khoản</h3>
+            <p className="text-gray-600 mb-6">
+              Tài khoản của bạn chưa được kích hoạt. Bạn có muốn gửi lại mã OTP
+              để kích hoạt không?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="secondary" onClick={handleActivationCancel}>
+                Hủy
+              </Button>
+              <Button variant="primary" onClick={handleActivationConfirmAction}>
+                Đồng ý
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <LoginOtpModal
+        isOpen={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
+        onVerificationSuccess={() => {
+          setShowOtpModal(false);
+          // Redirect to login page or show success message
+          handleActivationConfirm();
+        }}
+        userEmail={pendingEmail}
       />
-      <Button type="submit" fullWidth disabled={loading}>
-        {loading ? "Đang đăng nhập..." : "Đăng nhập"}
-      </Button>
-    </form>
+    </>
   );
 };

@@ -38,19 +38,21 @@ namespace QLQuanKaraokeHKT.Services.Implementation
                 {
                     return ServiceResult.Failure("Email không hợp lệ.");
                 }
+                var currentTime = DateTimeOffset.UtcNow.DateTime;
+                var expirationTime = currentTime.AddMinutes(_otpExpirationTime);
 
                 var otpCode = GenerateOtpCode();
                 var otpDTO = new CreateUserOtpDTO
                 {
                     MaTaiKhoan = user.Id,
                     maOTP = otpCode,
-                    ExpirationTime = DateTime.UtcNow.AddMinutes(_otpExpirationTime)
+                    ExpirationTime = expirationTime
                 };
                 var userOtp = _mapper.Map<MaOtp>(otpDTO);
                 await _maOtpRepository.CreateOTPAsync(userOtp);
 
                 await _sendEmailService.SendOtpEmailAsync(user.Email, otpCode);
-                return ServiceResult.Success("OTP đã được gửi thành công", otpCode);
+                return ServiceResult.Success("OTP đã được gửi thành công");
             }
             catch (Exception ex)
             {

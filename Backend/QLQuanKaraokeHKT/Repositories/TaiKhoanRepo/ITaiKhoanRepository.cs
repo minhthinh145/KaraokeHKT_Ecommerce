@@ -84,5 +84,15 @@ namespace QLQuanKaraokeHKT.Repositories.TaiKhoanRepo
         /// Đối tượng <see cref="IdentityResult"/> chứa thông tin về kết quả cập nhật.
         /// </returns>
         Task<IdentityResult> UpdateUserAsync(TaiKhoan user);
+
+        /// <summary>
+        /// Cập nhật mật khẩu người dùng.
+        /// </summary>
+        /// <param name="user">Đối tượng người dùng cần cập nhật mật khẩu.</param>
+        /// <param name="newPassword">Mật khẩu mới.</param>
+        /// <returns>
+        /// Tuple chứa thông tin thành công/thất bại và danh sách lỗi nếu có.
+        /// </returns>
+        Task<(bool Success, string[] Errors)> UpdatePasswordAsync(TaiKhoan user, string newPassword);
     }
 }

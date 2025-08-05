@@ -1,5 +1,13 @@
 import axios from "axios";
 
+// 🔥 Thêm interface cho refresh token response
+interface RefreshTokenResponse {
+  AccessToken?: string;
+  accessToken?: string;
+  RefreshToken?: string;
+  refreshToken?: string;
+}
+
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
@@ -21,9 +29,7 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-// Request interceptor: tự động gắn accessToken
 axiosInstance.interceptors.request.use((config) => {
-  // Không gắn token cho signin/signup/refresh-token
   if (
     config.url &&
     (config.url.includes("/signin") ||
@@ -34,14 +40,10 @@ axiosInstance.interceptors.request.use((config) => {
   }
 
   const accessToken = localStorage.getItem("accessToken");
-  console.log("[DEBUG] AccessToken từ localStorage:", accessToken); // 🔥 DEBUG
 
   if (accessToken) {
     config.headers = config.headers ?? {};
     config.headers.Authorization = `Bearer ${accessToken}`;
-    console.log("[DEBUG] Header Authorization:", config.headers.Authorization); // 🔥 DEBUG
-  } else {
-    console.log("[DEBUG] Không có accessToken trong localStorage"); // 🔥 DEBUG
   }
 
   return config;
@@ -53,50 +55,69 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Nếu lỗi 401 và chưa thử refresh
     if (
       error.response &&
       error.response.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/signin") &&
+      !originalRequest.url.includes("/signup") &&
+      !originalRequest.url.includes("/refresh-token")
     ) {
+      originalRequest._retry = true;
+
       if (isRefreshing) {
-        // Nếu đang refresh, chờ refresh xong
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
             originalRequest.headers.Authorization = "Bearer " + token;
             return axiosInstance(originalRequest);
           })
-          .catch((err) => Promise.reject(err));
+          .catch((err) => {
+            return Promise.reject(err);
+          });
       }
 
-      originalRequest._retry = true;
       isRefreshing = true;
 
       try {
         const refreshToken = localStorage.getItem("refreshToken");
         if (!refreshToken) throw new Error("No refresh token");
 
-        // Gọi API refresh-token
-        // Kiểu trả về: { AccessToken: string }
-        const res = await axiosInstance.post<{ AccessToken: string }>(
+        // 🔥 Type assertion cho response
+        const res = await axiosInstance.post<RefreshTokenResponse>(
           "/Auth/refresh-token",
-          { refreshToken }
+          {
+            refreshToken,
+          }
         );
 
-        const { AccessToken } = res.data;
+        const responseData = res.data;
+        const newAccessToken =
+          responseData.AccessToken || responseData.accessToken;
+        const newRefreshToken =
+          responseData.RefreshToken || responseData.refreshToken;
 
-        // Lưu lại accessToken mới
-        localStorage.setItem("accessToken", AccessToken);
+        if (!newAccessToken) {
+          throw new Error("No access token in response");
+        }
 
-        processQueue(null, AccessToken);
+        localStorage.setItem("accessToken", newAccessToken);
+        if (newRefreshToken) {
+          localStorage.setItem("refreshToken", newRefreshToken);
+        }
 
-        // Gửi lại request cũ với token mới
-        originalRequest.headers.Authorization = "Bearer " + AccessToken;
+        processQueue(null, newAccessToken);
+
+        originalRequest.headers.Authorization = "Bearer " + newAccessToken;
         return axiosInstance(originalRequest);
       } catch (err) {
         processQueue(err, null);
+
+        // Clear tokens
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
 
         return Promise.reject(err);
       } finally {

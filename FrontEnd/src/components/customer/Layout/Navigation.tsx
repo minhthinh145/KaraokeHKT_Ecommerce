@@ -1,43 +1,35 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../../redux/store";
-
-const navigationItems = [
-  { label: "Trang chủ", href: "/" },
-  { label: "Đặt phòng", href: "/booking" },
-  { label: "Dịch vụ", href: "/services" },
-  { label: "Liên hệ", href: "/contact" },
-];
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const Navigation: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const location = useLocation();
 
-  const handleNavClick = (href: string, e: React.MouseEvent) => {
-    if (href === "/") {
-      // Trang chủ thì cho vào tự do
-      return;
-    }
+  const navigationItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Đặt phòng", path: "/booking" },
+    { label: "Dịch vụ", path: "/services" },
+    { label: "Liên hệ", path: "/contact" },
+  ];
 
-    // Các trang khác cần login
-    if (!isAuthenticated) {
-      e.preventDefault();
-      navigate("/login");
-    }
+  const handleNavigation = (path: string) => {
+    navigate(path);
   };
 
   return (
-    <nav className="flex items-center space-x-8">
+    <nav className="hidden md:flex space-x-8">
       {navigationItems.map((item) => (
-        <Link
-          key={item.href}
-          to={item.href}
-          onClick={(e) => handleNavClick(item.href, e)}
-          className="text-2xl font-medium font-['Space_Grotesk'] text-black hover:text-indigo-600 transition-colors"
+        <button
+          key={item.path}
+          onClick={() => handleNavigation(item.path)}
+          className={`px-3 py-2 text-sm font-medium transition-colors ${
+            location.pathname === item.path
+              ? "text-indigo-600 border-b-2 border-indigo-600"
+              : "text-gray-700 hover:text-indigo-600"
+          }`}
         >
           {item.label}
-        </Link>
+        </button>
       ))}
     </nav>
   );

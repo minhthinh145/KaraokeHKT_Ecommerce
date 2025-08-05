@@ -7,7 +7,6 @@ export const Footer: React.FC = () => {
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Newsletter signup:", email);
     setEmail("");
   };
 

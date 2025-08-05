@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../redux/store";
-import { signUpThunk } from "../redux/auth/authSlice";
+import { signUpThunk } from "../redux/auth/index";
 import { useToast } from "./useToast";
 import type { SignUpDTO } from "../api/types/auth/AuthDTO";
 

@@ -1,10 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { OtpVerificationModal } from "./OtpVerificationModal";
 import { useSignUpForm } from "../../hooks/useSignUpForm";
 import { useToast } from "../../hooks/useToast";
-
+import { LoginOtpModal } from "./OtpVerification/LoginOtpModal";
 export const SignUpForm = () => {
   const navigate = useNavigate();
   const { showSuccess } = useToast();
@@ -133,7 +132,7 @@ export const SignUpForm = () => {
         </div>
       </form>
 
-      <OtpVerificationModal
+      <LoginOtpModal
         isOpen={showOtpModal}
         onClose={() => setShowOtpModal(false)}
         onVerificationSuccess={handleOtpVerificationSuccess}

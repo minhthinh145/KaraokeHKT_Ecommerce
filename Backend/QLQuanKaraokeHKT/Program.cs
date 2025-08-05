@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QLQuanKaraokeHKT.AuthenticationService;
+using QLQuanKaraokeHKT.AuthenticationService.ChangePassword;
 using QLQuanKaraokeHKT.ExternalService.Implementation;
 using QLQuanKaraokeHKT.ExternalService.Interfaces;
 using QLQuanKaraokeHKT.Helpers;
@@ -106,6 +107,8 @@ builder.Services.AddAutoMapper(typeof(ApplicationMapper));
 // Authentication Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IVerifyAuthService, VerifyAuthService>();
+//ChangePassword Service
+builder.Services.AddScoped<IChangePasswordService, ChangePasswordService>();
 
 // Account Services
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();

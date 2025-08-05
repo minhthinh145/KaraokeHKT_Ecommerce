@@ -5,6 +5,7 @@ import { PublicRoute } from "../components/Auth/PublicRoute";
 import { LoginPage } from "../pages/login";
 import { SignUpPage } from "../pages/signup";
 import { HomePage } from "../pages/HomePage";
+import { ProfilePage } from "../pages/ProfilePage";
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
@@ -42,7 +43,7 @@ export const AppRoutes: React.FC = () => {
         path="/profile"
         element={
           <ProtectedRoute>
-            <div>Services Page (Coming Soon)</div>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />

@@ -6,6 +6,7 @@ using QLQuanKaraokeHKT.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Helpers;
 using QLQuanKaraokeHKT.Models;
 using QLQuanKaraokeHKT.Repositories.TaiKhoanRepo;
+using System.ComponentModel;
 
 namespace QLQuanKaraokeHKT.Services.TaiKhoanService
 {
@@ -24,6 +25,7 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
             _context = context;
         }
 
+   
         public async Task<ServiceResult> CheckPasswordAsync(Guid userId, string password)
         {
             var user = await _taiKhoanRepository.FindByUserIDAsync(userId.ToString());
@@ -62,9 +64,11 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
             {
                 return ServiceResult.Failure("Invalid email or password.");
             }
-            //Check if user is locked out
-
-
+            if(!CheckAccountIsActive(user))
+            {
+               
+                return ServiceResult.Failure("Account is not active. Please activate your account first.",data:false);
+            }
             var (accessToken, refreshToken) = await _authService.GenerateTokensAsync(user);
             var TokenResponse = new TokenResponseDTO
             {
@@ -155,6 +159,15 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
             {
                 await _taiKhoanRepository.AddToRoleAsync(user, ApplicationRole.KhacHang);
             }
+        }
+
+        private bool CheckAccountIsActive(TaiKhoan user)
+        {
+            if (user == null)
+            {
+                return false;
+            }
+            return user.daKichHoat && user.EmailConfirmed;
         }
     }
 }
