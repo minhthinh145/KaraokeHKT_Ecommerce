@@ -148,3 +148,5 @@ Backend/QLQuanKaraokeHKT/obj/
 Backend/QLQuanKaraokeHKT/appsettings*.json
 Backend/QLQuanKaraokeHKT/bin/
 Backend/QLQuanKaraokeHKT/obj/
+*.vsidx
+*.vsidx
