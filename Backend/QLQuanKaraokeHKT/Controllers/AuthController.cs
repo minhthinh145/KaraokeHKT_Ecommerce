@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using QLQuanKaraokeHKT.AuthenticationService;
 using QLQuanKaraokeHKT.Controllers.Helper;
 using QLQuanKaraokeHKT.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Services.TaiKhoanService;
-using System.Security.Claims;
 
 namespace QLQuanKaraokeHKT.Controllers
 {
@@ -31,12 +29,7 @@ namespace QLQuanKaraokeHKT.Controllers
                 return modelValidation;
 
             var result = await _taiKhoanService.SignInAsync(signIn);
-            if (result == null || !result.IsSuccess)
-            {
-                return Unauthorized(new { message = result?.Message ?? "Invalid credentials" });
-            }
-
-            return Ok(result);
+            return result.IsSuccess ? Ok(result) : Unauthorized(result);
         }
 
         [HttpPost("signup")]
@@ -47,28 +40,7 @@ namespace QLQuanKaraokeHKT.Controllers
                 return modelValidation;
 
             var result = await _taiKhoanService.SignUpAsync(signUp);
-            if (!result.Succeeded)
-            {
-                return BadRequest(new { message = "Sign up failed.", errors = result.Errors });
-            }
-
-            return Ok(new { message = "Sign up successful." });
-        }
-
-        [HttpPost("signout")]
-        public async Task<IActionResult> SignOut([FromBody] RefreshTokenRequestDTO request)
-        {
-            var modelValidation = this.ValidateModelState();
-            if (modelValidation != null)
-                return modelValidation;
-
-            if (string.IsNullOrEmpty(request.RefreshToken))
-            {
-                return BadRequest(new { message = "Refresh token is required." });
-            }
-
-            await _authService.RevokeRefreshTokenAsync(request.RefreshToken);
-            return Ok(new { message = "Signed out successfully." });
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
         [HttpPost("refresh-token")]
@@ -80,21 +52,63 @@ namespace QLQuanKaraokeHKT.Controllers
 
             if (string.IsNullOrEmpty(request.RefreshToken))
             {
-                return BadRequest(new { message = "Refresh token is required." });
+                return BadRequest(new
+                {
+                    message = "Refresh token is required.",
+                    success = false,
+                    requireLogin = true
+                });
             }
 
             try
             {
                 var accessToken = await _authService.RefreshAccessTokenAsync(request.RefreshToken);
-                return Ok(new { AccessToken = accessToken });
+                return Ok(new
+                {
+                    message = "Token refreshed successfully.",
+                    success = true,
+                    data = new { AccessToken = accessToken }
+                });
             }
             catch (SecurityTokenException ex)
             {
-                return Unauthorized(new { message = ex.Message });
+                return Unauthorized(new
+                {
+                    message = ex.Message,
+                    success = false,
+                    requireLogin = true
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Lỗi hệ thống khi làm mới token.",
+                    success = false
+                });
+            }
+        }
+
+        [HttpPost("signout")]
+        public async Task<IActionResult> SignOut([FromBody] RefreshTokenRequestDTO request)
+        {
+            var modelValidation = this.ValidateModelState();
+            if (modelValidation != null)
+                return modelValidation;
+
+            try
+            {
+                if (!string.IsNullOrEmpty(request.RefreshToken))
+                {
+                    await _authService.RevokeRefreshTokenAsync(request.RefreshToken);
+                }
+
+                return Ok(new { message = "Đăng xuất thành công.", success = true });
+            }
+            catch
+            {
+                // Ngay cả khi có lỗi revoke, vẫn trả về success vì client đã logout
+                return Ok(new { message = "Đăng xuất thành công.", success = true });
             }
         }
 
@@ -108,17 +122,16 @@ namespace QLQuanKaraokeHKT.Controllers
                 if (validationResult != null)
                     return validationResult;
 
-                var userProfileResult = await _taiKhoanService.FindUserById(userId);
-                if (userProfileResult == null || !userProfileResult.IsSuccess)
-                {
-                    return NotFound(new { message = userProfileResult?.Message ?? "User not found." });
-                }
-
-                return Ok(userProfileResult);
+                var result = await _taiKhoanService.GetProfileUserAsync(userId);
+                return result.IsSuccess ? Ok(result) : NotFound(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while retrieving the profile.", error = ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "An error occurred while retrieving the profile.",
+                    success = false
+                });
             }
         }
 
@@ -130,12 +143,8 @@ namespace QLQuanKaraokeHKT.Controllers
             if (validationResult != null)
                 return validationResult;
 
-            var userUpdate = await _taiKhoanService.UpdateUserById(userId, user);
-            if (userUpdate == null || !userUpdate.IsSuccess)
-            {
-                return BadRequest(new { message = userUpdate?.Message ?? "Cannot update user" });
-            }
-            return Ok(new { message = "Cập nhật thông tin thành công" });
+            var result = await _taiKhoanService.UpdateUserById(userId, user);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
         [HttpPost("checkpassword")]
@@ -148,15 +157,15 @@ namespace QLQuanKaraokeHKT.Controllers
 
             if (string.IsNullOrEmpty(password))
             {
-                return BadRequest(new { message = "Password is required." });
+                return BadRequest(new
+                {
+                    message = "Password is required.",
+                    success = false
+                });
             }
 
             var result = await _taiKhoanService.CheckPasswordAsync(userId, password);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result);
-            }
-            return Ok(result);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
 }

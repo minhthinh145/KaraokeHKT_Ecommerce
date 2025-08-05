@@ -3,11 +3,15 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "../components/Auth/ProtectedRoute";
 import { PublicRoute } from "../components/Auth/PublicRoute";
 import { LoginPage } from "../pages/login";
-
+import { SignUpPage } from "../pages/signup";
+import { HomePage } from "../pages/HomePage";
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Public Routes - chỉ truy cập được khi chưa đăng nhập */}
+      {/* Home Page - Public, ai cũng vào được */}
+      <Route path="/" element={<HomePage />} />
+
+      {/* Auth Routes - chỉ truy cập được khi chưa đăng nhập */}
       <Route
         path="/login"
         element={
@@ -20,25 +24,17 @@ export const AppRoutes: React.FC = () => {
         path="/signup"
         element={
           <PublicRoute>
-            <div>SignUp Page (Coming Soon)</div>
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/forgot-password"
-        element={
-          <PublicRoute>
-            <div>Forgot Password Page (Coming Soon)</div>
+            <SignUpPage />
           </PublicRoute>
         }
       />
 
-      {/* Protected Routes - chỉ truy cập được khi đã đăng nhập */}
+      {/* Các chức năng khác - Protected, cần login */}
       <Route
-        path="/dashboard"
+        path="/booking"
         element={
           <ProtectedRoute>
-            <div>Dashboard Page (Coming Soon)</div>
+            <div>Booking Page (Coming Soon)</div>
           </ProtectedRoute>
         }
       />
@@ -46,16 +42,29 @@ export const AppRoutes: React.FC = () => {
         path="/profile"
         element={
           <ProtectedRoute>
-            <div>Profile Page (Coming Soon)</div>
+            <div>Services Page (Coming Soon)</div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/services"
+        element={
+          <ProtectedRoute>
+            <div>Services Page (Coming Soon)</div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <ProtectedRoute>
+            <div>Contact Page (Coming Soon)</div>
           </ProtectedRoute>
         }
       />
 
-      {/* Default Routes */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-
       {/* 404 Route */}
-      <Route path="*" element={<div>404 - Page Not Found</div>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

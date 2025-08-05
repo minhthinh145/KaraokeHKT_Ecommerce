@@ -16,56 +16,35 @@ namespace QLQuanKaraokeHKT.AuthenticationService
             _taiKhoanRepository = taiKhoanRepository ?? throw new ArgumentNullException(nameof(taiKhoanRepository));
         }
 
-        public async Task<ServiceResult> VerifyAccountByEmail(VerifyAccountDTO verifyAccountDto, Guid userID)
+        public async Task<ServiceResult> VerifyAccountByEmail(VerifyAccountDTO verifyAccountDto)
         {
             try
             {
-                // Validate input
                 if (verifyAccountDto == null)
-                {
                     return ServiceResult.Failure("Dữ liệu xác thực không hợp lệ.");
-                }
 
-                if (string.IsNullOrWhiteSpace(verifyAccountDto.OtpCode))
-                {
-                    return ServiceResult.Failure("Mã OTP không được để trống.");
-                }
+                if (string.IsNullOrWhiteSpace(verifyAccountDto.Email) || string.IsNullOrWhiteSpace(verifyAccountDto.OtpCode))
+                    return ServiceResult.Failure("Email và mã OTP không được để trống.");
 
-                var otpVerificationResult = await _maOtpService.VerifyOtpAsync(userID, verifyAccountDto.OtpCode);
-
+                var otpVerificationResult = await _maOtpService.VerifyOtpAsync(verifyAccountDto.Email, verifyAccountDto.OtpCode);
                 if (!otpVerificationResult.IsSuccess)
-                {
                     return ServiceResult.Failure(otpVerificationResult.Message);
-                }
 
-                var user = await _taiKhoanRepository.FindByUserIDAsync(userID.ToString());
-
+                var user = await _taiKhoanRepository.FindByEmailAsync(verifyAccountDto.Email);
                 if (user == null)
-                {
                     return ServiceResult.Failure("Không tìm thấy tài khoản người dùng.");
-                }
 
                 if (user.daKichHoat)
-                {
                     return ServiceResult.Failure("Tài khoản đã được kích hoạt trước đó.");
-                }
 
                 user.daKichHoat = true;
-                user.EmailConfirmed = true; 
+                user.EmailConfirmed = true;
 
                 var updateResult = await _taiKhoanRepository.UpdateUserAsync(user);
-
                 if (!updateResult.Succeeded)
-                {
                     return ServiceResult.Failure("Không thể cập nhật trạng thái tài khoản.");
-                }
 
-                var markOtpResult = await _maOtpService.MarkOtpAsUsedAsync(userID, verifyAccountDto.OtpCode);
-
-                if (!markOtpResult.IsSuccess)
-                {
-               
-                }
+                await _maOtpService.MarkOtpAsUsedAsync(verifyAccountDto.Email, verifyAccountDto.OtpCode);
 
                 return ServiceResult.Success("Tài khoản đã được kích hoạt thành công.");
             }

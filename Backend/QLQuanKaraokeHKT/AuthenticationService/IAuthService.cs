@@ -42,5 +42,25 @@ namespace QLQuanKaraokeHKT.AuthenticationService
         /// <param name="refreshToken"></param>
         /// <returns></returns>
         Task RevokeRefreshTokenAsync(string refreshToken);
+
+        /// <summary>
+        /// Revoke all refresh tokens for a specific user
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <returns></returns>
+        Task RevokeAllUserRefreshTokensAsync(Guid userId);
+
+        /// <summary>
+        /// Check if refresh token is valid
+        /// </summary>
+        /// <param name="refreshToken">Refresh token to check</param>
+        /// <returns>True if valid, false otherwise</returns>
+        Task<bool> IsRefreshTokenValidAsync(string refreshToken);
+
+        /// <summary>
+        /// Cleanup expired refresh tokens
+        /// </summary>
+        /// <returns>Number of tokens cleaned up</returns>
+        Task<int> CleanupExpiredRefreshTokensAsync();
     }
 }

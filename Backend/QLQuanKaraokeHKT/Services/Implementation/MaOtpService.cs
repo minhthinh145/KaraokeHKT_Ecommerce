@@ -19,34 +19,36 @@ namespace QLQuanKaraokeHKT.Services.Implementation
 
         public MaOtpService(ISendEmailService sendEmailService, IMaOtpRepository repo, ITaiKhoanRepository authRepo, IMapper mapper)
         {
-             _sendEmailService = sendEmailService;
-             _maOtpRepository = repo;
-             _taiKhoanRepository = authRepo;
-             _mapper = mapper;
-
+            _sendEmailService = sendEmailService;
+            _maOtpRepository = repo;
+            _taiKhoanRepository = authRepo;
+            _mapper = mapper;
         }
-        public async Task<ServiceResult> GenerateAndSendOtpAsync(Guid userId)
+
+        public async Task<ServiceResult> GenerateAndSendOtpAsync(string email)
         {
             try
             {
-                var user = await _taiKhoanRepository.FindByUserIDAsync(userId.ToString());
-                if(user == null)
+                var user = await _taiKhoanRepository.FindByEmailAsync(email);
+                if (user == null)
                 {
-                    return ServiceResult.Failure("Không tìm thấy User");
+                    return ServiceResult.Failure("Không tìm thấy User với email này.");
                 }
+                if (string.IsNullOrEmpty(user.Email))
+                {
+                    return ServiceResult.Failure("Email không hợp lệ.");
+                }
+
                 var otpCode = GenerateOtpCode();
                 var otpDTO = new CreateUserOtpDTO
                 {
-                    MaTaiKhoan = userId,
+                    MaTaiKhoan = user.Id,
                     maOTP = otpCode,
-                    ExpirationTime = DateTime.UtcNow.AddMinutes(_otpExpirationTime) 
+                    ExpirationTime = DateTime.UtcNow.AddMinutes(_otpExpirationTime)
                 };
                 var userOtp = _mapper.Map<MaOtp>(otpDTO);
                 await _maOtpRepository.CreateOTPAsync(userOtp);
-                if(string.IsNullOrEmpty(user.Email))
-                {
-                    return ServiceResult.Failure("Email không hợp lệ");
-                }   
+
                 await _sendEmailService.SendOtpEmailAsync(user.Email, otpCode);
                 return ServiceResult.Success("OTP đã được gửi thành công", otpCode);
             }
@@ -56,36 +58,51 @@ namespace QLQuanKaraokeHKT.Services.Implementation
             }
         }
 
-        public async Task<ServiceResult> MarkOtpAsUsedAsync(Guid userId, string otpCode)
+        public async Task<ServiceResult> VerifyOtpAsync(string email, string otpCode)
         {
             try
             {
-                return await _maOtpRepository.MarkOtpAsUsedAsync(userId, otpCode)
+                var user = await _taiKhoanRepository.FindByEmailAsync(email);
+                if (user == null)
+                    return ServiceResult.Failure("Không tìm thấy User với email này.");
+
+                var userOTP = await _maOtpRepository.GetOtpByCodeAsync(otpCode);
+                if (userOTP == null)
+                    return ServiceResult.Failure("OTP không hợp lệ hoặc đã hết hạn.");
+
+                if (userOTP.MaTaiKhoan != user.Id)
+                    return ServiceResult.Failure("OTP không đúng với tài khoản.");
+
+                if (userOTP.DaSuDung)
+                    return ServiceResult.Failure("OTP đã được sử dụng.");
+
+                if (userOTP.NgayHetHan < DateTime.UtcNow)
+                    return ServiceResult.Failure("OTP đã hết hạn.");
+
+                return ServiceResult.Success("OTP hợp lệ.");
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult.Failure($"Lỗi khi xác thực OTP: {ex.Message}");
+            }
+        }
+
+        public async Task<ServiceResult> MarkOtpAsUsedAsync(string email, string otpCode)
+        {
+            try
+            {
+                var user = await _taiKhoanRepository.FindByEmailAsync(email);
+                if (user == null)
+                    return ServiceResult.Failure("Không tìm thấy User với email này.");
+
+                var result = await _maOtpRepository.MarkOtpAsUsedAsync(user.Id, otpCode);
+                return result
                     ? ServiceResult.Success("OTP đã được đánh dấu là đã sử dụng.")
                     : ServiceResult.Failure("Không thể đánh dấu OTP là đã sử dụng hoặc OTP không hợp lệ.");
             }
             catch (Exception ex)
             {
                 return ServiceResult.Failure($"Lỗi khi đánh dấu OTP là đã sử dụng: {ex.Message}");
-            }
-        }
-
-        public async Task<ServiceResult> VerifyOtpAsync(Guid userId, string otpCode)
-        {
-            try
-            {
-                var userOTP = await _maOtpRepository.GetOtpByCodeAsync(otpCode);
-                if (userOTP == null)
-                {
-                    return ServiceResult.Failure("OTP không hợp lệ hoặc đã hết hạn.");
-                }
-                return userOTP.MaTaiKhoan == userId && !userOTP.DaSuDung
-                    ? ServiceResult.Success("OTP hợp lệ.")
-                    : ServiceResult.Failure("OTP không hợp lệ hoặc đã được sử dụng.");
-            }
-            catch (Exception ex)
-            {
-                return ServiceResult.Failure($"Lỗi khi xác thực OTP: {ex.Message}");
             }
         }
 

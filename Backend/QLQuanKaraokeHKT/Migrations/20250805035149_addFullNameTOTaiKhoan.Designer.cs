@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QLQuanKaraokeHKT.Models;
 
@@ -11,9 +12,11 @@ using QLQuanKaraokeHKT.Models;
 namespace QLQuanKaraokeHKT.Migrations
 {
     [DbContext(typeof(QlkaraokeHktContext))]
-    partial class QlkaraokeHktContextModelSnapshot : ModelSnapshot
+    [Migration("20250805035149_addFullNameTOTaiKhoan")]
+    partial class addFullNameTOTaiKhoan
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

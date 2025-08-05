@@ -11,9 +11,16 @@ namespace QLQuanKaraokeHKT.Helpers
         {
             // TaiKhoan to UserProfileDTO mapping
             CreateMap<TaiKhoan, UserProfileDTO>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src =>
+                    // Ưu tiên lấy từ KhachHang.TenKhachHang, nếu không có thì lấy TaiKhoan.FullName, cuối cùng là UserName
+                    src.KhachHangs.FirstOrDefault() != null && !string.IsNullOrEmpty(src.KhachHangs.FirstOrDefault().TenKhachHang)
+                        ? src.KhachHangs.FirstOrDefault().TenKhachHang
+                        : !string.IsNullOrEmpty(src.FullName)
+                            ? src.FullName
+                            : src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(dest => dest.LoaiTaiKhoan, opt => opt.MapFrom(src => src.loaiTaiKhoan))
                 .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src =>
                     src.KhachHangs.FirstOrDefault() != null && src.KhachHangs.FirstOrDefault().NgaySinh.HasValue
                         ? src.KhachHangs.FirstOrDefault().NgaySinh.Value.ToDateTime(TimeOnly.MinValue)
@@ -21,16 +28,24 @@ namespace QLQuanKaraokeHKT.Helpers
 
             // KhachHang to UserProfileDTO mapping
             CreateMap<KhachHang, UserProfileDTO>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.UserName))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src =>
+                    // Ưu tiên TenKhachHang, nếu không có thì lấy FullName từ TaiKhoan, cuối cùng là UserName
+                    !string.IsNullOrEmpty(src.TenKhachHang)
+                        ? src.TenKhachHang
+                        : !string.IsNullOrEmpty(src.MaTaiKhoanNavigation.FullName)
+                            ? src.MaTaiKhoanNavigation.FullName
+                            : src.MaTaiKhoanNavigation.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email ?? src.MaTaiKhoanNavigation.Email))
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.PhoneNumber))
+                .ForMember(dest => dest.LoaiTaiKhoan, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.loaiTaiKhoan))
                 .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src =>
                     src.NgaySinh.HasValue ? src.NgaySinh.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null));
 
             // SignUpDTO to TaiKhoan mapping
             CreateMap<SignUpDTO, TaiKhoan>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Username))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Username))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.PhoneNumberConfirmed, opt => opt.MapFrom(src => false))
@@ -63,7 +78,7 @@ namespace QLQuanKaraokeHKT.Helpers
 
             // Reverse mappings for updating operations
             CreateMap<UserProfileDTO, TaiKhoan>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
                 .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.LoaiTaiKhoan))
@@ -81,7 +96,6 @@ namespace QLQuanKaraokeHKT.Helpers
                 .ForMember(dest => dest.NormalizedEmail, opt => opt.Ignore())
                 .ForMember(dest => dest.daKichHoat, opt => opt.Ignore())
                 .ForMember(dest => dest.daBiKhoa, opt => opt.Ignore())
-                
                 .ForMember(dest => dest.KhachHangs, opt => opt.Ignore())
                 .ForMember(dest => dest.NhanViens, opt => opt.Ignore())
                 .ForMember(dest => dest.MaOtps, opt => opt.Ignore())

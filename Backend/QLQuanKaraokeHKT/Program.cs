@@ -117,7 +117,6 @@ builder.Services.AddScoped<IMaOtpRepository, MaOtpRepository>();
 
 // OTP Services
 builder.Services.AddScoped<IMaOtpService, MaOtpService>();
-
 // External Services
 builder.Services.AddScoped<ISendEmailService, SendEmailService>();
 

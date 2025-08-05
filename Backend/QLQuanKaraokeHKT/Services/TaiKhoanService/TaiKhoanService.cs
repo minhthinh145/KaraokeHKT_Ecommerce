@@ -39,7 +39,7 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
             return ServiceResult.Failure("Incorrect password.");
         }
 
-        public async Task<ServiceResult> FindUserById(Guid userID)
+        public async Task<ServiceResult> GetProfileUserAsync(Guid userID)
         {
             var user = await _taiKhoanRepository.FindByUserIDAsync(userID.ToString());
             if (user == null)
@@ -47,7 +47,6 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
                 return ServiceResult.Failure("User not found.");
             }
 
-            // Load KhachHang data manually since repository doesn't include it
             await _context.Entry(user)
                 .Collection(u => u.KhachHangs)
                 .LoadAsync();
@@ -75,25 +74,42 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
             return ServiceResult.Success("Login successful.", TokenResponse);
         }
 
-        public async Task<IdentityResult> SignUpAsync(SignUpDTO signup)
+        public async Task<ServiceResult> SignUpAsync(SignUpDTO signup)
         {
-            var ApplicationUser = _mapper.Map<QLQuanKaraokeHKT.Models.TaiKhoan>(signup);
-            var result = await _taiKhoanRepository.CreateUserAsync(ApplicationUser, signup.Password);
-
-            if (result.Succeeded)
+            try
             {
+                // Check if email already exists
+                var existingUser = await _taiKhoanRepository.FindByEmailAsync(signup.Email);
+                if (existingUser != null)
+                {
+                    return ServiceResult.Failure("Email đã được sử dụng bởi tài khoản khác.");
+                }
+
+                var ApplicationUser = _mapper.Map<QLQuanKaraokeHKT.Models.TaiKhoan>(signup);
+                var result = await _taiKhoanRepository.CreateUserAsync(ApplicationUser, signup.Password);
+
+                if (!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(e => e.Description).ToList();
+                    return ServiceResult.Failure("Đăng ký thất bại.", errors);
+                }
+
                 await AssignCustomerRoleAsync(ApplicationUser);
 
-                // Create KhachHang record
                 var ApplicationKhachHang = _mapper.Map<QLQuanKaraokeHKT.Models.KhachHang>(signup);
                 ApplicationKhachHang.MaTaiKhoan = ApplicationUser.Id;
                 ApplicationKhachHang.MaKhachHang = Guid.NewGuid();
 
                 _context.KhachHangs.Add(ApplicationKhachHang);
                 await _context.SaveChangesAsync();
-            }
 
-            return result;
+                var userProfile = _mapper.Map<UserProfileDTO>(ApplicationUser);
+                return ServiceResult.Success("Đăng ký thành công. Vui lòng kiểm tra email để kích hoạt tài khoản.", userProfile);
+            }
+            catch (Exception ex)
+            {
+                return ServiceResult.Failure($"Lỗi hệ thống khi đăng ký: {ex.Message}");
+            }
         }
 
         public async Task<ServiceResult> UpdateUserById(Guid userid, UserProfileDTO user)

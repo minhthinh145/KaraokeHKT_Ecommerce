@@ -17,6 +17,6 @@ export interface RefreshTokenRequestDTO {
 }
 
 export interface TokenResponseDTO {
-  AccessToken: string;
-  RefreshToken: string;
+  accessToken: string;
+  refreshToken: string;
 }

@@ -12,6 +12,8 @@ namespace QLQuanKaraokeHKT.Models
         [Column("tenDangNhap")]
         public override string UserName { get; set; } = null!;
 
+        public string FullName { get; set; } = null!;
+
         [Column("daKichHoat")]
         public bool daKichHoat { get; set; }
 

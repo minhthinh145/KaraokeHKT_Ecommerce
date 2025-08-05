@@ -10,6 +10,6 @@ namespace QLQuanKaraokeHKT.AuthenticationService
         /// </summary>
         /// <param name="verifyAccountDto">Contains user ID and OTP code</param>
         /// <returns>ServiceResult indicating success or failure</returns>
-        Task<ServiceResult> VerifyAccountByEmail(VerifyAccountDTO verifyAccountDtok, Guid userId);
+        Task<ServiceResult> VerifyAccountByEmail(VerifyAccountDTO verifyAccountDto);
     }
 }
