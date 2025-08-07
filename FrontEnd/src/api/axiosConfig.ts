@@ -1,11 +1,13 @@
 import axios from "axios";
 
-// 🔥 Thêm interface cho refresh token response
+// 🔥 Sửa interface để match với backend response
 interface RefreshTokenResponse {
-  AccessToken?: string;
-  accessToken?: string;
-  RefreshToken?: string;
-  refreshToken?: string;
+  isSuccess: boolean;
+  message: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  } | null;
 }
 
 const axiosInstance = axios.create({
@@ -84,7 +86,9 @@ axiosInstance.interceptors.response.use(
         const refreshToken = localStorage.getItem("refreshToken");
         if (!refreshToken) throw new Error("No refresh token");
 
-        // 🔥 Type assertion cho response
+        console.log("🔄 Refreshing token...");
+
+        // 🔥 Sửa để parse đúng backend response structure
         const res = await axiosInstance.post<RefreshTokenResponse>(
           "/Auth/refresh-token",
           {
@@ -93,19 +97,24 @@ axiosInstance.interceptors.response.use(
         );
 
         const responseData = res.data;
-        const newAccessToken =
-          responseData.AccessToken || responseData.accessToken;
-        const newRefreshToken =
-          responseData.RefreshToken || responseData.refreshToken;
+
+        // 🔥 Check success và extract data
+        if (!responseData.isSuccess || !responseData.data) {
+          throw new Error("Refresh token failed: " + responseData.message);
+        }
+
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          responseData.data;
 
         if (!newAccessToken) {
           throw new Error("No access token in response");
         }
 
+        console.log("✅ Token refreshed successfully");
+
+        // 🔥 Lưu token mới
         localStorage.setItem("accessToken", newAccessToken);
-        if (newRefreshToken) {
-          localStorage.setItem("refreshToken", newRefreshToken);
-        }
+        localStorage.setItem("refreshToken", newRefreshToken);
 
         processQueue(null, newAccessToken);
 
@@ -114,10 +123,13 @@ axiosInstance.interceptors.response.use(
       } catch (err) {
         processQueue(err, null);
 
-        // Clear tokens
+        // Clear tokens và redirect
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
+
+        // Redirect to login
+        window.location.href = "/login";
 
         return Promise.reject(err);
       } finally {

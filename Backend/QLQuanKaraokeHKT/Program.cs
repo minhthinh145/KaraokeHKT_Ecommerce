@@ -14,6 +14,7 @@ using QLQuanKaraokeHKT.Repositories.Interfaces;
 using QLQuanKaraokeHKT.Repositories.TaiKhoanRepo;
 using QLQuanKaraokeHKT.Services.Implementation;
 using QLQuanKaraokeHKT.Services.Interfaces;
+using QLQuanKaraokeHKT.Services.QLHeThongServices;
 using QLQuanKaraokeHKT.Services.TaiKhoanService;
 using System.Text;
 
@@ -107,21 +108,29 @@ builder.Services.AddAutoMapper(typeof(ApplicationMapper));
 // Authentication Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IVerifyAuthService, VerifyAuthService>();
+builder.Services.AddScoped<IKhachHangService, KhachHangService>();
 //ChangePassword Service
 builder.Services.AddScoped<IChangePasswordService, ChangePasswordService>();
 
 // Account Services
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
+builder.Services.AddScoped<IQLNhanSuService, QLNhanSuService>();
+builder.Services.AddScoped<IQLHeThongService, QLHeThongService>();
 
 // Repositories
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IMaOtpRepository, MaOtpRepository>();
+builder.Services.AddScoped<IKhacHangRepository, KhacHangRepository>();
+builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
+builder.Services.AddScoped<ITaiKhoanQuanLyRepository, TaiKhoanQuanLyRepository>();
+
 
 // OTP Services
 builder.Services.AddScoped<IMaOtpService, MaOtpService>();
 // External Services
 builder.Services.AddScoped<ISendEmailService, SendEmailService>();
+
 
 var app = builder.Build();
 

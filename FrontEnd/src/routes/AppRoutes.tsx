@@ -6,6 +6,7 @@ import { LoginPage } from "../pages/login";
 import { SignUpPage } from "../pages/signup";
 import { HomePage } from "../pages/HomePage";
 import { ProfilePage } from "../pages/ProfilePage";
+import { AdminRoutes } from "./AdminRoute";
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
@@ -29,6 +30,7 @@ export const AppRoutes: React.FC = () => {
           </PublicRoute>
         }
       />
+      <Route path="/admin/*" element={<AdminRoutes />} />
 
       {/* Các chức năng khác - Protected, cần login */}
       <Route
@@ -65,6 +67,7 @@ export const AppRoutes: React.FC = () => {
       />
 
       {/* 404 Route */}
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

@@ -37,7 +37,6 @@ const authSlice = createSlice({
       state.error = null;
     },
 
-    // 🔥 Update user info locally
     updateUserLocal(state, action: PayloadAction<Partial<UserProfileDTO>>) {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
@@ -47,17 +46,14 @@ const authSlice = createSlice({
       }
     },
 
-    // 🔥 Set loading state
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
 
-    // 🔥 Set error
     setError(state, action: PayloadAction<string>) {
       state.error = action.payload;
     },
 
-    // 🔥 Restore auth from localStorage
     restoreAuth(state) {
       const restoredState = getInitialState();
       Object.assign(state, restoredState);

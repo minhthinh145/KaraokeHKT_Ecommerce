@@ -51,5 +51,6 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
         /// <returns>True if correct, false otherwise</returns>
         Task<ServiceResult> CheckPasswordAsync(Guid userId, string password);
 
+
     }
 }

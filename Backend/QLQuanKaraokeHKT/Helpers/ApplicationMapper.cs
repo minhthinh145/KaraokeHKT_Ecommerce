@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using QLQuanKaraokeHKT.DTOs;
 using QLQuanKaraokeHKT.DTOs.AuthDTOs;
+using QLQuanKaraokeHKT.DTOs.QLHeThongDTOs;
+using QLQuanKaraokeHKT.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Models;
 
 namespace QLQuanKaraokeHKT.Helpers
@@ -76,12 +78,12 @@ namespace QLQuanKaraokeHKT.Helpers
                 .ForMember(dest => dest.DaSuDung, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.MaTaiKhoanNavigation, opt => opt.Ignore());
 
-            // Reverse mappings for updating operations
             CreateMap<UserProfileDTO, TaiKhoan>()
-                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.UserName)) 
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
                 .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.LoaiTaiKhoan))
+                .ForMember(dest => dest.UserName, opt => opt.Ignore())
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                 .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
@@ -117,6 +119,87 @@ namespace QLQuanKaraokeHKT.Helpers
             CreateMap<(string AccessToken, string RefreshToken), TokenResponseDTO>()
                 .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.AccessToken))
                 .ForMember(dest => dest.RefreshToken, opt => opt.MapFrom(src => src.RefreshToken));
+
+            //KhachHangdto
+            CreateMap<KhachHang, KhachHangDTO>().ReverseMap();
+            //TaiKhoan -> KhachHang reverse
+            CreateMap<TaiKhoan, KhachHang>()
+                  .ForMember(dest => dest.TenKhachHang, opt => opt.MapFrom(src => src.FullName)).ReverseMap();
+
+            CreateMap<NhanVien, NhanVienDTO>().ReverseMap();
+
+            // AddNhanVienDTO mappings
+            CreateMap<AddNhanVienDTO, TaiKhoan>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.HoTen))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.SoDienThoai))
+                .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.LoaiTaiKhoan))
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
+                .ForMember(dest => dest.ConcurrencyStamp, opt => opt.Ignore());
+
+            // AddNhanVienDTO to NhanVien mapping (bỏ LoaiNhanVien mapping)
+            CreateMap<AddNhanVienDTO, NhanVien>()
+                .ForMember(dest => dest.HoTen, opt => opt.MapFrom(src => src.HoTen))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.NgaySinh, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.NgaySinh)))
+                .ForMember(dest => dest.SoDienThoai, opt => opt.MapFrom(src => src.SoDienThoai))
+                .ForMember(dest => dest.LoaiNhanVien, opt => opt.Ignore()) // Sẽ set thủ công sau
+                .ForMember(dest => dest.MaNv, opt => opt.Ignore())
+                .ForMember(dest => dest.MaTaiKhoan, opt => opt.Ignore());
+
+            // NhanVienDTO to TaiKhoan mapping
+            CreateMap<NhanVienDTO, TaiKhoan>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.HoTen))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.SoDienThoai))
+                 .ForMember(dest => dest.loaiTaiKhoan, opt => opt.Ignore()) 
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
+                .ForMember(dest => dest.ConcurrencyStamp, opt => opt.Ignore());
+
+            // NhanVien + TaiKhoan mappings
+            CreateMap<NhanVien, NhanVienTaiKhoanDTO>()
+                .ForMember(dest => dest.MaNv, opt => opt.MapFrom(src => src.MaNv))
+                .ForMember(dest => dest.HoTen, opt => opt.MapFrom(src => src.HoTen))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.NgaySinh, opt => opt.MapFrom(src => src.NgaySinh))
+                .ForMember(dest => dest.SoDienThoai, opt => opt.MapFrom(src => src.SoDienThoai))
+                .ForMember(dest => dest.LoaiNhanVien, opt => opt.MapFrom(src => src.LoaiNhanVien))
+                .ForMember(dest => dest.MaTaiKhoan, opt => opt.MapFrom(src => src.MaTaiKhoan))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.UserName))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.FullName))
+                .ForMember(dest => dest.DaKichHoat, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.daKichHoat))
+                .ForMember(dest => dest.DaBiKhoa, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.daBiKhoa))
+                .ForMember(dest => dest.LoaiTaiKhoan, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.loaiTaiKhoan))
+                .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.EmailConfirmed));
+
+            // KhachHang + TaiKhoan mappings
+            CreateMap<KhachHang, KhachHangTaiKhoanDTO>()
+                .ForMember(dest => dest.MaKhachHang, opt => opt.MapFrom(src => src.MaKhachHang))
+                .ForMember(dest => dest.TenKhachHang, opt => opt.MapFrom(src => src.TenKhachHang))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.NgaySinh, opt => opt.MapFrom(src => src.NgaySinh))
+                .ForMember(dest => dest.MaTaiKhoan, opt => opt.MapFrom(src => src.MaTaiKhoan))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.UserName))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.FullName))
+                .ForMember(dest => dest.DaKichHoat, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.daKichHoat))
+                .ForMember(dest => dest.DaBiKhoa, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.daBiKhoa))
+                .ForMember(dest => dest.LoaiTaiKhoan, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.loaiTaiKhoan))
+                .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.EmailConfirmed));
+
+            CreateMap<TaiKhoanQuanLyDTO , TaiKhoan>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.loaiTaiKhoan))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MaTaiKhoan))
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
+                .ForMember(dest => dest.ConcurrencyStamp, opt => opt.Ignore())
+                .ReverseMap();
         }
     }
 }

@@ -94,5 +94,73 @@ namespace QLQuanKaraokeHKT.Repositories.TaiKhoanRepo
         /// Tuple chứa thông tin thành công/thất bại và danh sách lỗi nếu có.
         /// </returns>
         Task<(bool Success, string[] Errors)> UpdatePasswordAsync(TaiKhoan user, string newPassword);
+
+        /// <summary>
+        /// Lấy mô tả vai trò từ database
+        /// </summary>
+        /// <param name="roleName">Tên vai trò</param>
+        /// <returns>Mô tả vai trò hoặc tên vai trò nếu không tìm thấy</returns>
+        Task<string> GetRoleDescriptionAsync(string roleName);
+
+
+        /// <summary>
+        /// Cập nhật role của user - xóa role cũ và thêm role mới
+        /// </summary>
+        /// <param name="user">User cần cập nhật role</param>
+        /// <param name="newRoleName">Tên role mới</param>
+        /// <returns>True nếu thành công</returns>
+        Task<bool> UpdateUserRoleAsync(TaiKhoan user, string newRoleName);
+
+        /// <summary>
+        /// Xóa user khỏi role
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <param name="roleName">Tên role cần xóa</param>
+        /// <returns></returns>
+        Task RemoveFromRoleAsync(TaiKhoan user, string roleName);
+
+        // Thêm method này vào interface:
+
+        /// <summary>
+        /// Xóa tài khoản người dùng khỏi hệ thống
+        /// </summary>
+        /// <param name="user">Tài khoản cần xóa</param>
+        /// <returns>True nếu xóa thành công</returns>
+        Task<bool> DeleteUserAsync(TaiKhoan user);
+
+        /// <summary>
+        /// Xóa tài khoản theo ID
+        /// </summary>
+        /// <param name="userId">ID tài khoản cần xóa</param>
+        /// <returns>True nếu xóa thành công</returns>
+        Task<bool> DeleteUserByIdAsync(Guid userId);
+
+        /// <summary>
+        /// Xóa tài khoản và tất cả dữ liệu liên quan (roles, refresh tokens, OTP...)
+        /// </summary>
+        /// <param name="user">Tài khoản cần xóa</param>
+        /// <returns>True nếu xóa thành công</returns>
+        Task<bool> DeleteUserWithRelatedDataAsync(TaiKhoan user);
+
+        // Thêm method này:
+
+        /// <summary>
+        /// Lấy mã role từ mô tả vai trò
+        /// </summary>
+        /// <param name="roleDescription">Mô tả vai trò (VD: "Nhân viên kho")</param>
+        /// <returns>Mã role (VD: "NhanVienKho") hoặc null nếu không tìm thấy</returns>
+        Task<string?> GetRoleCodeFromDescriptionAsync(string roleDescription);
+        /// <summary>
+        /// Lock tài khoản người dùng theo ID tài khoản
+        /// </summary>
+        /// <param name="maTaIkhoan"></param>
+        /// <returns></returns>
+        Task<bool> LockAccountAsync(Guid maTaIkhoan);
+        /// <summary>
+        /// Unlock tài khoản người dùng theo ID tài khoản
+        /// </summary>
+        /// <param name="maTaIkhoan"></param>
+        /// <returns></returns>
+        Task<bool> UnlockAccountAsync(Guid maTaIkhoan);
     }
 }

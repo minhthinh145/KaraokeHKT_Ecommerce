@@ -6,6 +6,7 @@ using QLQuanKaraokeHKT.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Helpers;
 using QLQuanKaraokeHKT.Models;
 using QLQuanKaraokeHKT.Repositories.TaiKhoanRepo;
+using QLQuanKaraokeHKT.Services.Interfaces;
 using System.ComponentModel;
 
 namespace QLQuanKaraokeHKT.Services.TaiKhoanService
@@ -16,13 +17,15 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
         private readonly IMapper _mapper;
         private readonly IAuthService _authService;
         private readonly QlkaraokeHktContext _context;
+        private readonly IKhachHangService _khachHangService;
 
-        public TaiKhoanService(ITaiKhoanRepository taiKhoanRepository, IMapper mapper, IAuthService authService, QlkaraokeHktContext context)
+        public TaiKhoanService(ITaiKhoanRepository taiKhoanRepository, IMapper mapper, IAuthService authService,IKhachHangService khachHangService ,QlkaraokeHktContext context)
         {
             _taiKhoanRepository = taiKhoanRepository;
             _mapper = mapper;
             _authService = authService;
             _context = context;
+            _khachHangService = khachHangService ?? throw new ArgumentNullException(nameof(khachHangService));
         }
 
    
@@ -100,12 +103,7 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
 
                 await AssignCustomerRoleAsync(ApplicationUser);
 
-                var ApplicationKhachHang = _mapper.Map<QLQuanKaraokeHKT.Models.KhachHang>(signup);
-                ApplicationKhachHang.MaTaiKhoan = ApplicationUser.Id;
-                ApplicationKhachHang.MaKhachHang = Guid.NewGuid();
-
-                _context.KhachHangs.Add(ApplicationKhachHang);
-                await _context.SaveChangesAsync();
+                await _khachHangService.CreateKhachHangByDangKyAsync(signup);
 
                 var userProfile = _mapper.Map<UserProfileDTO>(ApplicationUser);
                 return ServiceResult.Success("Đăng ký thành công. Vui lòng kiểm tra email để kích hoạt tài khoản.", userProfile);
@@ -124,31 +122,19 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
                 return ServiceResult.Failure("User not found.");
             }
 
-            // Load KhachHang data
-            await _context.Entry(userApp)
-                .Collection(u => u.KhachHangs)
-                .LoadAsync();
-
             _mapper.Map(user, userApp);
 
-            // Update KhachHang if exists
-            var khachHang = userApp.KhachHangs.FirstOrDefault();
-            if (khachHang != null)
+            var result = await _taiKhoanRepository.UpdateUserAsync(userApp);
+            await _khachHangService.UpdateKhachHangByTaiKhoanAsync(userApp);
+            if (result.Succeeded)
             {
-                _mapper.Map(user, khachHang);
-            }
-
-            // Note: Repository doesn't have UpdateAsync, need to add it or use context directly
-            _context.Update(userApp);
-            var result = await _context.SaveChangesAsync();
-
-            if (result > 0)
-            {
-                return ServiceResult.Success("User updated successfully.", _mapper.Map<UserProfileDTO>(userApp));
+                var updatedUser = await _taiKhoanRepository.FindByUserIDAsync(userid.ToString());
+                return ServiceResult.Success("Cập nhật user thành công.", _mapper.Map<UserProfileDTO>(updatedUser));
             }
             else
             {
-                return ServiceResult.Failure("Failed to update user.");
+                var errors = result.Errors.Select(e => e.Description).ToArray();
+                return ServiceResult.Failure($"Failed to update user: {string.Join(", ", errors)}");
             }
         }
 

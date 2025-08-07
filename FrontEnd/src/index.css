@@ -1,5 +1,4 @@
 @import "tailwindcss";
-
 @custom-variant dark (&:where(.dark , .dark *));
 /* Định nghĩa màu sắc cho chế độ sáng */
 
@@ -45,4 +44,30 @@ html,body{
   padding: 10px;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Để tạo bóng đổ cho nút */
   z-index: 1000; /* Đảm bảo nút luôn ở trên */
+}
+
+
+/* 🔥 Custom horizontal scrollbar */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px; /* 🔥 Height for horizontal scrollbar */
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+  border: 2px solid #f3f4f6;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }

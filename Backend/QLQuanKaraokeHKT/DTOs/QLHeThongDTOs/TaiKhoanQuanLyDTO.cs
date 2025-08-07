@@ -1,0 +1,20 @@
+﻿using QLQuanKaraokeHKT.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace QLQuanKaraokeHKT.DTOs.QLHeThongDTOs
+{
+    public class TaiKhoanQuanLyDTO
+    {
+        public  Guid MaTaiKhoan { get; set; }
+
+        public  string Email { get; set; } = null!;
+
+        public bool daKichHoat { get; set; }
+
+        public bool daBiKhoa { get; set; }
+
+        public string loaiTaiKhoan { get; set; } = null!;
+
+   
+    }
+}

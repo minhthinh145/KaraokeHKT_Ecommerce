@@ -16,7 +16,6 @@ export const signInThunk = createAsyncThunk<SignInResponse, SignInDTO>(
   async (payload, { rejectWithValue }) => {
     try {
       const loginResponse = await SignIn(payload);
-
       if (!loginResponse.isSuccess || !loginResponse.data) {
         return rejectWithValue(loginResponse);
       }

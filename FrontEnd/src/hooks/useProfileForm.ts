@@ -56,18 +56,24 @@ export const useProfileForm = () => {
           return;
         }
 
-        await dispatch(
-          updateUserThunk({
-            ...user!,
-            userName: formData.fullName,
-            phone: formData.phoneNumber,
-            birthDate: formData.dateOfBirth,
-          })
-        ).unwrap();
+        // 🔥 Debug: Log data trước khi gửi
+        const updateData = {
+          ...user!,
+          userName: formData.fullName,
+          phone: formData.phoneNumber,
+          birthDate: formData.dateOfBirth,
+        };
+
+        console.log("🔍 Data gửi đi:", updateData);
+        console.log("🔍 formData.fullName:", formData.fullName);
+        console.log("🔍 updateData.userName:", updateData.userName);
+
+        await dispatch(updateUserThunk(updateData)).unwrap();
 
         setIsEditing(false);
         showSuccess("Cập nhật thông tin thành công!");
       } catch (error: any) {
+        console.log("❌ Update error:", error);
         showError(error || "Cập nhật thất bại!");
       }
     } else {
