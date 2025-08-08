@@ -4,46 +4,38 @@ import type {
   AdminAccountDTO,
 } from "../../../api/types/admins/QLHeThongtypes";
 
-// 🎯 Redux State Interface
+// 🎯 Generic Data State Interface
+export interface DataState<T> {
+  data: T[];
+  loading: boolean;
+  error: string | null;
+  total: number;
+}
+
+// 🎯 UI State Interface
+export interface UIState {
+  activeTab: "nhan-vien" | "khach-hang" | "quan-ly";
+  searchQuery: string;
+  filters: {
+    loaiTaiKhoan: string;
+    trangThai: string; // không optional
+  };
+}
+
+// 🎯 Redux State Interface - sử dụng generic DataState
 export interface QLHeThongState {
-  nhanVien: {
-    data: NhanVienTaiKhoanDTO[];
-    loading: boolean;
-    error: string | null;
-    total: number;
-  };
-
-  khachHang: {
-    data: KhachHangTaiKhoanDTO[];
-    loading: boolean;
-    error: string | null;
-    total: number;
-  };
-
-  adminAccount: {
-    data: AdminAccountDTO[];
-    loading: boolean;
-    error: string | null;
-    total: number;
-  };
-
+  nhanVien: DataState<NhanVienTaiKhoanDTO>;
+  khachHang: DataState<KhachHangTaiKhoanDTO>;
+  adminAccount: DataState<AdminAccountDTO>;
   loaiTaiKhoan: {
     data: string[];
     loading: boolean;
     error: string | null;
   };
-
-  ui: {
-    activeTab: "nhan-vien" | "khach-hang";
-    searchQuery: string;
-    filters: {
-      loaiTaiKhoan: string;
-      trangThai?: string;
-    };
-  };
+  ui: UIState;
 }
 
-// 🎯 Initial State
+// 🎯 Initial State - đồng nhất tất cả
 export const qlHeThongInitialState: QLHeThongState = {
   nhanVien: {
     data: [],
@@ -57,22 +49,23 @@ export const qlHeThongInitialState: QLHeThongState = {
     error: null,
     total: 0,
   },
-  loaiTaiKhoan: {
-    data: [],
-    loading: false,
-    error: null,
-  },
   adminAccount: {
     data: [],
     loading: false,
     error: null,
     total: 0,
   },
+  loaiTaiKhoan: {
+    data: [],
+    loading: false,
+    error: null,
+  },
   ui: {
     activeTab: "nhan-vien",
     searchQuery: "",
     filters: {
-      loaiTaiKhoan: "All",
+      loaiTaiKhoan: "", // đồng nhất: dùng "" thay vì "All"
+      trangThai: "", // đồng nhất: luôn có giá trị
     },
   },
 };

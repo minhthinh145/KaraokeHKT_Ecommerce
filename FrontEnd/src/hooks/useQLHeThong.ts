@@ -1,287 +1,144 @@
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../src/redux/hooks";
-import { message } from "antd";
-
-// Import API functions
-import {
-  lockAccount,
-  unlockAccount,
-} from "../../src/api/services/shared/accountAPI";
 
 import {
-  // Thunks - Sử dụng tên đã rename
-  fetchAllNhanVienQLHeThong,
-  fetchAllKhachHang,
-  fetchAllNhanVienQLNhanSu,
-  fetchLoaiTaiKhoan,
-  createNhanVienQLHeThong,
-
-  // Actions - Sử dụng tên đã rename
   setActiveTab,
   setSearchQueryQLHeThong,
   setLoaiTaiKhoanFilter,
   setTrangThaiFilterQLHeThong,
   clearFiltersQLHeThong,
-  clearNhanVienErrorQLHeThong,
-  clearKhachHangError,
-  clearLoaiTaiKhoanError,
-  clearAdminAccountError,
-
-  // Selectors - Sử dụng tên đã rename
-  selectNhanVienStateQLHeThong,
-  selectKhachHangState,
-  selectLoaiTaiKhoanState,
   selectUIStateQLHeThong,
-  selectFilteredNhanVienQLHeThong,
-  selectFilteredKhachHang,
-  selectNhanVienStatsQLHeThong,
-  selectKhachHangStats,
-  selectAdminAccountState,
-  selectFilteredAdminAccount,
-  selectAdminAccountStats,
-  fetchAllAdminAccount,
 } from "../../src/redux/admin";
 
-import type {
-  AddNhanVienDTO,
-  AddTaiKhoanForNhanVienDTO,
-} from "../../src/api/types";
+import { useNhanVienAccount } from "./QLHeThong/useNhanVienAccount";
+import { useKhachHangAccount } from "./QLHeThong/useKhachHangAccount";
+import { useAdminAccount } from "./QLHeThong/useAdminAccount";
+import { useLoaiTaiKhoan } from "./QLHeThong/useLoaiTaiKhoan";
 
 export const useQLHeThong = () => {
   const dispatch = useAppDispatch();
 
-  // 🎯 Selectors - Sử dụng tên đã rename
-  const nhanVienState = useAppSelector(selectNhanVienStateQLHeThong);
-  const khachHangState = useAppSelector(selectKhachHangState);
-  const adminAccountState = useAppSelector(selectAdminAccountState);
-  const loaiTaiKhoanState = useAppSelector(selectLoaiTaiKhoanState);
-
+  // 🎯 UI State selectors
   const uiState = useAppSelector(selectUIStateQLHeThong);
 
-  // 🔍 Filtered data - Sử dụng tên đã rename
-  const filteredNhanVien = useAppSelector(selectFilteredNhanVienQLHeThong);
-  const filteredKhachHang = useAppSelector(selectFilteredKhachHang);
-  const filteredAdminAccount = useAppSelector(selectFilteredAdminAccount);
+  // 🟣 Sử dụng các hook con - KHÔNG auto-load trong hook con
+  const nhanVien = useNhanVienAccount({ autoLoad: false });
+  const khachHang = useKhachHangAccount({ autoLoad: false });
+  const admin = useAdminAccount({ autoLoad: false });
+  const loaiTaiKhoan = useLoaiTaiKhoan({ autoLoad: false });
 
-  // 📊 Stats - Sử dụng tên đã rename
-  const nhanVienStats = useAppSelector(selectNhanVienStatsQLHeThong);
-  const khachHangStats = useAppSelector(selectKhachHangStats);
-  const adminAccountStats = useAppSelector(selectAdminAccountStats);
+  // Auto load
+  useEffect(() => {
+    // Load loại tài khoản
+    if (loaiTaiKhoan.loaiTaiKhoanData.length === 0 && !loaiTaiKhoan.loading) {
+      dispatch(loaiTaiKhoan.thunks.fetchLoaiTaiKhoan());
+    }
 
-  // 🔒 Lock/Unlock handlers
-  const handleLockAccount = useCallback(
-    async (maTaiKhoan: string) => {
-      try {
-        const response = await lockAccount(maTaiKhoan);
-        if (response.isSuccess) {
-          message.success("Khóa tài khoản thành công!");
-          // Reload data to refresh UI
-          dispatch(fetchAllNhanVienQLHeThong());
-          return { success: true };
-        } else {
-          message.error(response.message || "Không thể khóa tài khoản!");
-          return { success: false, error: response.message };
-        }
-      } catch (error: any) {
-        message.error(error.message || "Có lỗi xảy ra khi khóa tài khoản!");
-        return { success: false, error: error.message };
-      }
-    },
-    [dispatch]
-  );
+    // Load nhân viên
+    if (nhanVien.nhanVienData.length === 0 && !nhanVien.loading) {
+      dispatch(nhanVien.thunks.fetchAllNhanVienQLHeThong());
+    }
 
-  const handleUnlockAccount = useCallback(
-    async (maTaiKhoan: string) => {
-      try {
-        const response = await unlockAccount(maTaiKhoan);
-        if (response.isSuccess) {
-          message.success("Mở khóa tài khoản thành công!");
-          // Reload data to refresh UI
-          dispatch(fetchAllNhanVienQLHeThong());
-          return { success: true };
-        } else {
-          message.error(response.message || "Không thể mở khóa tài khoản!");
-          return { success: false, error: response.message };
-        }
-      } catch (error: any) {
-        message.error(error.message || "Có lỗi xảy ra khi mở khóa tài khoản!");
-        return { success: false, error: error.message };
-      }
-    },
-    [dispatch]
-  );
+    // Load khách hàng
+    if (khachHang.khachHangData.length === 0 && !khachHang.loading) {
+      dispatch(khachHang.thunks.fetchAllKhachHang());
+    }
 
-  // Combined lock/unlock toggle
-  const handleLockToggle = useCallback(
-    async (maTaiKhoan: string, isCurrentlyLocked: boolean) => {
-      if (isCurrentlyLocked) {
-        return await handleUnlockAccount(maTaiKhoan);
-      } else {
-        return await handleLockAccount(maTaiKhoan);
-      }
-    },
-    [handleLockAccount, handleUnlockAccount]
-  );
+    // Load admin account
+    if (admin.adminAccountData.length === 0 && !admin.loading) {
+      dispatch(admin.thunks.fetchAllAdminAccount());
+    }
+  }, [dispatch]); // ✅ CHỈ phụ thuộc dispatch
 
-  // 🎬 Actions
+  // 🎬 Common Actions
   const actions = useMemo(
     () => ({
-      // 🔄 Tab Management
       switchTab: (tab: "nhan-vien" | "khach-hang") => {
         dispatch(setActiveTab(tab));
       },
-
-      // 🔍 Search & Filter - Updated cho component mới
       setSearchQuery: (query: string) => {
         dispatch(setSearchQueryQLHeThong(query));
       },
-
       setRoleFilter: (role: string) => {
         dispatch(setLoaiTaiKhoanFilter(role));
       },
-
       setStatusFilter: (status: string) => {
         dispatch(setTrangThaiFilterQLHeThong(status));
       },
-
       clearAllFilters: () => {
         dispatch(clearFiltersQLHeThong());
       },
 
-      // 📊 Data Loading
-      loadNhanVien: () => {
-        return dispatch(fetchAllNhanVienQLHeThong());
-      },
+      // Data loading actions
+      loadNhanVien: () => dispatch(nhanVien.thunks.fetchAllNhanVienQLHeThong()),
+      loadKhachHang: () => dispatch(khachHang.thunks.fetchAllKhachHang()),
+      loadAdminAccount: () => dispatch(admin.thunks.fetchAllAdminAccount()),
+      loadLoaiTaiKhoan: () => dispatch(loaiTaiKhoan.thunks.fetchLoaiTaiKhoan()),
 
-      loadKhachHang: () => {
-        return dispatch(fetchAllKhachHang());
-      },
-      loadAdminAccount: () => {
-        return dispatch(fetchAllAdminAccount());
-      },
-
-      loadLoaiTaiKhoan: () => {
-        return dispatch(fetchLoaiTaiKhoan());
-      },
-
-      // ➕ CRUD Operations - Sử dụng tên đã rename
-      addNhanVien: (data: AddTaiKhoanForNhanVienDTO) => {
-        return dispatch(createNhanVienQLHeThong(data));
-      },
-
-      // 🧹 Error Management - Sử dụng tên đã rename
+      // Error clearing
       clearErrors: () => {
-        dispatch(clearNhanVienErrorQLHeThong());
-        dispatch(clearKhachHangError());
-        dispatch(clearLoaiTaiKhoanError());
+        dispatch(nhanVien.actions.clearNhanVienError());
+        dispatch(khachHang.actions.clearKhachHangError());
+        dispatch(admin.actions.clearAdminAccountError());
+        dispatch(loaiTaiKhoan.actions.clearLoaiTaiKhoanError());
       },
-
-      clearNhanVienError: () => {
-        dispatch(clearNhanVienErrorQLHeThong());
-      },
-
-      clearKhachHangError: () => {
-        dispatch(clearKhachHangError());
-      },
-      clearAdminAccountError: () => {
-        dispatch(clearAdminAccountError());
-      },
+      clearNhanVienError: () => dispatch(nhanVien.actions.clearNhanVienError()),
+      clearKhachHangError: () =>
+        dispatch(khachHang.actions.clearKhachHangError()),
+      clearAdminAccountError: () =>
+        dispatch(admin.actions.clearAdminAccountError()),
+      clearLoaiTaiKhoanError: () =>
+        dispatch(loaiTaiKhoan.actions.clearLoaiTaiKhoanError()),
     }),
     [dispatch]
   );
 
-  // 🎯 Auto-load data on mount
-  useEffect(() => {
-    // Load loại tài khoản first (for filters)
-    if (loaiTaiKhoanState.data.length === 0 && !loaiTaiKhoanState.loading) {
-      actions.loadLoaiTaiKhoan();
-    }
-  }, []);
-
-  // 🎯 Auto-load nhân viên data by default
-  useEffect(() => {
-    if (nhanVienState.data.length === 0 && !nhanVienState.loading) {
-      actions.loadNhanVien();
-    }
-  }, []);
-
-  // 🎯 Auto-load khách hàng data
-  useEffect(() => {
-    if (khachHangState.data.length === 0 && !khachHangState.loading) {
-      actions.loadKhachHang();
-    }
-  }, []);
-
-  // 🎯 Auto-load admin account data
-  useEffect(() => {
-    if (adminAccountState.data.length === 0 && !adminAccountState.loading) {
-      actions.loadAdminAccount();
-    }
-  }, []);
-
-  // 🎯 Filter options with computed values
+  // 🎯 Filter options - SỬ DỤNG hook con
   const filterOptions = useMemo(() => {
     const baseOptions = [
       { value: "", label: "Tất cả loại tài khoản" },
-
       { value: "NhanVienKho", label: "Nhân viên kho" },
       { value: "NhanVienPhucVu", label: "Nhân viên phục vụ" },
       { value: "NhanVienTiepTan", label: "Nhân viên tiếp tân" },
       { value: "QuanTriHeThong", label: "Quản trị hệ thống" },
-      { value: "KhachHang", label: "Khách hàng" }, // 🔥 Add customer role
+      { value: "KhachHang", label: "Khách hàng" },
     ];
-
-    // Add dynamic options from API if available
-    const dynamicOptions = loaiTaiKhoanState.data
+    const dynamicOptions = loaiTaiKhoan.loaiTaiKhoanData // ✅ Dùng hook con
       .filter((role) => !baseOptions.some((opt) => opt.value === role))
       .map((role) => ({
         value: role,
         label: role.replace(/([A-Z])/g, " $1").trim(),
       }));
-
     return [...baseOptions, ...dynamicOptions];
-  }, [loaiTaiKhoanState.data]);
+  }, [loaiTaiKhoan.loaiTaiKhoanData]);
 
   // 🎯 Loading states
   const loading = useMemo(
     () => ({
-      nhanVien: nhanVienState.loading,
-      khachHang: khachHangState.loading,
-      loaiTaiKhoan: loaiTaiKhoanState.loading,
-      adminAccount: adminAccountState.loading,
+      nhanVien: nhanVien.loading,
+      khachHang: khachHang.loading,
+      adminAccount: admin.loading,
+      loaiTaiKhoan: loaiTaiKhoan.loading, // ✅ Dùng hook con
       any:
-        nhanVienState.loading ||
-        khachHangState.loading ||
-        loaiTaiKhoanState.loading ||
-        adminAccountState.loading,
+        nhanVien.loading ||
+        khachHang.loading ||
+        admin.loading ||
+        loaiTaiKhoan.loading,
     }),
-    [
-      nhanVienState.loading,
-      khachHangState.loading,
-      loaiTaiKhoanState.loading,
-      adminAccountState.loading,
-    ]
+    [nhanVien.loading, khachHang.loading, admin.loading, loaiTaiKhoan.loading]
   );
 
   // 🎯 Error states
   const errors = useMemo(
     () => ({
-      nhanVien: nhanVienState.error,
-      khachHang: khachHangState.error,
-      loaiTaiKhoan: loaiTaiKhoanState.error,
-      adminAccount: adminAccountState.error,
+      nhanVien: nhanVien.error,
+      khachHang: khachHang.error,
+      adminAccount: admin.error,
+      loaiTaiKhoan: loaiTaiKhoan.error, // ✅ Dùng hook con
       any:
-        nhanVienState.error ||
-        khachHangState.error ||
-        loaiTaiKhoanState.error ||
-        adminAccountState.error,
+        nhanVien.error || khachHang.error || admin.error || loaiTaiKhoan.error,
     }),
-    [
-      nhanVienState.error,
-      khachHangState.error,
-      loaiTaiKhoanState.error,
-      adminAccountState.error,
-    ]
+    [nhanVien.error, khachHang.error, admin.error, loaiTaiKhoan.error]
   );
 
   // 🎯 UI state for component
@@ -292,45 +149,27 @@ export const useQLHeThong = () => {
         loaiTaiKhoan: uiState.filters.loaiTaiKhoan,
         trangThai: uiState.filters.trangThai,
       },
-      filteredNhanVien: filteredNhanVien, // 🔥 For NhanVien tab
-      filteredKhachHang: filteredKhachHang, // 🔥 For KhachHang tab
-      filteredAdminAccount: filteredAdminAccount, // 🔥 For AdminAccount tab
-
+      filteredNhanVien: nhanVien.filteredNhanVien,
+      filteredKhachHang: khachHang.filteredKhachHang,
+      filteredAdminAccount: admin.filteredAdminAccount,
       filterOptions,
     }),
     [
       uiState.searchQuery,
       uiState.filters,
-      filteredNhanVien,
-      filteredKhachHang,
+      nhanVien.filteredNhanVien,
+      khachHang.filteredKhachHang,
+      admin.filteredAdminAccount,
       filterOptions,
-      filteredAdminAccount,
     ]
   );
 
-  // 🎯 CRUD handlers with error handling
-  const handleAddNhanVien = useCallback(
-    async (data: AddTaiKhoanForNhanVienDTO) => {
-      try {
-        const result = await actions.addNhanVien(data);
-        if (result.meta.requestStatus === "fulfilled") {
-          return { success: true, data: result.payload };
-        } else {
-          return { success: false, error: result.payload as string };
-        }
-      } catch (error: any) {
-        return { success: false, error: error.message || "Có lỗi xảy ra" };
-      }
-    },
-    [actions]
-  );
-
-  // 🎯 Return hook interface - Enhanced with KhachHang data
   return {
     // 📊 Main data
-    data: nhanVienState.data,
-    khachHangData: khachHangState.data, // 🔥 Add khachHang data
-    adminAccountData: adminAccountState.data, // 🔥 Add admin account data
+    nhanVienData: nhanVien.nhanVienData,
+    khachHangData: khachHang.khachHangData,
+    adminAccountData: admin.adminAccountData,
+    loaiTaiKhoanData: loaiTaiKhoan.loaiTaiKhoanData, // ✅ Thêm data từ hook con
 
     // 🔄 UI State
     ui,
@@ -339,28 +178,30 @@ export const useQLHeThong = () => {
     loading,
     errors,
 
-    // 🎬 Actions - Simplified names
-    actions: {
-      setSearchQuery: actions.setSearchQuery,
-      setRoleFilter: actions.setRoleFilter,
-      setStatusFilter: actions.setStatusFilter,
-      clearFilters: actions.clearAllFilters,
-      loadNhanVien: actions.loadNhanVien,
-      loadKhachHang: actions.loadKhachHang,
-      loadAdminAccount: actions.loadAdminAccount,
-      clearAdminAccountError: actions.clearAdminAccountError,
-      clearErrors: actions.clearErrors,
-    },
+    // 🎬 Actions
+    actions,
 
     // 🔄 CRUD Handlers
     handlers: {
-      addNhanVien: handleAddNhanVien,
-      lockAccount: handleLockAccount,
-      unlockAccount: handleUnlockAccount,
-      lockToggle: handleLockToggle, // 🔥 Main function to use in components
+      addNhanVien: nhanVien.addNhanVienAccount,
+      addAdminAccount: admin.addAdminAccount,
+      deleteAdminAccount: admin.deleteAdminAccount,
+    },
+
+    // 🔄 Lock handlers
+    lockHandlers: {
+      nhanVien: nhanVien.lockHandlers,
+      khachHang: khachHang.lockHandlers,
+      adminAccount: admin.lockHandlers,
+    },
+
+    // 📊 Stats
+    stats: {
+      nhanVien: nhanVien.nhanVienStats,
+      khachHang: khachHang.khachHangStats,
+      adminAccount: admin.adminAccountStats,
     },
   };
 };
 
-// 🎯 Export hook with type for easier imports
 export type UseQLHeThongReturn = ReturnType<typeof useQLHeThong>;

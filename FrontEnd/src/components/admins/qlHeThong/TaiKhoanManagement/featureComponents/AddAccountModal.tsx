@@ -14,10 +14,10 @@ import {
 import { UserAddOutlined, MailOutlined, TeamOutlined } from "@ant-design/icons";
 import {
   getEmployeesWithoutAccounts,
-  addTaiKhoanNhanVien,
   type NhanVienDTO,
   type AddTaiKhoanForNhanVienDTO,
 } from "../../../../../api/services/shared";
+import { useQLHeThong } from "../../../../../hooks/useQLHeThong";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -38,6 +38,9 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
   const [selectedEmployee, setSelectedEmployee] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // 🔥 Sử dụng hook để handle submit
+  const { handlers } = useQLHeThong();
 
   useEffect(() => {
     if (visible) {
@@ -73,18 +76,14 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
         email: values.email,
       };
 
-      const response = await addTaiKhoanNhanVien(addData);
+      // 🔥 Sử dụng handler từ hook
+      const result = await handlers.addNhanVien(addData);
 
-      if (response.isSuccess) {
-        message.success("🎉 Tạo tài khoản thành công!");
+      if (result.success) {
         form.resetFields();
         setSelectedEmployee("");
         onSuccess();
-      } else {
-        message.error(response.message);
       }
-    } catch (error) {
-      message.error("❌ Có lỗi xảy ra khi tạo tài khoản!");
     } finally {
       setSubmitting(false);
     }
@@ -100,6 +99,12 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
     }
   };
 
+  const handleClose = () => {
+    form.resetFields();
+    setSelectedEmployee("");
+    onCancel();
+  };
+
   return (
     <Modal
       title={
@@ -108,12 +113,12 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
             <UserAddOutlined className="text-2xl text-white" />
           </div>
           <Title level={3} className="!mb-1 !text-slate-800">
-            Thay đổi tài khoản cho nhân viên
-          </Title>{" "}
+            Tạo tài khoản cho nhân viên
+          </Title>
         </div>
       }
       open={visible}
-      onCancel={onCancel}
+      onCancel={handleClose}
       footer={null}
       width={700}
       className="top-12"
@@ -216,7 +221,7 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
           <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200">
             <Button
               size="large"
-              onClick={onCancel}
+              onClick={handleClose}
               className="px-8 rounded-lg font-medium"
             >
               Hủy bỏ
@@ -229,7 +234,7 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
               icon={<UserAddOutlined />}
               className="px-8 rounded-lg font-medium bg-gradient-to-r from-blue-500 to-purple-500 border-none hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              {submitting ? "Đang tạo..." : "Thay đổi"}
+              {submitting ? "Đang tạo..." : "Tạo tài khoản"}
             </Button>
           </div>
         </Form>

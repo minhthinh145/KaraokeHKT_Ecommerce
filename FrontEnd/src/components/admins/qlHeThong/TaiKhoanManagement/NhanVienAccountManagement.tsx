@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { useQLHeThong } from "../../../../hooks/useQLHeThong";
 import { AddAccountModal } from "./featureComponents/AddAccountModal";
 import { StatsCardHelpers, StatsCards } from "../../uiForAll/StatsCards";
 import { NhanVienAccountTable } from "./Table/NhanVienAccountTable";
+import type { useQLHeThong } from "../../../../hooks/useQLHeThong";
 
-const QLHeThongManagement: React.FC = () => {
-  const { ui, loading, errors, actions, handlers, data } = useQLHeThong();
+export const NhanVienAccountManagement: React.FC<{
+  qlHeThong: ReturnType<typeof useQLHeThong>;
+}> = ({ qlHeThong }) => {
+  const { ui, loading, errors, actions, handlers, nhanVienData, lockHandlers } =
+    qlHeThong;
   const [showModal, setShowModal] = useState(false);
 
   // Stats cho nhân viên
-  const totalNhanVien = data.length;
+  const totalNhanVien = nhanVienData.length;
   const filteredNhanVien = ui.filteredNhanVien.length;
   const activeNhanVien = ui.filteredNhanVien.filter(
     (item) => !item.daBiKhoa && item.daKichHoat
@@ -116,7 +119,7 @@ const QLHeThongManagement: React.FC = () => {
           </button>
 
           <button
-            onClick={actions.clearFilters}
+            onClick={actions.clearAllFilters}
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
           >
             🗑️ Xóa lọc
@@ -130,14 +133,12 @@ const QLHeThongManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* 🔥 CHỈ THAY ĐỔI PHẦN NÀY - THAY QLHeThongTable BẰNG GenericQLTable */}
       <NhanVienAccountTable
         data={ui.filteredNhanVien}
         loading={loading.nhanVien}
-        onLockToggle={handlers.lockToggle}
+        onLockToggle={lockHandlers.nhanVien.lockToggle}
       />
 
-      {/* 🔥 SỬ DỤNG AddAccountModal CÓ SẴN */}
       <AddAccountModal
         visible={showModal}
         onCancel={() => setShowModal(false)}
@@ -149,5 +150,3 @@ const QLHeThongManagement: React.FC = () => {
     </div>
   );
 };
-
-export default QLHeThongManagement;

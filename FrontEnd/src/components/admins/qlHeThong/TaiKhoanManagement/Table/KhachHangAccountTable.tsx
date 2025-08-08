@@ -6,11 +6,13 @@ import { GenericQLTable, TableHelpers } from "../../../uiForAll/GenericQLTable";
 interface KhacHangAccountTableProps {
   data: KhachHangTaiKhoanDTO[];
   loading: boolean;
+  onLockToggle: (maTaiKhoan: string, isLocked: boolean) => void;
 }
 
 export const KhachHangAccountTable: React.FC<KhacHangAccountTableProps> = ({
   data,
   loading,
+  onLockToggle,
 }) => {
   const khachHangColumns = [
     {
@@ -23,7 +25,7 @@ export const KhachHangAccountTable: React.FC<KhacHangAccountTableProps> = ({
     },
     {
       key: "userName",
-      title: "Tên đăng nhập",
+      title: "Email đăng nhập",
       dataIndex: "userName" as keyof KhachHangTaiKhoanDTO,
       width: 180,
       render: (value: string) => TableHelpers.getUserNameCell(value),
@@ -31,9 +33,9 @@ export const KhachHangAccountTable: React.FC<KhacHangAccountTableProps> = ({
         "font-semibold text-gray-900 group-hover:text-blue-600 transition-colors",
     },
     {
-      key: "email",
-      title: "Email",
-      dataIndex: "email" as keyof KhachHangTaiKhoanDTO,
+      key: "tenKhachHang",
+      title: "Tên khách hàng",
+      dataIndex: "tenKhachHang" as keyof KhachHangTaiKhoanDTO,
       width: 250,
       className: "text-gray-700 group-hover:text-gray-900 transition-colors",
     },
@@ -58,7 +60,9 @@ export const KhachHangAccountTable: React.FC<KhacHangAccountTableProps> = ({
       loading={loading}
       columns={khachHangColumns}
       rowKey="maTaiKhoan"
-      showLockActions={false}
+      onLockToggle={onLockToggle}
+      showLockActions={true}
+      lockStatusField="daBiKhoa"
       emptyMessage="Không có tài khoản khách hàng nào phù hợp với tiêu chí tìm kiếm."
       tableName="tài khoản khách hàng"
     />

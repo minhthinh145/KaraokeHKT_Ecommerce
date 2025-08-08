@@ -6,11 +6,16 @@ import { renderRoleBadge } from "../../../uiForAll/roleMacros";
 interface AdminAccountTableProps {
   data: AdminAccountDTO[];
   loading: boolean;
+
+  onLockToggle: (maTaiKhoan: string, isLocked: boolean) => void;
+  onDelete: (maTaiKhoan: string) => Promise<{ success: boolean }>;
 }
 
 export const AdminAccountTable: React.FC<AdminAccountTableProps> = ({
   data,
   loading,
+  onLockToggle,
+  onDelete,
 }) => {
   const AdminColumns = [
     {
@@ -23,18 +28,12 @@ export const AdminAccountTable: React.FC<AdminAccountTableProps> = ({
     {
       key: "userName",
       title: "Tên đăng nhập",
-      dataIndex: "userName" as keyof AdminAccountDTO,
+      dataIndex: "email" as keyof AdminAccountDTO,
       render: (value: string) => TableHelpers.getUserNameCell(value),
       className:
         "font-semibold text-gray-900 group-hover:text-blue-600 transition-colors",
     },
-    {
-      key: "email",
-      title: "Email đăng nhập",
-      dataIndex: "email" as keyof AdminAccountDTO,
-      className:
-        "font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors",
-    },
+
     {
       key: "loaiTaiKhoan",
       title: "Vai trò",
@@ -55,7 +54,11 @@ export const AdminAccountTable: React.FC<AdminAccountTableProps> = ({
       loading={loading}
       columns={AdminColumns}
       rowKey="maTaiKhoan"
-      showLockActions={false}
+      onLockToggle={onLockToggle}
+      onDelete={onDelete}
+      showLockActions={true}
+      showDeleteAction={true}
+      lockStatusField="daBiKhoa"
       emptyMessage="Không có tài khoản quản trị nào"
       tableName="Tài khoản quản trị"
     />

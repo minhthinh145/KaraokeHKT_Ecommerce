@@ -86,7 +86,6 @@ axiosInstance.interceptors.response.use(
         const refreshToken = localStorage.getItem("refreshToken");
         if (!refreshToken) throw new Error("No refresh token");
 
-        console.log("🔄 Refreshing token...");
 
         // 🔥 Sửa để parse đúng backend response structure
         const res = await axiosInstance.post<RefreshTokenResponse>(
@@ -110,7 +109,6 @@ axiosInstance.interceptors.response.use(
           throw new Error("No access token in response");
         }
 
-        console.log("✅ Token refreshed successfully");
 
         // 🔥 Lưu token mới
         localStorage.setItem("accessToken", newAccessToken);

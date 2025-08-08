@@ -3,8 +3,10 @@ import { useQLHeThong } from "../../../../hooks/useQLHeThong";
 import { KhachHangAccountTable } from "./Table/KhachHangAccountTable";
 import { StatsCardHelpers, StatsCards } from "../../uiForAll/StatsCards";
 
-export const KhachHangManagement: React.FC = () => {
-  const { khachHangData, loading, ui, actions } = useQLHeThong();
+export const KhachHangAccountManagement: React.FC<{
+  qlHeThong: ReturnType<typeof useQLHeThong>;
+}> = ({ qlHeThong }) => {
+  const { khachHangData, loading, ui, actions, lockHandlers } = qlHeThong;
 
   // Tính toán số liệu thống kê
   const totalKhachHang = khachHangData.length;
@@ -73,6 +75,7 @@ export const KhachHangManagement: React.FC = () => {
       <KhachHangAccountTable
         data={ui.filteredKhachHang}
         loading={loading.khachHang}
+        onLockToggle={lockHandlers.khachHang.lockToggle}
       />
     </div>
   );

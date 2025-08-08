@@ -5,6 +5,8 @@ using QLQuanKaraokeHKT.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Helpers;
 using QLQuanKaraokeHKT.Services.QLHeThongServices;
+using QLQuanKaraokeHKT.Services.QLHeThongServices.Implementation;
+using QLQuanKaraokeHKT.Services.QLHeThongServices.Interface;
 
 namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
 {
@@ -12,11 +14,17 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
     [ApiController]
     public class QLHeThongController : ControllerBase
     {
-        private readonly IQLHeThongService _qlHeThongService;
+        private readonly IAdminAccountService _adminAccountService;
+        private readonly INhanVienAccountService _nhanVienAccountService;
+        private readonly IKhachHangAccountService _khachHangAccountService;
+        private readonly IAccountManagementService _accountManagementService;
 
-        public QLHeThongController(IQLHeThongService qlHeThongService)
+        public QLHeThongController(IAdminAccountService adminAccountService, INhanVienAccountService nhanVienAccountService, IKhachHangAccountService khachHangAccountService, IAccountManagementService accountManagementService)
         {
-            _qlHeThongService = qlHeThongService ?? throw new ArgumentNullException(nameof(qlHeThongService));
+            _adminAccountService = adminAccountService ?? throw new ArgumentNullException(nameof(adminAccountService));
+            _nhanVienAccountService = nhanVienAccountService ?? throw new ArgumentNullException(nameof(nhanVienAccountService));
+            _khachHangAccountService = khachHangAccountService ?? throw new ArgumentNullException(nameof(khachHangAccountService));
+            _accountManagementService = accountManagementService ?? throw new ArgumentNullException(nameof(accountManagementService));
         }
 
 
@@ -29,7 +37,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
         {
             try
             {
-                var result = await _qlHeThongService.GetAllNhanVienAsync();
+                var result = await _nhanVienAccountService.GetAllTaiKhoanNhanVienAsync();
                 return result.IsSuccess ? Ok(result) : NotFound(result);
             }
             catch (Exception ex)
@@ -49,7 +57,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
         {
             try
             {
-                var result = await _qlHeThongService.GettAllAdminAccount();
+                var result = await _adminAccountService.GetAllAdminAccountAsync();
                 return result.IsSuccess ? Ok(result) : NotFound(result);
             }
             catch (Exception ex)
@@ -62,6 +70,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
                 });
             }
         }
+
         /// <summary>
         /// Lấy danh sách tất cả tài khoản khách hàng
         /// </summary>
@@ -71,7 +80,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
         {
             try
             {
-                var result = await _qlHeThongService.GetAllTaiKhoanKhachHangAsync();
+                var result = await _khachHangAccountService.GetAllTaiKhoanKhachHangAsync();
                 return result.IsSuccess ? Ok(result) : NotFound(result);
             }
             catch (Exception ex)
@@ -94,7 +103,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
         {
             try
             {
-                var result = await _qlHeThongService.GetAllTaiKhoanNhanVienAsync();
+                var result = await _nhanVienAccountService.GetAllTaiKhoanNhanVienAsync();
                 return result.IsSuccess ? Ok(result) : NotFound(result);
             }
             catch (Exception ex)
@@ -127,7 +136,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
                     });
                 }
 
-                var result = await _qlHeThongService.GetAllTaiKhoanNhanVienByLoaiTaiKhoanAsync(loaiTaiKhoan);
+                var result = await _nhanVienAccountService.GetAllTaiKhoanNhanVienByLoaiTaiKhoanAsync(loaiTaiKhoan);
                 return result.IsSuccess ? Ok(result) : NotFound(result);
             }
             catch (Exception ex)
@@ -156,7 +165,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
                 if (modelValidation != null)
                     return modelValidation;
 
-                var result = await _qlHeThongService.AddTaiKhoanForNhanVienAsync(request);
+                var result = await _nhanVienAccountService.AddTaiKhoanForNhanVienAsync(request);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
@@ -171,31 +180,43 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
         }
 
         /// <summary>
+        /// Tạo tài khoản quản lý mới
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("taikhoan/admin/tao-tai-khoan")]
+        public async Task<IActionResult> CreateTaiKhoanQuanLy([FromBody] AddAccountForAdminDTO request)
+        {
+            try
+            {
+                var modelValidation = this.ValidateModelState();
+                if (modelValidation != null)
+                    return modelValidation;
+                var result = await _adminAccountService.AddAdminAccountAsync(request);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi hệ thống khi tạo tài khoản quản lý.",
+                    success = false,
+                    error = ex.Message
+                });
+            }
+        }
+        /// <summary>
         /// Lấy danh sách các loại tài khoản có sẵn
         /// </summary>
         /// <returns>Danh sách loại tài khoản</returns>
         [HttpGet("loai-tai-khoan")]
-        public IActionResult GetLoaiTaiKhoan()
+        public async Task<IActionResult> GetLoaiTaiKhoan()
         {
             try
             {
-                var loaiTaiKhoans = new[]
-                {
-                    ApplicationRole.QuanLyKho,
-                    ApplicationRole.QuanLyNhanSu,
-                    ApplicationRole.QuanLyPhongHat,
-                    ApplicationRole.NhanVienKho,
-                    ApplicationRole.NhanVienPhucVu,
-                    ApplicationRole.NhanVienTiepTan,
-                    ApplicationRole.QuanTriHeThong
-                };
-
-                return Ok(new
-                {
-                    message = "Lấy danh sách loại tài khoản thành công.",
-                    success = true,
-                    data = loaiTaiKhoans
-                });
+                var result = await _accountManagementService.GetAllLoaiTaiKhoanAsync();
+                return result.IsSuccess
+                    ? Ok(result)
+                    : NotFound(result);
             }
             catch (Exception ex)
             {
@@ -226,7 +247,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
                     });
                 }
 
-                var result = await _qlHeThongService.LockAccountByMaTaiKhoanAsync(maTaiKhoan);
+                var result = await _accountManagementService.LockAccountByMaTaiKhoanAsync(maTaiKhoan);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
@@ -259,7 +280,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
                     });
                 }
 
-                var result = await _qlHeThongService.UnlockAccountByMaTaiKhoanAsync(maTaiKhoan);
+                var result = await _accountManagementService.UnlockAccountByMaTaiKhoanAsync(maTaiKhoan);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
@@ -267,6 +288,33 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
                 return StatusCode(500, new
                 {
                     message = "Lỗi hệ thống khi mở khóa tài khoản.",
+                    success = false,
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpDelete("taikhoan/{maTaiKhoan}/delete")]
+        public async Task<IActionResult> DeleteAccount(Guid maTaiKhoan)
+        {
+            try
+            {
+                if (maTaiKhoan == Guid.Empty)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Mã tài khoản không hợp lệ.",
+                        success = false
+                    });
+                }
+                var result = await _accountManagementService.DeleteAccountAsync(maTaiKhoan);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi hệ thống khi xóa tài khoản.",
                     success = false,
                     error = ex.Message
                 });

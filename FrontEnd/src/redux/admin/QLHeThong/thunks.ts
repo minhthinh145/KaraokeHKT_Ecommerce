@@ -3,15 +3,20 @@ import {
   getAllTaiKhoanNhanVien,
   getAllTaiKhoanKhachHang,
   addTaiKhoanNhanVien,
-  getLoaiTaiKhoan, // ✅ API này có trong backend
+  getLoaiTaiKhoan,
   getEmployeesWithoutAccounts,
+  lockAccount,
+  unlockAccount,
   type NhanVienTaiKhoanDTO,
   type KhachHangTaiKhoanDTO,
   type AddTaiKhoanForNhanVienDTO,
-  getAllAdminAccount, // ✅ Fix type name
+  getAllAdminAccount,
+  addAdminAccount,
+  deleteAccount,
 } from "../../../api/services/shared";
 import type { ApiResponse } from "../../../api/types/apiResponse";
 import type { NhanVienDTO } from "../../../api/services/shared";
+import type { AddAdminAccountDTO } from "../../../api";
 // 🔥 Fetch All Tài khoản Nhân viên
 export const fetchAllNhanVien = createAsyncThunk(
   "qlHeThong/fetchAllNhanVien",
@@ -60,7 +65,6 @@ export const fetchLoaiTaiKhoan = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response: ApiResponse<string[]> = await getLoaiTaiKhoan();
-
       if (response.isSuccess && response.data) {
         return response.data;
       } else {
@@ -97,7 +101,7 @@ export const fetchNhanVienChuaCoTaiKhoan = createAsyncThunk(
 );
 
 // 🔥 Create Tài khoản cho Nhân viên - Gọi endpoint gan-tai-khoan
-export const createNhanVien = createAsyncThunk(
+export const createNhanVienAccount = createAsyncThunk(
   "qlHeThong/createNhanVien",
   async (data: AddTaiKhoanForNhanVienDTO, { rejectWithValue }) => {
     try {
@@ -129,6 +133,75 @@ export const fetchAllAdminAccount = createAsyncThunk(
       }
     } catch (error: any) {
       return rejectWithValue(error.message || "Lỗi khi tải danh sách quản lý");
+    }
+  }
+);
+
+export const createAdminAccount = createAsyncThunk(
+  "qlHeThong/createAdminAccount",
+  async (data: AddAdminAccountDTO, { rejectWithValue }) => {
+    try {
+      const response = await addAdminAccount(data);
+      if (response.isSuccess) {
+        return response.data;
+      } else {
+        return rejectWithValue(
+          response.message || "Không thể tạo tài khoản quản lý"
+        );
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Lỗi khi tạo tài khoản quản lý");
+    }
+  }
+);
+
+//lock account
+export const lockAccountThunk = createAsyncThunk(
+  "qlHeThong/lockAccount",
+  async (maTaiKhoan: string, { rejectWithValue }) => {
+    try {
+      const response = await lockAccount(maTaiKhoan);
+      if (response.isSuccess) {
+        return response.data;
+      } else {
+        return rejectWithValue(response.message || "Không thể khóa tài khoản");
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Lỗi hệ thống");
+    }
+  }
+);
+
+export const unlockAccountThunk = createAsyncThunk(
+  "qlHeThong/unlockAccount",
+  async (maTaiKhoan: string, { rejectWithValue }) => {
+    try {
+      const response = await unlockAccount(maTaiKhoan);
+      if (response.isSuccess) {
+        return response.data;
+      } else {
+        return rejectWithValue(
+          response.message || "Không thể mở khóa tài khoản"
+        );
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Lỗi hệ thống");
+    }
+  }
+);
+
+export const deleteAccountThunk = createAsyncThunk(
+  "qlHeThong/deleteAccount",
+  async (maTaiKhoan: string, { rejectWithValue }) => {
+    try {
+      const response = await deleteAccount(maTaiKhoan);
+      if (response.isSuccess) {
+        return response.data;
+      } else {
+        return rejectWithValue(response.message || "Không thể xóa tài khoản");
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Lỗi hệ thống");
     }
   }
 );

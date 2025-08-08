@@ -6,7 +6,7 @@ export const qlHeThongReducers = {
   // UI Actions
   setActiveTab: (
     state: QLHeThongState,
-    action: PayloadAction<"nhan-vien" | "khach-hang">
+    action: PayloadAction<"nhan-vien" | "khach-hang" | "quan-ly">
   ) => {
     state.ui.activeTab = action.payload;
   },
@@ -24,7 +24,7 @@ export const qlHeThongReducers = {
 
   setTrangThaiFilter: (
     state: QLHeThongState,
-    action: PayloadAction<string | undefined>
+    action: PayloadAction<string>
   ) => {
     state.ui.filters.trangThai = action.payload;
   },
@@ -32,8 +32,8 @@ export const qlHeThongReducers = {
   clearFilters: (state: QLHeThongState) => {
     state.ui.searchQuery = "";
     state.ui.filters = {
-      loaiTaiKhoan: "All",
-      trangThai: undefined,
+      loaiTaiKhoan: "",
+      trangThai: "",
     };
   },
 

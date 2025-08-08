@@ -34,5 +34,10 @@
             var pair = RoleDescriptions.FirstOrDefault(x => x.Value.Equals(description, StringComparison.OrdinalIgnoreCase));
             return pair.Key ?? description;
         }
+
+        public static List<string> GetAllRoleCodes()
+        {
+            return RoleDescriptions.Keys.ToList();
+        }
     }
 }

@@ -22,7 +22,6 @@ export const NhanVienManagement: React.FC = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
       const result = handlers.deleteNhanVien(maNv);
       if (result.success) {
-        console.log("Xóa nhân viên thành công");
       }
     }
   };

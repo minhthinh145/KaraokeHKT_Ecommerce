@@ -23,6 +23,12 @@ export interface AdminAccountDTO {
   daBiKhoa: boolean;
   loaiTaiKhoan: string;
 }
+
+export interface AddAdminAccountDTO{
+  userName: string;
+  phoneNumber: string;
+  loaiTaiKhoan: string; 
+}
 // 🎯 Khách hàng DTO (placeholder - chưa có từ backend)
 export interface KhachHangTaiKhoanDTO {
   // Thông tin khách hàng - Match C# properties
@@ -40,6 +46,8 @@ export interface KhachHangTaiKhoanDTO {
   loaiTaiKhoan: string; // string LoaiTaiKhoan
   emailConfirmed: boolean; // bool EmailConfirmed
 }
+
+
 // 🎯 Application Roles Constants
 export const ApplicationRole = {
   QuanLyKho: "QuanLyKho",
@@ -81,31 +89,6 @@ export interface AddNhanVienDTO {
   soDienThoai?: string;
   loaiNhanVien?: string;
   loaiTaiKhoan: string;
-}
-
-export interface QLHeThongState {
-  nhanVien: {
-    data: NhanVienTaiKhoanDTO[];
-    loading: boolean;
-    error: string | null;
-    total: number;
-  };
-
-  khachHang: {
-    data: KhachHangTaiKhoanDTO[];
-    loading: boolean;
-    error: string | null;
-    total: number;
-  };
-
-  ui: {
-    activeTab: "nhan-vien" | "khach-hang";
-    searchQuery: string;
-    filters: {
-      loaiTaiKhoan?: string;
-      trangThai?: string;
-    };
-  };
 }
 
 // 🎯 API Error Response

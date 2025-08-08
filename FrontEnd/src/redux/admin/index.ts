@@ -8,7 +8,8 @@ export {
   fetchAllKhachHang,
   fetchLoaiTaiKhoan,
   fetchAllAdminAccount,
-  createNhanVien as createNhanVienQLHeThong,
+  createNhanVienAccount as createNhanVienQLHeThong,
+  createAdminAccount,
   // Actions
   setActiveTab,
   setSearchQuery as setSearchQueryQLHeThong,

@@ -3,10 +3,14 @@ import type { QLHeThongState } from "./types";
 import {
   fetchAllNhanVien,
   fetchAllKhachHang,
-  createNhanVien,
+  createNhanVienAccount,
+  createAdminAccount,
   fetchAllAdminAccount,
+  fetchLoaiTaiKhoan,
+  lockAccountThunk,
+  unlockAccountThunk,
+  deleteAccountThunk,
 } from "./thunks";
-import { fetchLoaiTaiKhoan } from "./thunks";
 
 // 🔥 Extra Reducers for Async Thunks
 export const qlHeThongExtraReducers = (
@@ -64,22 +68,24 @@ export const qlHeThongExtraReducers = (
 
   // ➕ Create Nhân viên
   builder
-    .addCase(createNhanVien.pending, (state) => {
+    .addCase(createNhanVienAccount.pending, (state) => {
       state.nhanVien.loading = true;
       state.nhanVien.error = null;
     })
-    .addCase(createNhanVien.fulfilled, (state, action) => {
+    .addCase(createNhanVienAccount.fulfilled, (state, action) => {
       state.nhanVien.loading = false;
-      state.nhanVien.data.push(action.payload);
-      state.nhanVien.total += 1;
+      if (action.payload) {
+        state.nhanVien.data.push(action.payload);
+        state.nhanVien.total += 1;
+      }
       state.nhanVien.error = null;
     })
-    .addCase(createNhanVien.rejected, (state, action) => {
+    .addCase(createNhanVienAccount.rejected, (state, action) => {
       state.nhanVien.loading = false;
       state.nhanVien.error = action.payload as string;
     });
 
-  //Extra reducer quản lý tài khoản
+  // 📋 Fetch All Admin Account
   builder
     .addCase(fetchAllAdminAccount.pending, (state) => {
       state.adminAccount.loading = true;
@@ -87,11 +93,123 @@ export const qlHeThongExtraReducers = (
     })
     .addCase(fetchAllAdminAccount.fulfilled, (state, action) => {
       state.adminAccount.loading = false;
-      state.adminAccount.data = action.payload;
+      state.adminAccount.data = action.payload || [];
+      state.adminAccount.total = action.payload?.length || 0;
       state.adminAccount.error = null;
     })
     .addCase(fetchAllAdminAccount.rejected, (state, action) => {
       state.adminAccount.loading = false;
       state.adminAccount.error = action.payload as string;
+    });
+
+  // ➕ Create Admin Account
+  builder
+    .addCase(createAdminAccount.pending, (state) => {
+      state.adminAccount.loading = true;
+      state.adminAccount.error = null;
+    })
+    .addCase(createAdminAccount.fulfilled, (state, action) => {
+      state.adminAccount.loading = false;
+      if (action.payload) {
+        state.adminAccount.data.push(action.payload);
+        state.adminAccount.total += 1;
+      }
+      state.adminAccount.error = null;
+    })
+    .addCase(createAdminAccount.rejected, (state, action) => {
+      state.adminAccount.loading = false;
+      state.adminAccount.error = action.payload as string;
+    });
+
+  //delete admin account
+  builder
+    .addCase(deleteAccountThunk.pending, (state) => {
+      state.adminAccount.loading = true;
+      state.adminAccount.error = null;
+    })
+    .addCase(deleteAccountThunk.fulfilled, (state, action) => {
+      state.adminAccount.loading = false;
+      state.adminAccount.data = state.adminAccount.data.filter(
+        (acc) => acc.maTaiKhoan !== action.meta.arg
+      );
+      state.adminAccount.total -= 1;
+      state.adminAccount.error = null;
+    })
+    .addCase(deleteAccountThunk.rejected, (state, action) => {
+      state.adminAccount.loading = false;
+      state.adminAccount.error = action.payload as string;
+    });
+
+  // 🔒 Lock Account
+  function updateLockStatus(
+    state: QLHeThongState,
+    maTaiKhoan: string,
+    locked: boolean
+  ) {
+    [
+      state.nhanVien.data,
+      state.khachHang.data,
+      state.adminAccount.data,
+    ].forEach((list) => {
+      const idx = list.findIndex((acc) => acc.maTaiKhoan === maTaiKhoan);
+      if (idx !== -1) list[idx].daBiKhoa = locked;
+    });
+  }
+
+  builder
+    .addCase(lockAccountThunk.pending, (state) => {
+      state.nhanVien.loading =
+        state.khachHang.loading =
+        state.adminAccount.loading =
+          true;
+      state.nhanVien.error =
+        state.khachHang.error =
+        state.adminAccount.error =
+          null;
+    })
+    .addCase(lockAccountThunk.fulfilled, (state, action) => {
+      updateLockStatus(state, action.meta.arg, true);
+      state.nhanVien.loading =
+        state.khachHang.loading =
+        state.adminAccount.loading =
+          false;
+    })
+    .addCase(lockAccountThunk.rejected, (state, action) => {
+      state.nhanVien.loading =
+        state.khachHang.loading =
+        state.adminAccount.loading =
+          false;
+      state.nhanVien.error =
+        state.khachHang.error =
+        state.adminAccount.error =
+          action.payload as string;
+    })
+    // 🔓 Unlock Account
+    .addCase(unlockAccountThunk.pending, (state) => {
+      state.nhanVien.loading =
+        state.khachHang.loading =
+        state.adminAccount.loading =
+          true;
+      state.nhanVien.error =
+        state.khachHang.error =
+        state.adminAccount.error =
+          null;
+    })
+    .addCase(unlockAccountThunk.fulfilled, (state, action) => {
+      updateLockStatus(state, action.meta.arg, false);
+      state.nhanVien.loading =
+        state.khachHang.loading =
+        state.adminAccount.loading =
+          false;
+    })
+    .addCase(unlockAccountThunk.rejected, (state, action) => {
+      state.nhanVien.loading =
+        state.khachHang.loading =
+        state.adminAccount.loading =
+          false;
+      state.nhanVien.error =
+        state.khachHang.error =
+        state.adminAccount.error =
+          action.payload as string;
     });
 };

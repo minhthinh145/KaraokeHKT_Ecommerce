@@ -79,7 +79,7 @@ namespace QLQuanKaraokeHKT.Helpers
                 .ForMember(dest => dest.MaTaiKhoanNavigation, opt => opt.Ignore());
 
             CreateMap<UserProfileDTO, TaiKhoan>()
-                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.UserName)) 
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
                 .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.LoaiTaiKhoan))
@@ -156,7 +156,7 @@ namespace QLQuanKaraokeHKT.Helpers
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.SoDienThoai))
-                 .ForMember(dest => dest.loaiTaiKhoan, opt => opt.Ignore()) 
+                 .ForMember(dest => dest.loaiTaiKhoan, opt => opt.Ignore())
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
                 .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
@@ -192,7 +192,7 @@ namespace QLQuanKaraokeHKT.Helpers
                 .ForMember(dest => dest.LoaiTaiKhoan, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.loaiTaiKhoan))
                 .ForMember(dest => dest.EmailConfirmed, opt => opt.MapFrom(src => src.MaTaiKhoanNavigation.EmailConfirmed));
 
-            CreateMap<TaiKhoanQuanLyDTO , TaiKhoan>()
+            CreateMap<TaiKhoanQuanLyDTO, TaiKhoan>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.loaiTaiKhoan))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.MaTaiKhoan))
@@ -200,6 +200,19 @@ namespace QLQuanKaraokeHKT.Helpers
                 .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
                 .ForMember(dest => dest.ConcurrencyStamp, opt => opt.Ignore())
                 .ReverseMap();
+
+            CreateMap<AddAccountForAdminDTO, TaiKhoan>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.loaiTaiKhoan))
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.SecurityStamp, opt => opt.Ignore())
+                .ForMember(dest => dest.ConcurrencyStamp, opt => opt.Ignore())
+            .ReverseMap();
+
         }
     }
 }

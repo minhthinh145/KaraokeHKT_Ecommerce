@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { formatDateForDisplay } from "../../../api/services/admin/utils/dateUtils";
+import { useConfirmDialog } from "../../../hooks/shared/useConfirmDialog";
 
 // Generic interface cho table configuration
 interface TableColumn<T> {
@@ -17,7 +18,9 @@ interface GenericQLTableProps<T> {
   columns: TableColumn<T>[];
   rowKey: keyof T;
   onLockToggle?: (id: string, isLocked: boolean) => void;
+  onDelete?: (id: string) => Promise<{ success: boolean }>; // 🔥 Thêm optional delete
   showLockActions?: boolean;
+  showDeleteAction?: boolean; // 🔥 Thêm flag để show/hide delete
   lockStatusField?: keyof T; // field để check trạng thái khóa
   emptyMessage?: string;
   tableName?: string;
@@ -29,14 +32,21 @@ export function GenericQLTable<T extends Record<string, any>>({
   columns,
   rowKey,
   onLockToggle,
+  onDelete, // 🔥 Nhận prop delete
   showLockActions = false,
+  showDeleteAction = false, // 🔥 Default false
   lockStatusField,
   emptyMessage = "Không có dữ liệu",
   tableName = "mục",
 }: GenericQLTableProps<T>) {
+  const { showConfirm, ConfirmDialogComponent } = useConfirmDialog();
+
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>(
     {}
   );
+  const [deleteLoadingStates, setDeleteLoadingStates] = useState<
+    Record<string, boolean>
+  >({}); // 🔥 Loading cho delete
 
   const handleLockToggle = async (id: string, isLocked: boolean) => {
     if (!onLockToggle) return;
@@ -47,6 +57,20 @@ export function GenericQLTable<T extends Record<string, any>>({
     } finally {
       setTimeout(() => {
         setLoadingStates((prev) => ({ ...prev, [id]: false }));
+      }, 500);
+    }
+  };
+
+  // Handle delete
+  const handleDelete = async (id: string) => {
+    if (!onDelete) return;
+
+    setDeleteLoadingStates((prev) => ({ ...prev, [id]: true }));
+    try {
+      await onDelete(id);
+    } finally {
+      setTimeout(() => {
+        setDeleteLoadingStates((prev) => ({ ...prev, [id]: false }));
       }, 500);
     }
   };
@@ -133,6 +157,7 @@ export function GenericQLTable<T extends Record<string, any>>({
     </div>
   );
 
+  // 🎨 Sửa nút Lock/Unlock với màu đỏ/xanh
   const getLockActionButton = (record: T) => {
     if (!showLockActions || !onLockToggle || !lockStatusField) return null;
 
@@ -141,58 +166,120 @@ export function GenericQLTable<T extends Record<string, any>>({
 
     return (
       <div className="flex items-center justify-center">
-        {isLocked ? (
-          <button
-            onClick={() => handleLockToggle(id, true)}
-            disabled={loadingStates[id]}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-green-500 to-emerald-600 border border-green-600 rounded-xl hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
-            title="Mở khóa tài khoản"
-          >
-            {loadingStates[id] ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 11V7a5 5 0 0110 0v4M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H5a2 2 0 00-2 2v5a2 2 0 002 2z"
-                />
-              </svg>
-            )}
-          </button>
-        ) : (
-          <button
-            onClick={() => handleLockToggle(id, false)}
-            disabled={loadingStates[id]}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-red-500 to-rose-600 border border-red-600 rounded-xl hover:from-red-600 hover:to-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
-            title="Khóa tài khoản"
-          >
-            {loadingStates[id] ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-6V7a6 6 0 10-12 0v4"
-                />
-                <rect width="20" height="8" x="2" y="11" rx="2" />
-              </svg>
-            )}
-          </button>
-        )}
+        <button
+          onClick={() => handleLockToggle(id, isLocked)}
+          disabled={loadingStates[id]}
+          className={`
+            inline-flex items-center gap-2 px-3 py-2 text-sm font-medium 
+            border rounded-lg transition-all duration-200 
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+            disabled:opacity-50 disabled:cursor-not-allowed
+            ${
+              isLocked
+                ? "text-green-700 bg-green-50 border-green-200 hover:bg-green-100 hover:border-green-300 focus:ring-green-500" // 🔥 Xanh cho mở khóa
+                : "text-red-700 bg-red-50 border-red-200 hover:bg-red-100 hover:border-red-300 focus:ring-red-500" // 🔥 Đỏ cho khóa
+            }
+          `}
+          title={isLocked ? "Mở khóa tài khoản" : "Khóa tài khoản"}
+        >
+          {loadingStates[id] ? (
+            <div
+              className={`w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin`}
+            ></div>
+          ) : isLocked ? (
+            // 🔥 Icon mở khóa - màu xanh
+            <svg
+              className="w-4 h-4 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
+              />
+            </svg>
+          ) : (
+            // 🔥 Icon khóa - màu đỏ
+            <svg
+              className="w-4 h-4 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+          )}
+        </button>
+      </div>
+    );
+  };
+
+  // 🔥 Thêm nút Delete
+  const getDeleteActionButton = (record: T) => {
+    if (!showDeleteAction || !onDelete) return null;
+
+    const id = record[rowKey] as string;
+
+    return (
+      <button
+        onClick={() => {
+          showConfirm(
+            {
+              title: "Xóa tài khoản",
+              message:
+                "Bạn có chắc chắn muốn xóa tài khoản này? Hành động này không thể hoàn tác.",
+              confirmText: "Xóa",
+              cancelText: "Hủy",
+              variant: "danger",
+            },
+            () => handleDelete(id)
+          );
+        }}
+        className="
+          inline-flex items-center gap-2 px-3 py-2 text-sm font-medium 
+          text-red-700 bg-red-50 border border-red-200 rounded-lg
+          hover:bg-red-100 hover:border-red-300 
+          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
+          transition-all duration-200
+        "
+        title="Xóa"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
+        </svg>
+      </button>
+    );
+  };
+
+  // 🔥 Render cột thao tác với cả lock và delete
+  const getActionButtons = (record: T) => {
+    const lockButton = getLockActionButton(record);
+    const deleteButton = getDeleteActionButton(record);
+
+    if (!lockButton && !deleteButton) return null;
+
+    return (
+      <div className="flex items-center justify-center gap-2">
+        {lockButton}
+        {deleteButton}
       </div>
     );
   };
@@ -264,94 +351,104 @@ export function GenericQLTable<T extends Record<string, any>>({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-neutral-200 shadow-lg overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full divide-y divide-gray-200">
-          <thead className="bg-gradient-to-r from-slate-50 via-blue-50 to-indigo-50 sticky top-0 z-10">
-            <tr>
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap border-b-2 border-blue-200"
-                  style={{ width: column.width }}
-                >
-                  {column.title}
-                </th>
-              ))}
-              {showLockActions && (
-                <th className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap border-b-2 border-blue-200">
-                  Thao tác
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
-            {data.map((record, rowIndex) => (
-              <tr
-                key={record[rowKey] as string}
-                className="hover:bg-gradient-to-r hover:from-blue-25 hover:to-indigo-25 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-md group"
-                style={{ animationDelay: `${rowIndex * 50}ms` }}
-              >
+    <>
+      <div className="bg-white rounded-xl border border-neutral-200 shadow-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
                 {columns.map((column) => (
-                  <td
+                  <th
                     key={column.key}
-                    className={`px-6 py-4 text-center whitespace-nowrap ${
-                      column.className || ""
-                    }`}
+                    className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap border-b-2 border-blue-200"
+                    style={{ width: column.width }}
                   >
-                    {column.render
-                      ? column.render(
-                          column.dataIndex ? record[column.dataIndex] : record,
-                          record,
-                          rowIndex
-                        )
-                      : column.dataIndex
-                      ? record[column.dataIndex]
-                      : ""}
-                  </td>
+                    {column.title}
+                  </th>
                 ))}
-                {showLockActions && (
-                  <td className="px-6 py-4 text-center whitespace-nowrap">
-                    {getLockActionButton(record)}
-                  </td>
+                {(showLockActions || showDeleteAction) && (
+                  <th
+                    className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap border-b-2 border-blue-200"
+                    style={{ width: 110, minWidth: 90, maxWidth: 140 }} // 👈 Thêm width cố định
+                  >
+                    Thao tác
+                  </th>
                 )}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-100">
+              {data.map((record, rowIndex) => (
+                <tr
+                  key={record[rowKey] as string}
+                  className="hover:bg-gradient-to-r hover:from-blue-25 hover:to-indigo-25 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-md group"
+                  style={{ animationDelay: `${rowIndex * 50}ms` }}
+                >
+                  {columns.map((column) => (
+                    <td
+                      key={column.key}
+                      className={`px-6 py-4 text-center whitespace-nowrap ${
+                        column.className || ""
+                      }`}
+                    >
+                      {column.render
+                        ? column.render(
+                            column.dataIndex
+                              ? record[column.dataIndex]
+                              : record,
+                            record,
+                            rowIndex
+                          )
+                        : column.dataIndex
+                        ? record[column.dataIndex]
+                        : ""}
+                    </td>
+                  ))}
+                  {(showLockActions || showDeleteAction) && (
+                    <td className="px-6 py-4 text-center whitespace-nowrap">
+                      {getActionButtons(record)}
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Footer */}
-      <div className="bg-gradient-to-r from-gray-50 to-blue-50 px-6 py-4 border-t border-gray-200">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm font-semibold text-gray-700">
-              Hiển thị{" "}
-              <span className="font-bold text-blue-600 text-lg">
-                {data.length}
-              </span>{" "}
-              {tableName}
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 text-xs text-gray-500">
-            <svg
-              className="w-4 h-4 animate-bounce"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M7 16l-4-4m0 0l4-4m-4 4h18"
-              />
-            </svg>
-            <span>Kéo ngang để xem thêm</span>
+        {/* Footer */}
+        <div className="bg-gradient-to-r from-gray-50 to-blue-50 px-6 py-4 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <span className="text-sm font-semibold text-gray-700">
+                Hiển thị{" "}
+                <span className="font-bold text-blue-600 text-lg">
+                  {data.length}
+                </span>{" "}
+                {tableName}
+              </span>
+            </div>
+            <div className="flex items-center space-x-2 text-xs text-gray-500">
+              <svg
+                className="w-4 h-4 animate-bounce"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M7 16l-4-4m0 0l4-4m-4 4h18"
+                />
+              </svg>
+              <span>Kéo ngang để xem thêm</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* 🔥 Thêm ConfirmDialog */}
+      {ConfirmDialogComponent}
+    </>
   );
 }
 

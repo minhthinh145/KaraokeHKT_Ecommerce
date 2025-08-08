@@ -90,3 +90,17 @@ export const unlockAccount = async (
     );
   }
 };
+
+//Delete /api/QLHeThong/Taikhoan/{maTaiKhoan}/delete
+export const deleteAccount = async (
+  maTaiKhoan: string
+): Promise<ApiResponse<any>> => {
+  try {
+    const response = await axiosInstance.delete(
+      `QLHeThong/taikhoan/${maTaiKhoan}/delete`
+    );
+    return response.data as ApiResponse<any>;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Lỗi khi xóa tài khoản");
+  }
+};

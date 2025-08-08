@@ -61,34 +61,6 @@ export const NhanVienAccountTable: React.FC<NhanVienAccountTableProps> = ({
       width: 160,
       render: (value: boolean) => TableHelpers.getEmailConfirmedBadge(value),
     },
-    {
-      key: "maNv",
-      title: "Mã NV",
-      dataIndex: "maNv" as keyof NhanVienTaiKhoanDTO,
-      width: 120,
-      render: (value: string) => (
-        <div className="bg-gradient-to-r from-blue-100 to-indigo-100 px-2 py-1 rounded-md">
-          {value.substring(0, 8)}...
-        </div>
-      ),
-      className: "font-mono text-gray-600",
-    },
-    {
-      key: "soDienThoai",
-      title: "SĐT",
-      dataIndex: "soDienThoai" as keyof NhanVienTaiKhoanDTO,
-      width: 120,
-      render: (value: string) => value || "-",
-      className: "text-gray-700",
-    },
-    {
-      key: "ngaySinh",
-      title: "Ngày sinh",
-      dataIndex: "ngaySinh" as keyof NhanVienTaiKhoanDTO,
-      width: 120,
-      render: (value: string) => TableHelpers.getDateCell(value),
-      className: "text-gray-700",
-    },
   ];
 
   return (

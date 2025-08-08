@@ -15,6 +15,8 @@ using QLQuanKaraokeHKT.Repositories.TaiKhoanRepo;
 using QLQuanKaraokeHKT.Services.Implementation;
 using QLQuanKaraokeHKT.Services.Interfaces;
 using QLQuanKaraokeHKT.Services.QLHeThongServices;
+using QLQuanKaraokeHKT.Services.QLHeThongServices.Implementation;
+using QLQuanKaraokeHKT.Services.QLHeThongServices.Interface;
 using QLQuanKaraokeHKT.Services.TaiKhoanService;
 using System.Text;
 
@@ -115,7 +117,12 @@ builder.Services.AddScoped<IChangePasswordService, ChangePasswordService>();
 // Account Services
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IQLNhanSuService, QLNhanSuService>();
-builder.Services.AddScoped<IQLHeThongService, QLHeThongService>();
+builder.Services.AddScoped<IAccountBaseService, AccountBaseService>();
+builder.Services.AddScoped<IAdminAccountService, AdminAccountService>();
+builder.Services.AddScoped<INhanVienAccountService, NhanVienAccountService>();
+builder.Services.AddScoped<IKhachHangAccountService, KhachHangAccountService>();
+builder.Services.AddScoped<IAccountManagementService, AccountManagementService>();
+
 
 // Repositories
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();

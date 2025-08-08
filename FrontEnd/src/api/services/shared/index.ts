@@ -19,6 +19,6 @@ export type { NhanVienDTO } from "../../types/admins/QLNhanSutypes";
 
 export * from "./employeeAPI";
 export * from "./accountAPI";
-export * from "./managementAPI";
+export * from "./adminAPI";
 export type { ApiResponse } from "../../types/apiResponse";
 export type { AddNhanVienDTO } from "../../types/admins/QLHeThongtypes";

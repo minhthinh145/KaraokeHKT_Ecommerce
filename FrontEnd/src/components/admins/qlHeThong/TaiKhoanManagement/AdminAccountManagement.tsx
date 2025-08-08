@@ -2,13 +2,24 @@ import React, { useState } from "react";
 import { useQLHeThong } from "../../../../hooks/useQLHeThong";
 import { StatsCardHelpers, StatsCards } from "../../uiForAll/StatsCards";
 import { AdminAccountTable } from "./Table/AdminAccountTable";
+import { AddAdminAccountModal } from "./featureComponents/AddAdminAccountModal";
 
-export const AdminAccountManagement: React.FC = () => {
-  const { ui, loading, errors, actions, data } = useQLHeThong();
+export const AdminAccountManagement: React.FC<{
+  qlHeThong: ReturnType<typeof useQLHeThong>;
+}> = ({ qlHeThong }) => {
+  const {
+    ui,
+    loading,
+    errors,
+    actions,
+    handlers,
+    adminAccountData,
+    lockHandlers,
+  } = qlHeThong;
   const [showModal, setShowModal] = useState(false);
 
   // Stats cho tài khoản quản trị
-  const totalAccounts = data.length;
+  const totalAccounts = adminAccountData.length;
   const filteredAccounts = ui.filteredAdminAccount.length;
 
   const statsCards = [
@@ -57,6 +68,18 @@ export const AdminAccountManagement: React.FC = () => {
       <AdminAccountTable
         data={ui.filteredAdminAccount}
         loading={loading.adminAccount}
+        onLockToggle={lockHandlers.adminAccount.lockToggle}
+        onDelete={handlers.deleteAdminAccount}
+      />
+
+      {/* Add Admin Account Modal */}
+      <AddAdminAccountModal
+        visible={showModal}
+        onCancel={() => setShowModal(false)}
+        onSuccess={() => {
+          setShowModal(false);
+          actions.loadAdminAccount();
+        }}
       />
     </div>
   );

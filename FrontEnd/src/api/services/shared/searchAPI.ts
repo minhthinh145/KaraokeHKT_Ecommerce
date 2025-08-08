@@ -7,7 +7,6 @@ export const search = async <T>(
   params: SearchParams
 ): Promise<ApiResponse<SearchResult<T>>> => {
   try {
-    console.log("🔍 Searching:", endpoint, params);
 
     const queryParams = new URLSearchParams();
 
@@ -31,7 +30,6 @@ export const search = async <T>(
     const url = `${endpoint}?${queryParams.toString()}`;
     const response = await axiosInstance.get(url);
 
-    console.log("✅ Search results:", response.data);
     return response.data as ApiResponse<SearchResult<T>>;
   } catch (error: any) {
     console.error("❌ Search error:", error.response?.data || error.message);
@@ -78,14 +76,12 @@ export const advancedSearch = async <T>(
   }
 ): Promise<ApiResponse<T[]>> => {
   try {
-    console.log("🔍 Advanced search:", endpoint, searchCriteria);
 
     const response = await axiosInstance.post(
       `${endpoint}/advanced-search`,
       searchCriteria
     );
 
-    console.log("✅ Advanced search results:", response.data);
     return response.data as ApiResponse<T[]>;
   } catch (error: any) {
     console.error(
