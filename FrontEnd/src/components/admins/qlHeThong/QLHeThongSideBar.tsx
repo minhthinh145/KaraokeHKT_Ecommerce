@@ -47,7 +47,7 @@ export const QLHeThongSidebar: React.FC<QLHeThongSidebarProps> = ({
         <div className="space-y-2">
           <div className="px-4 py-2">
             <h3 className="text-lg font-bold font-['Space_Grotesk'] text-black leading-tight">
-              Tài khoản nhân viên
+              Tài khoản nội bộ
             </h3>
           </div>
 
@@ -55,7 +55,7 @@ export const QLHeThongSidebar: React.FC<QLHeThongSidebarProps> = ({
             <MenuItem id="nhan-vien" title="Nhân viên" icon={UsersIcon} />
           </div>
           <div className="space-y-1">
-            <MenuItem id="quan-ly" title="Quản lý hệ thống" icon={UsersIcon} />
+            <MenuItem id="quan-ly" title="Quản lý" icon={UsersIcon} />
           </div>
           <div className="h-4"></div>
         </div>

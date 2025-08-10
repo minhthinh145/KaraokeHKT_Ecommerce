@@ -186,6 +186,7 @@ export const useQLHeThong = () => {
       addNhanVien: nhanVien.addNhanVienAccount,
       addAdminAccount: admin.addAdminAccount,
       deleteAdminAccount: admin.deleteAdminAccount,
+      updateAdminAccount: admin.updateAdminAccount,
     },
 
     // 🔄 Lock handlers

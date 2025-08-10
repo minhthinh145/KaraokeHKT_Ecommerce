@@ -1,17 +1,35 @@
 // filepath: d:\OOAD_Project\FrontEnd\src\components\admins\qlNhanSu\NhanVienManagement\NhanVienManagement.tsx
 import React, { useEffect } from "react";
-import { useQLNhanSu } from "../../../../hooks/useQLNhanSu"; // 🔥 Fix: Use QLNhanSu hook
+import { useQLNhanSu } from "../../../../hooks/useQLNhanSu";
 import { NhanVienTable } from "./Table/NhanVienTable";
-import { NhanVienFilters } from "./NhanVienFilters";
-import { AddNhanVienModal } from "./AddNhanVienModal";
-import { EditNhanVienModal } from "./EditNhanVienModal";
-import type { NhanVienDTO } from "../../../../api"; // 🔥 Fix: Use QLNhanSu types
+import { AccountFilterBar } from "../../uiForAll/AccountFilterBar";
+import { AddNhanVienModal } from "./feature/AddNhanVienModal";
+import { EditNhanVienModal } from "./feature/EditNhanVienModal";
+import { StatsCards, StatsCardHelpers } from "../../uiForAll/StatsCards";
+import type { NhanVienDTO } from "../../../../api/types/admins/QLNhanSutypes";
+
+// Role options cho nhân viên
+const NHAN_VIEN_ROLE_OPTIONS = [
+  { value: "", label: "Tất cả vai trò" },
+  { value: "NhanVienKho", label: "Nhân viên kho" },
+  { value: "NhanVienPhucVu", label: "Nhân viên phục vụ" },
+  { value: "NhanVienTiepTan", label: "Nhân viên tiếp tân" },
+];
 
 export const NhanVienManagement: React.FC = () => {
-  const { state, ui, loading, errors, actions, handlers } = useQLNhanSu(); // 🔥 Fix: Use QLNhanSu hook
+  const {
+    nhanVienData,
+    filteredNhanVien,
+    nhanVienStats,
+    loading,
+    errors,
+    ui,
+    actions,
+    handlers,
+  } = useQLNhanSu();
 
   useEffect(() => {
-    actions.loadData();
+    actions.loadNhanVien();
   }, []);
 
   const handleEdit = (nhanVien: NhanVienDTO) => {
@@ -20,21 +38,28 @@ export const NhanVienManagement: React.FC = () => {
 
   const handleDelete = async (maNv: string) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
-      const result = handlers.deleteNhanVien(maNv);
-      if (result.success) {
-      }
+      // Trả về promise đúng kiểu
+      return handlers.deleteNhanVien(maNv);
     }
+    // Nếu không xóa, vẫn trả về đúng kiểu
+    return Promise.resolve({ success: false });
   };
 
-  useEffect(() => {
-    return () => {
-      actions.clearErrors();
-    };
-  }, []);
+  // ✨ Stats cards data với helper functions
+  const statsCards = [
+    StatsCardHelpers.totalNhanVienCard(nhanVienStats.total),
+    StatsCardHelpers.nhanVienKhoCard(nhanVienStats.byType.NhanVienKho || 0),
+    StatsCardHelpers.nhanVienPhucVuCard(
+      nhanVienStats.byType.NhanVienPhucVu || 0
+    ),
+    StatsCardHelpers.nhanVienTiepTanCard(
+      nhanVienStats.byType.NhanVienTiepTan || 0
+    ),
+  ];
 
   return (
     <div className="space-y-6">
-      {/* 📊 Header & Stats */}
+      {/* Header & Stats */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Quản lý nhân sự</h1>
@@ -42,36 +67,31 @@ export const NhanVienManagement: React.FC = () => {
             Quản lý thông tin nhân viên trong hệ thống
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="text-sm text-gray-600">
-            Tổng số:{" "}
-            <span className="font-medium text-gray-900">
-              {state.nhanVien.total}
-            </span>
-          </div>
-          <button
-            onClick={actions.openAddModal}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        <button
+          onClick={actions.openAddModal}
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        >
+          <svg
+            className="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-            Thêm nhân viên
-          </button>
-        </div>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            />
+          </svg>
+          Thêm nhân viên
+        </button>
       </div>
 
-      {/* 🚨 Error Display */}
+      {/* Stats Cards */}
+      <StatsCards cards={statsCards} gridCols={4} />
+
+      {/* Error Display */}
       {errors.nhanVien && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex">
@@ -94,62 +114,53 @@ export const NhanVienManagement: React.FC = () => {
               </h3>
               <p className="text-sm text-red-700 mt-1">{errors.nhanVien}</p>
             </div>
-            <button
-              onClick={actions.clearErrors}
-              className="ml-auto text-red-400 hover:text-red-600"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
           </div>
         </div>
       )}
 
-      {/* 🔍 Filters */}
-      <NhanVienFilters
-        searchQuery={ui.searchQuery}
-        onSearchChange={actions.search}
-        loaiNhanVienFilter={ui.filters.loaiNhanVien}
-        onLoaiNhanVienChange={actions.filterByType}
-        filterOptions={ui.filterOptions}
-        onClearFilters={actions.clearFilters}
-        totalCount={state.nhanVien.total}
-        filteredCount={state.nhanVien.filtered.length}
+      {/* Filter Bar */}
+      <AccountFilterBar
+        colorTheme="green"
+        searchPlaceholder="Tìm kiếm nhân viên theo tên, email, SĐT..."
+        searchValue={ui.searchQuery}
+        onSearchChange={actions.setSearchQuery}
+        showRoleFilter
+        roleValue={ui.filters.loaiNhanVien || ""}
+        roleOptions={NHAN_VIEN_ROLE_OPTIONS}
+        onRoleChange={actions.setRoleFilter}
+        onRefresh={actions.loadNhanVien}
+        refreshing={loading.nhanVien}
+        onClearAll={actions.clearAllFilters}
       />
 
-      {/* 📋 Table */}
+      {/* Table */}
       <NhanVienTable
-        data={state.nhanVien.filtered}
+        data={filteredNhanVien}
         loading={loading.nhanVien}
-        onEdit={handleEdit}
+        onUpdate={handleEdit}
         onDelete={handleDelete}
       />
 
-      {/* 📝 Add Modal */}
+      {/* Add Modal */}
       <AddNhanVienModal
-        isOpen={ui.modals.showAdd}
+        isOpen={ui.showAddModal}
         onClose={actions.closeAddModal}
-        roleOptions={ui.filterOptions.filter((opt) => opt.value !== "All")}
+        onSuccess={() => {
+          actions.closeAddModal();
+          actions.loadNhanVien();
+        }}
+        roleOptions={NHAN_VIEN_ROLE_OPTIONS}
       />
 
-      {/* ✏️ Edit Modal */}
-
+      {/* Edit Modal */}
       <EditNhanVienModal
-        isOpen={ui.modals.showEdit}
+        isOpen={ui.showEditModal}
         onClose={actions.closeEditModal}
-        nhanVien={ui.modals.selectedNhanVien}
-        roleOptions={ui.filterOptions.filter((opt) => opt.value !== "All")}
+        nhanVien={ui.selectedNhanVien ?? null}
+        onSuccess={() => {
+          actions.closeEditModal();
+          actions.loadNhanVien();
+        }}
       />
     </div>
   );

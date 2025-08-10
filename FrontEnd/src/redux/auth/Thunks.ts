@@ -7,52 +7,45 @@ import {
   getProfile,
   updateProfile,
 } from "../../api/services/index";
-import type { AuthState, SignInResponse, SignUpResponse } from "./types";
+import type { AuthState, SignUpResponse } from "./types";
 import { saveAuthData, clearAuthData } from "./utils";
+import type { AuthUser } from "../../types/auth";
+import type { UserRole } from "../../constants/auth";
 
-// 🔥 Sign In Thunk
-export const signInThunk = createAsyncThunk<SignInResponse, SignInDTO>(
-  "auth/signIn",
-  async (payload, { rejectWithValue }) => {
-    try {
-      const loginResponse = await SignIn(payload);
-      if (!loginResponse.isSuccess || !loginResponse.data) {
-        return rejectWithValue(loginResponse);
-      }
-
-      const { accessToken, refreshToken } = loginResponse.data;
-      saveAuthData(undefined, accessToken, refreshToken);
-
-      const profileResponse = await getProfile();
-
-      if (!profileResponse.isSuccess || !profileResponse.data) {
-        return rejectWithValue({
-          isSuccess: false,
-          message: "Không thể lấy thông tin người dùng",
-          data: null,
-        });
-      }
-
-      saveAuthData(profileResponse.data);
-
-      return {
-        accessToken,
-        refreshToken,
-        user: profileResponse.data,
-      };
-    } catch (error: any) {
-      if (error.response?.data) {
-        return rejectWithValue(error.response.data);
-      }
-
-      return rejectWithValue({
-        isSuccess: false,
-        message: error.message || "Có lỗi xảy ra khi đăng nhập",
-        data: null,
-      });
+// 🔥 Sign In Thunk - return đúng type
+export const signInThunk = createAsyncThunk<
+  { accessToken: string; refreshToken: string; user: AuthUser },
+  SignInDTO
+>("auth/signIn", async (payload, { rejectWithValue }) => {
+  try {
+    const loginResponse = await SignIn(payload);
+    if (!loginResponse.isSuccess || !loginResponse.data) {
+      return rejectWithValue(loginResponse);
     }
+
+    const { accessToken, refreshToken, loaiTaiKhoan } = loginResponse.data;
+
+    // 🔥 Tạo AuthUser object đúng type
+    const user: AuthUser = {
+      loaiTaiKhoan: loaiTaiKhoan as UserRole,
+      profileLoaded: false,
+    };
+
+    saveAuthData(user, accessToken, refreshToken);
+
+    return {
+      accessToken,
+      refreshToken,
+      user, // 🔥 AuthUser type
+    };
+  } catch (error: any) {
+    return rejectWithValue({
+      isSuccess: false,
+      message: error.message || "Có lỗi xảy ra khi đăng nhập",
+      data: null,
+    });
   }
-);
+});
 
 // 🔥 Sign Up Thunk
 export const signUpThunk = createAsyncThunk<SignUpResponse, SignUpDTO>(
@@ -87,7 +80,7 @@ export const signUpThunk = createAsyncThunk<SignUpResponse, SignUpDTO>(
   }
 );
 
-// 🔥 Fetch Profile Thunk
+// 🔥 Fetch Profile Thunk - chỉ return UserProfileDTO
 export const fetchProfileThunk = createAsyncThunk<UserProfileDTO, void>(
   "auth/fetchProfile",
   async (_, { rejectWithValue }) => {
@@ -100,7 +93,7 @@ export const fetchProfileThunk = createAsyncThunk<UserProfileDTO, void>(
         );
       }
 
-      saveAuthData(response.data);
+      // 🔥 Chỉ return UserProfileDTO, việc update AuthUser sẽ xử lý trong reducer
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
@@ -110,7 +103,7 @@ export const fetchProfileThunk = createAsyncThunk<UserProfileDTO, void>(
   }
 );
 
-// 🔥 Update User Thunk
+// 🔥 Update User Thunk - chỉ return UserProfileDTO
 export const updateUserThunk = createAsyncThunk<UserProfileDTO, UserProfileDTO>(
   "auth/updateUser",
   async (payload, { rejectWithValue, getState }) => {
@@ -126,7 +119,7 @@ export const updateUserThunk = createAsyncThunk<UserProfileDTO, UserProfileDTO>(
         return rejectWithValue(response.message || "Cập nhật thất bại");
       }
 
-      saveAuthData(response.data);
+      // 🔥 Chỉ return UserProfileDTO mới
       return response.data;
     } catch (error: any) {
       const errorMessage =
@@ -141,7 +134,7 @@ export const updateUserThunk = createAsyncThunk<UserProfileDTO, UserProfileDTO>(
 // 🔥 Logout Thunk
 export const logoutThunk = createAsyncThunk<null, void>(
   "auth/logout",
-  async (_, { getState }) => {
+  async () => {
     try {
       clearAuthData();
       return null;
@@ -154,24 +147,41 @@ export const logoutThunk = createAsyncThunk<null, void>(
 
 // 🔥 Check Auth Status Thunk
 export const checkAuthStatusThunk = createAsyncThunk<
-  UserProfileDTO | null,
+  { user: AuthUser; profile: UserProfileDTO } | null,
   void
->("auth/checkStatus", async (_, { rejectWithValue }) => {
+>("auth/checkStatus", async () => {
   try {
     const accessToken = localStorage.getItem("accessToken");
+    const savedUser = localStorage.getItem("user");
 
-    if (!accessToken) {
-      return null;
-    }
-
-    const response = await getProfile();
-
-    if (!response.isSuccess || !response.data) {
+    if (!accessToken || !savedUser) {
       clearAuthData();
       return null;
     }
 
-    return response.data;
+    // 🔥 Parse AuthUser từ localStorage
+    const user: AuthUser = JSON.parse(savedUser);
+
+    // 🔥 Nếu chưa có profile, fetch từ API
+    if (!user.profileLoaded || !user.profile) {
+      const response = await getProfile();
+
+      if (response.isSuccess && response.data) {
+        return {
+          user: {
+            loaiTaiKhoan: user.loaiTaiKhoan,
+            profileLoaded: true,
+          },
+          profile: response.data,
+        };
+      }
+    }
+
+    // 🔥 Nếu đã có profile, return luôn
+    return {
+      user,
+      profile: user.profile!,
+    };
   } catch (error: any) {
     clearAuthData();
     return null;

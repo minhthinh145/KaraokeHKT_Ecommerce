@@ -42,6 +42,8 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
     public virtual DbSet<SanPhamDichVu> SanPhamDichVus { get; set; }
     public virtual DbSet<ThuePhong> ThuePhongs { get; set; }
     public virtual DbSet<VatLieu> VatLieus { get; set; }
+    public virtual DbSet<LichLamViec> LichLamViecs { get; set; }
+    public virtual DbSet<LuongCaLamViec> LuongCaLamViecs { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=localhost;Database=QLKaraokeHKT;Trusted_Connection=True;TrustServerCertificate=True;");
@@ -52,26 +54,14 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
 
         modelBuilder.Entity<CaLamViec>(entity =>
         {
-            entity.HasKey(e => e.MaCaLamViec).HasName("PK__CaLamVie__84019BCC8B786A53");
-
+            entity.HasKey(e => e.MaCa).HasName("PK_CaLamViec");
             entity.ToTable("CaLamViec");
 
-            entity.HasIndex(e => e.NgayLamViec, "IX_CaLamViec_NgayLam");
-
-            entity.HasIndex(e => e.MaNhanVien, "IX_CaLamViec_NhanVien");
-
-            entity.Property(e => e.MaCaLamViec).HasColumnName("maCaLamViec");
+            entity.Property(e => e.MaCa).HasColumnName("maCa");
+            entity.Property(e => e.TenCa).HasColumnName("tenCa").HasMaxLength(50);
             entity.Property(e => e.GioBatDauCa).HasColumnName("gioBatDauCa");
             entity.Property(e => e.GioKetThucCa).HasColumnName("gioKetThucCa");
-            entity.Property(e => e.MaNhanVien).HasColumnName("maNhanVien");
-            entity.Property(e => e.NgayLamViec).HasColumnName("ngayLamViec");
-
-            entity.HasOne(d => d.MaNhanVienNavigation).WithMany(p => p.CaLamViecs)
-                .HasForeignKey(d => d.MaNhanVien)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CaLamViec__maNha__1AD3FDA4");
         });
-
         modelBuilder.Entity<ChiTietHoaDonDichVu>(entity =>
         {
             entity.HasKey(e => e.MaCthoaDon).HasName("PK__ChiTietH__22113E7CA9E09973");
@@ -647,6 +637,33 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
                 .HasMaxLength(200)
                 .HasColumnName("tenVatLieu");
         });
+
+        modelBuilder.Entity<LichLamViec>(entity =>
+        {
+            entity.HasKey(e => e.MaLichLamViec).HasName("PK_LichLamViec");
+            entity.ToTable("LichLamViec");
+
+            entity.Property(e => e.MaLichLamViec).HasColumnName("maLichLamViec");
+            entity.Property(e => e.NgayLamViec).HasColumnName("ngayLamViec");
+            entity.Property(e => e.MaNhanVien).HasColumnName("maNhanVien");
+            entity.Property(e => e.MaCa).HasColumnName("maCa");
+
+            entity.HasOne(d => d.NhanVien)
+                .WithMany(p => p.LichLamViecs)
+                .HasForeignKey(d => d.MaNhanVien)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.HasOne(d => d.CaLamViec)
+                .WithMany(p => p.LichLamViecs)
+                .HasForeignKey(d => d.MaCa)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
+        modelBuilder.Entity<LuongCaLamViec>()
+    .ToTable("LuongCaLamViec")
+    .HasOne(l => l.CaLamViec)
+    .WithMany(c => c.LuongCaLamViecs)
+    .HasForeignKey(l => l.MaCa);
 
         modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("AspNetUserClaims");
         modelBuilder.Entity<IdentityUserLogin<Guid>>().ToTable("AspNetUserLogins");

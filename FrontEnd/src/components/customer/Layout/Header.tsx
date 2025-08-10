@@ -27,5 +27,5 @@ export const Header: React.FC = () => {
         <UserMenu />
       </div>
     </header>
-  ); 
+  );
 };

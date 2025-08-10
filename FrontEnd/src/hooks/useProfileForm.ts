@@ -10,21 +10,23 @@ export const useProfileForm = () => {
   const { showSuccess, showError } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
+
+  // 🔥 SỬA: Lấy data từ user.profile thay vì trực tiếp từ user
   const [formData, setFormData] = useState({
-    fullName: user?.userName || "",
-    phoneNumber: user?.phone || "",
-    email: user?.email || "",
-    dateOfBirth: user?.birthDate || "",
+    fullName: user?.profile?.userName || "",
+    phoneNumber: user?.profile?.phone || "",
+    email: user?.profile?.email || "",
+    dateOfBirth: user?.profile?.birthDate || "",
   });
 
-  // 🔥 Update form data when user changes
+  // 🔥 SỬA: Update form data when user changes
   const updateFormFromUser = () => {
-    if (user) {
+    if (user?.profile) {
       setFormData({
-        fullName: user.userName || "",
-        phoneNumber: user.phone || "",
-        email: user.email || "",
-        dateOfBirth: user.birthDate || "",
+        fullName: user.profile.userName || "",
+        phoneNumber: user.profile.phone || "",
+        email: user.profile.email || "",
+        dateOfBirth: user.profile.birthDate || "",
       });
     }
   };
@@ -56,15 +58,20 @@ export const useProfileForm = () => {
           return;
         }
 
-        // 🔥 Debug: Log data trước khi gửi
+        // 🔥 SỬA: Tạo updateData từ user.profile
+        if (!user?.profile) {
+          showError("Thông tin người dùng không tồn tại");
+          return;
+        }
+
         const updateData = {
-          ...user!,
+          ...user.profile, // Spread user.profile thay vì user
           userName: formData.fullName,
           phone: formData.phoneNumber,
+          email: formData.email,
           birthDate: formData.dateOfBirth,
         };
 
-      
         await dispatch(updateUserThunk(updateData)).unwrap();
 
         setIsEditing(false);
@@ -86,12 +93,13 @@ export const useProfileForm = () => {
   };
 
   const hasChanges = () => {
-    if (!user) return false;
+    if (!user?.profile) return false;
 
     return (
-      formData.fullName !== (user.userName || "") ||
-      formData.phoneNumber !== (user.phone || "") ||
-      formData.dateOfBirth !== (user.birthDate || "")
+      formData.fullName !== (user.profile.userName || "") ||
+      formData.phoneNumber !== (user.profile.phone || "") ||
+      formData.email !== (user.profile.email || "") ||
+      formData.dateOfBirth !== (user.profile.birthDate || "")
     );
   };
 
@@ -113,5 +121,9 @@ export const useProfileForm = () => {
     isFormValid: isFormValid(),
     hasChanges: hasChanges(),
     canSave: isEditing && isFormValid() && hasChanges(),
+
+    // 🔥 THÊM: Helper để check có profile không
+    hasProfile: !!user?.profile,
+    profileLoaded: user?.profileLoaded || false,
   };
 };

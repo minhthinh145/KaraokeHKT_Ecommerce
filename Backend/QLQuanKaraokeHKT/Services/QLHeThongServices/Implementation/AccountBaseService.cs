@@ -1,4 +1,6 @@
-﻿using QLQuanKaraokeHKT.ExternalService.Interfaces;
+﻿using AutoMapper;
+using QLQuanKaraokeHKT.DTOs.AuthDTOs;
+using QLQuanKaraokeHKT.ExternalService.Interfaces;
 using QLQuanKaraokeHKT.Helpers;
 using QLQuanKaraokeHKT.Repositories.TaiKhoanRepo;
 using QLQuanKaraokeHKT.Services.QLHeThongServices.Interface;
@@ -9,10 +11,13 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices.Implementation
     {
         public readonly ITaiKhoanRepository _taiKhoanRepository;
         public readonly ISendEmailService _emailService;
-        public AccountBaseService(ITaiKhoanRepository taiKhoanRepository, ISendEmailService emailService)
+        private readonly IMapper _mapper;
+
+        public AccountBaseService(ITaiKhoanRepository taiKhoanRepository, ISendEmailService emailService, IMapper mapper)
         {
             _taiKhoanRepository = taiKhoanRepository;
             _emailService = emailService;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         public async Task<ServiceResult> CheckEmailExistsAsync(string email)
         {
@@ -43,8 +48,6 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices.Implementation
 
             }
         }
-
-     
 
     }
 }

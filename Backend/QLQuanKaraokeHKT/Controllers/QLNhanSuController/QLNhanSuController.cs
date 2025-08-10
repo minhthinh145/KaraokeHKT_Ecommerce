@@ -8,6 +8,7 @@ using QLQuanKaraokeHKT.Services.QLHeThongServices;
 
 namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
 {
+    [Authorize(Roles = ApplicationRole.QuanLyNhanSu)]
     [Route("api/[controller]")]
     [ApiController]
     public class QLNhanSuController : ControllerBase

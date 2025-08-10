@@ -21,7 +21,8 @@
             { ApplicationRole.NhanVienKho, "Nhân viên kho" },
             { ApplicationRole.NhanVienPhucVu, "Nhân viên phục vụ" },
             { ApplicationRole.NhanVienTiepTan, "Nhân viên tiếp tân" },
-            { ApplicationRole.QuanTriHeThong, "Quản trị hệ thống" }
+            { ApplicationRole.QuanTriHeThong, "Quản trị hệ thống" },
+            { ApplicationRole.KhacHang, "Khách hàng"   }
         };
 
         public static string GetRoleDescription(string roleCode)

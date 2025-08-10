@@ -3,13 +3,13 @@ import type { ApiResponse } from "../types/apiResponse";
 import type {
   SignInDTO,
   SignUpDTO,
-  TokenResponseDTO,
+  LoginResponseDTO,
 } from "../types/auth/AuthDTO";
 
 export const SignIn = async (
   data: SignInDTO
-): Promise<ApiResponse<TokenResponseDTO>> => {
-  const response = await axiosInstance.post<ApiResponse<TokenResponseDTO>>(
+): Promise<ApiResponse<LoginResponseDTO>> => {
+  const response = await axiosInstance.post<ApiResponse<LoginResponseDTO>>(
     "auth/signin",
     data
   );
@@ -18,8 +18,8 @@ export const SignIn = async (
 
 export const SignUp = async (
   data: SignUpDTO
-): Promise<ApiResponse<TokenResponseDTO>> => {
-  const response = await axiosInstance.post<ApiResponse<TokenResponseDTO>>(
+): Promise<ApiResponse<LoginResponseDTO>> => {
+  const response = await axiosInstance.post<ApiResponse<LoginResponseDTO>>(
     "auth/signup",
     data
   );

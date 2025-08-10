@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import { AdminLayout } from "../components/admins/uiForAll/AdminLayout";
-import { QLNhanSuSidebar } from "../components/admins/qlNhanSu/QLNhanSuSidebar";
-import { NhanVienManagement } from "../components/admins/qlNhanSu/NhanVienManagement/NhanVienManagement"; // 🔥 Add import
+import { AdminLayout } from "../../components/admins/uiForAll/AdminLayout";
+import { QLNhanSuSidebar } from "../../components/admins/qlNhanSu/QLNhanSuSidebar";
+import { NhanVienManagement } from "../../components/admins/qlNhanSu/NhanVienManagement/NhanVienManagement"; // 🔥 Add import
 
-type TabType =
+type TabParent = "quan-ly-ca-lam" | "quan-ly-tien-luong" | "quan-ly-nhan-vien";
+type TabChild =
   | "sap-xep-lich"
   | "duyet-yeu-cau"
   | "thong-ke-luong"
   | "dieu-chinh-luong"
   | "thong-tin-nhan-vien";
-
 export const QLNhanSuPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("thong-tin-nhan-vien"); // 🔥 Default to implemented tab
+  const [activeParent, setActiveParent] = useState<TabParent>("quan-ly-ca-lam");
+  const [activeTab, setActiveTab] = useState<TabChild>("sap-xep-lich");
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -114,10 +115,14 @@ export const QLNhanSuPage: React.FC = () => {
       sidebarContent={
         <QLNhanSuSidebar
           isCollapsed={false}
+          activeParent={activeParent}
           activeTab={activeTab}
+          onParentChange={setActiveParent}
           onTabChange={setActiveTab}
         />
       }
+      showFilter={false}
+      showSearch={false}
       pageTitle="Quản lý nhân sự"
       searchPlaceholder="Tìm kiếm..."
     >

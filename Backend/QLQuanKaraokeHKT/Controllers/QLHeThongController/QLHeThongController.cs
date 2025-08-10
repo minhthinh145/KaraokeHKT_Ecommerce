@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QLQuanKaraokeHKT.Controllers.Helper;
+using QLQuanKaraokeHKT.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Helpers;
@@ -10,8 +11,10 @@ using QLQuanKaraokeHKT.Services.QLHeThongServices.Interface;
 
 namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
 {
+    [Authorize(Roles = ApplicationRole.QuanTriHeThong)]
     [Route("api/[controller]")]
     [ApiController]
+    
     public class QLHeThongController : ControllerBase
     {
         private readonly IAdminAccountService _adminAccountService;
@@ -315,6 +318,28 @@ namespace QLQuanKaraokeHKT.Controllers.QLHeThongController
                 return StatusCode(500, new
                 {
                     message = "Lỗi hệ thống khi xóa tài khoản.",
+                    success = false,
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPut("taikhoan/update")]
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDTO updateAccountDTO)
+        {
+            try
+            {
+                var modelValidation = this.ValidateModelState();
+                if (modelValidation != null)
+                    return modelValidation;
+                var result = await _accountManagementService.UpdateAccountAsync(updateAccountDTO);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi hệ thống khi cập nhật tài khoản.",
                     success = false,
                     error = ex.Message
                 });

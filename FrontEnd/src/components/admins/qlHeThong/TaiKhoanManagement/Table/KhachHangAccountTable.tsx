@@ -16,14 +16,6 @@ export const KhachHangAccountTable: React.FC<KhacHangAccountTableProps> = ({
 }) => {
   const khachHangColumns = [
     {
-      key: "maTaiKhoan",
-      title: "Mã TK",
-      dataIndex: "maTaiKhoan" as keyof KhachHangTaiKhoanDTO,
-      width: 120,
-      render: (value: string) => TableHelpers.getCodeCell(value),
-      className: "font-mono text-gray-900 group-hover:font-bold transition-all",
-    },
-    {
       key: "userName",
       title: "Email đăng nhập",
       dataIndex: "userName" as keyof KhachHangTaiKhoanDTO,
@@ -37,7 +29,8 @@ export const KhachHangAccountTable: React.FC<KhacHangAccountTableProps> = ({
       title: "Tên khách hàng",
       dataIndex: "tenKhachHang" as keyof KhachHangTaiKhoanDTO,
       width: 250,
-      className: "text-gray-700 group-hover:text-gray-900 transition-colors",
+      className:
+        "font-semibold text-gray-900 group-hover:text-indigo-500 transition-colors",
     },
     {
       key: "trangThai",

@@ -1,50 +1,47 @@
 import { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { signInThunk, clearError } from "../redux/auth/index";
-import type { RootState, AppDispatch } from "../redux/store";
-import type { SignInDTO } from "../api/types/auth/AuthDTO";
+import { useAuth } from "./auth/useAuth";
 import { useToast } from "./useToast";
+import type { SignInDTO } from "../api/types/auth/AuthDTO";
 
-export const useAuth = () => {
-  const dispatch = useDispatch<AppDispatch>();
+export const useSignInForm = () => {
+  const {
+    login,
+    loading,
+    error,
+    clearError: clearAuthError,
+    navigateToDefaultRoute,
+  } = useAuth();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
 
-  // 🔥 State cho activation modal
+  // 🔥 State cho activation modal (chỉ dành cho form)
   const [showActivationModal, setShowActivationModal] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
 
-  const { loading, error, isAuthenticated, user } = useSelector(
-    (state: RootState) => state.auth
-  );
-
-  const login = useCallback(
+  const handleLogin = useCallback(
     async (credentials: SignInDTO) => {
       try {
         if (error) {
-          dispatch(clearError());
+          clearAuthError();
         }
 
-        const result = await dispatch(signInThunk(credentials)).unwrap();
+        const result = await login(credentials);
 
+        // 🎉 Login thành công
         showSuccess("Đăng nhập thành công!");
-
-        setTimeout(() => {
-          navigate("/", { replace: true });
-        }, 500);
 
         return { success: true, data: result };
       } catch (rejectedValue: any) {
         let errorMsg = "Đăng nhập thất bại";
         let needActivation = false;
 
-        // 🔥 Kiểm tra data === false (account not active)
+        // 🔥 Kiểm tra lỗi activation
         if (typeof rejectedValue === "string") {
           errorMsg = rejectedValue;
         } else if (rejectedValue?.message) {
           errorMsg = rejectedValue.message;
-          // 🎯 CHECK: data === false
+          // 🎯 CHECK: data === false (account not active)
           if (rejectedValue?.data === false) {
             needActivation = true;
           }
@@ -57,7 +54,7 @@ export const useAuth = () => {
           }
         }
 
-        // 🔥 Nếu needActivation = true, show modal
+        // 🔥 Nếu cần activation, show modal
         if (needActivation) {
           setPendingEmail(credentials.email);
           setShowActivationModal(true);
@@ -69,30 +66,24 @@ export const useAuth = () => {
         return { success: false, error: errorMsg };
       }
     },
-    [dispatch, navigate, showSuccess, showError, error]
+    [login, error, clearAuthError, showSuccess, showError, navigate]
   );
 
-  const clearAuthError = useCallback(() => {
-    dispatch(clearError());
-  }, [dispatch]);
-
   // 🔥 Handle activation modal actions
-  const handleActivationConfirm = () => {
+  const handleActivationConfirm = useCallback(() => {
     setShowActivationModal(false);
     return pendingEmail;
-  };
+  }, [pendingEmail]);
 
-  const handleActivationCancel = () => {
+  const handleActivationCancel = useCallback(() => {
     setShowActivationModal(false);
     setPendingEmail("");
-  };
+  }, []);
 
   return {
     loading,
     error,
-    isAuthenticated,
-    user,
-    login,
+    login: handleLogin,
     clearAuthError,
     showActivationModal,
     pendingEmail,

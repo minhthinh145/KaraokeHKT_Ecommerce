@@ -1,0 +1,281 @@
+Folder PATH listing for volume DATA
+Volume serial number is 744F-17A6
+D:.
+|   App.css
+|   App.tsx
+|   index.css
+|   main.tsx
+|   structure.txt
+|   vite-env.d.ts
+|   
++---api
+|   |   axiosConfig.ts
+|   |   index.ts
+|   |   
+|   +---services
+|   |   |   changePassword.ts
+|   |   |   getProfile.ts.ts
+|   |   |   index.ts
+|   |   |   SignInOut.ts
+|   |   |   validateAccount.ts
+|   |   |   
+|   |   +---admin
+|   |   |   \---utils
+|   |   |           dateUtils.ts
+|   |   |           
+|   |   +---base
+|   |   |       axiosInstance.ts
+|   |   |       types.ts
+|   |   |       
+|   |   \---shared
+|   |           accountAPI.ts
+|   |           adminAPI.ts
+|   |           employeeAPI.ts
+|   |           index.ts
+|   |           searchAPI.ts
+|   |           
+|   \---types
+|       |   apiResponse.ts
+|       |   index.ts
+|       |   
+|       +---admins
+|       |       QLHeThongtypes.ts
+|       |       QLNhanSutypes.ts
+|       |       
+|       \---auth
+|               AuthDTO.ts
+|               ChangePassword.ts
+|               UserProfileDTO.ts
+|               VerifyAccountDTO.ts
+|               
++---assets
+|       react.svg
+|       
++---components
+|   +---admins
+|   |   +---qlHeThong
+|   |   |   |   QLHeThongSideBar.tsx
+|   |   |   |   
+|   |   |   \---TaiKhoanManagement
+|   |   |       |   AdminAccountManagement.tsx
+|   |   |       |   KhachHangAccountManagement.tsx
+|   |   |       |   NhanVienAccountManagement.tsx
+|   |   |       |   
+|   |   |       +---featureComponents
+|   |   |       |       AddAccountModal.tsx
+|   |   |       |       AddAdminAccountModal.tsx
+|   |   |       |       UpdateAccountModal.tsx
+|   |   |       |       
+|   |   |       \---Table
+|   |   |               AdminAccountTable.tsx
+|   |   |               KhachHangAccountTable.tsx
+|   |   |               NhanVienAccountTable.tsx
+|   |   |               
+|   |   +---qlKho
+|   |   +---qlNhanSu
+|   |   |   |   QLNhanSuSidebar.tsx
+|   |   |   |   
+|   |   |   \---NhanVienManagement
+|   |   |       |   AddNhanVienModal.tsx
+|   |   |       |   EditNhanVienModal.tsx
+|   |   |       |   index.ts
+|   |   |       |   NhanVienFilters.tsx
+|   |   |       |   NhanVienManagement.tsx
+|   |   |       |   
+|   |   |       \---Table
+|   |   |               NhanVienTable.tsx
+|   |   |               
+|   |   +---qlPhong
+|   |   \---uiForAll
+|   |           AccountFilterBar.tsx
+|   |           AdminLayout.tsx
+|   |           ConfirmDialog.tsx
+|   |           GenericQLTable.tsx
+|   |           roleMacros.tsx
+|   |           StatsCards.tsx
+|   |           
+|   +---Auth
+|   |   |   index.ts
+|   |   |   layout.tsx
+|   |   |   LoginForm.tsx
+|   |   |   OtpVerificationModal.tsx
+|   |   |   ProtectedRoute.tsx
+|   |   |   PublicRoute.tsx
+|   |   |   RoleBasedRoute.tsx
+|   |   |   SignUpForm.tsx
+|   |   |   
+|   |   \---OtpVerification
+|   |           ChangePasswordOtpModal.tsx
+|   |           LoginOtpModal.tsx
+|   |           
+|   +---common
+|   |       ToastProvider.tsx
+|   |       
+|   +---customer
+|   |   |   CustomerLayout.tsx
+|   |   |   
+|   |   +---ChangePassword
+|   |   |       ChangePasswordSection.tsx
+|   |   |       
+|   |   +---Layout
+|   |   |       Footer.tsx
+|   |   |       Header.tsx
+|   |   |       HeroSection.tsx
+|   |   |       Navigation.tsx
+|   |   |       UserMenu.tsx
+|   |   |       
+|   |   +---Main
+|   |   |       MainLayOut.tsx
+|   |   |       NoFooterLayout.tsx
+|   |   |       
+|   |   \---userProfile
+|   |           ProfileForm.tsx
+|   |           ProfileHeader.tsx
+|   |           ProfileStats.tsx
+|   |           
+|   +---employee
+|   \---ui
+|           Button.tsx
+|           Input.tsx
+|           
++---constants
+|       auth.ts
+|       
++---hooks
+|   |   useChangePassword .ts
+|   |   useOtpVerification.ts
+|   |   useProfileForm.ts
+|   |   useQLHeThong.ts
+|   |   useQLNhanSu.ts
+|   |   useSignInForm.ts
+|   |   useSignUpForm.ts
+|   |   useToast.ts
+|   |   
+|   +---auth
+|   |       useAuth.ts
+|   |       
+|   +---QLHeThong
+|   |       useAdminAccount.ts
+|   |       useKhachHangAccount.ts
+|   |       useLoaiTaiKhoan.ts
+|   |       useNhanVienAccount.ts
+|   |       
+|   \---shared
+|           useConfirmDialog.tsx
+|           useLockableAccount.ts
+|           
++---pages
+|   |   HomePage.tsx
+|   |   login.tsx
+|   |   NotFoundPage.tsx
+|   |   ProfilePage.tsx
+|   |   signup.tsx
+|   |   
+|   +---admin
+|   |       QLHeThongPage.tsx
+|   |       QLNhanSuPage.tsx
+|   |       QuanLyKhoPage.tsx
+|   |       QuanLyPhongHatPage.tsx
+|   |       
+|   +---customer
+|   |       BookingPage.tsx
+|   |       
+|   \---employee
+|           NhanVienKhoPage.tsx
+|           NhanVienPhucVuPage.tsx
+|           NhanVienTiepTanPage.tsx
+|           
++---redux
+|   |   hooks.ts
+|   |   index.ts
+|   |   store.ts
+|   |   
+|   +---admin
+|   |   |   index.ts
+|   |   |   
+|   |   +---QLHeThong
+|   |   |       extraReducers.ts
+|   |   |       index.ts
+|   |   |       reducers.ts
+|   |   |       selectors.ts
+|   |   |       slice.ts
+|   |   |       thunks.ts
+|   |   |       types.ts
+|   |   |       
+|   |   \---QLNhanSu
+|   |           extraReducers.ts
+|   |           index.ts
+|   |           reducers.ts
+|   |           selectors.ts
+|   |           slice.ts
+|   |           thunks.ts
+|   |           types.ts
+|   |           
+|   \---auth
+|           authSlice.ts
+|           index.ts
+|           selectors.ts
+|           thunks.ts
+|           types.ts
+|           utils.ts
+|           
++---routes
+|       AdminRoutes.tsx
+|       AppRoutes.tsx
+|       CustomerRoutes.tsx
+|       EmployeeRoutes.tsx
+|       index.ts
+|       
+\---types
+        auth.ts
+        
+
+---
+
+## Chức năng chính từng nhóm
+
+- **api/**: Giao tiếp backend, định nghĩa kiểu dữ liệu.
+- **components/**: Toàn bộ UI, chia theo domain (admin, customer, employee), có các modal, table, layout, filter, ...
+- **constants/**: Hằng số dùng toàn app (role, trạng thái, ...)
+- **hooks/**: Custom hook cho logic domain (CRUD, filter, xác thực, ...)
+- **pages/**: Trang lớn, mỗi trang là 1 màn hình chính.
+- **redux/**: State management (slice, thunk, reducer, selector).
+- **routes/**: Định nghĩa route, phân quyền.
+- **types/**: Định nghĩa type chung, dùng lại nhiều nơi.
+
+---
+
+## Ghi chú
+
+- **Table quản trị**: Dùng `GenericQLTable` + các table con cho từng loại tài khoản.
+- **Modal thêm/sửa**: Đặt trong `featureComponents/`, dùng chung logic với hook và redux.
+- **Quản lý tài khoản**: Tách riêng cho admin, nhân viên, khách hàng.
+- **UI dùng chung**: Đặt ở `uiForAll/` và `ui/`.
+
+---
+
+**Bạn có thể bổ sung thêm chi tiết cho từng module nếu muốn!**---
+
+## Chức năng chính từng nhóm
+
+- **api/**: Giao tiếp backend, định nghĩa kiểu dữ liệu.
+- **components/**: Toàn bộ UI, chia theo domain (admin, customer, employee), có các modal, table, layout, filter, ...
+- **constants/**: Hằng số dùng toàn app (role, trạng thái, ...)
+- **hooks/**: Custom hook cho logic domain (CRUD, filter, xác thực, ...)
+- **pages/**: Trang lớn, mỗi trang là 1 màn hình chính.
+- **redux/**: State management (slice, thunk, reducer, selector).
+- **routes/**: Định nghĩa route, phân quyền.
+- **types/**: Định nghĩa type chung, dùng lại nhiều nơi.
+
+---
+
+## Ghi chú
+
+- **Table quản trị**: Dùng `GenericQLTable` + các table con cho từng loại tài khoản.
+- **Modal thêm/sửa**: Đặt trong `featureComponents/`, dùng chung logic với hook và redux.
+- **Quản lý tài khoản**: Tách riêng cho admin, nhân viên, khách hàng.
+- **UI dùng chung**: Đặt ở `uiForAll/` và `ui/`.
+
+---
+
+**Bạn có thể bổ sung thêm chi tiết cho từng module

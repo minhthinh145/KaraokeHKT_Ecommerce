@@ -1,8 +1,9 @@
 import React from "react";
 import type { UserProfileDTO } from "../../../api/types/auth/UserProfileDTO";
+import type { AuthUser } from "../../../types/auth";
 
 interface ProfileHeaderProps {
-  user: UserProfileDTO | null;
+  user: AuthUser | null;
   isEditing: boolean;
   onUpdateInfo: () => void;
   onCancel?: () => void;
@@ -23,7 +24,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
   // Chỉ hiển thị buttons khi đang ở tab profile
   const showProfileButtons = activeTab === "profile";
-
+  console.log(user);
   return (
     <div
       className={`px-6 py-8 ${
@@ -40,7 +41,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               activeTab === "profile" ? "text-indigo-600" : "text-red-600"
             }
           >
-            {user?.userName?.charAt(0)?.toUpperCase() || "U"}
+            {user?.profile?.userName?.charAt(0)?.toUpperCase() || "U"}
           </span>
         </div>
 
@@ -48,7 +49,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <div className="text-center sm:text-left flex-1">
           <h1 className="text-2xl font-bold text-white">
             {activeTab === "profile"
-              ? user?.userName || "Người dùng"
+              ? user?.profile?.userName || "Người dùng"
               : "Bảo mật tài khoản"}
           </h1>
           <p
@@ -57,7 +58,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             }`}
           >
             {activeTab === "profile"
-              ? user?.email || ""
+              ? user?.profile?.email || ""
               : "Đổi mật khẩu để bảo vệ tài khoản của bạn"}
           </p>
         </div>

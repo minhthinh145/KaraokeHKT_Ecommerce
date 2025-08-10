@@ -166,4 +166,32 @@ export const StatsCardHelpers = {
     icon: "🔒",
     color: "red",
   }),
+  nhanVienPhucVuCard: (value: number): StatCardData => ({
+    id: "nhanVienPhucVu",
+    title: "Nhân viên phục vụ",
+    value,
+    icon: "🍽️",
+    color: "purple",
+  }),
+  nhanVienTiepTanCard: (value: number): StatCardData => ({
+    id: "nhanVienTiepTan",
+    title: "Nhân viên tiếp tân",
+    value,
+    icon: "👤",
+    color: "indigo",
+  }),
+  nhanVienKhoCard: (value: number): StatCardData => ({
+    id: "nhanVienKho",
+    title: "Nhân viên kho",
+    value,
+    icon: "📦",
+    color: "yellow",
+  }),
+  totalNhanVienCard: (value: number): StatCardData => ({
+    id: "totalNhanVien",
+    title: "Tổng nhân viên",
+    value,
+    icon: "👥",
+    color: "blue",
+  }),
 };

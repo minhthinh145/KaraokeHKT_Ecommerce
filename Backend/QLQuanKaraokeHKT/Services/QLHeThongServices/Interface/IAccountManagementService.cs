@@ -1,4 +1,5 @@
-﻿using QLQuanKaraokeHKT.Helpers;
+﻿using QLQuanKaraokeHKT.DTOs.AuthDTOs;
+using QLQuanKaraokeHKT.Helpers;
 
 namespace QLQuanKaraokeHKT.Services.QLHeThongServices.Interface
 {
@@ -8,6 +9,7 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices.Interface
         Task<ServiceResult> UnlockAccountByMaTaiKhoanAsync(Guid maTaiKhoan);
         Task<ServiceResult> GetAllLoaiTaiKhoanAsync();
         Task<ServiceResult> DeleteAccountAsync(Guid maTaiKhoan);
+        Task<ServiceResult> UpdateAccountAsync(UpdateAccountDTO updateAccountDTO);
 
 
     }

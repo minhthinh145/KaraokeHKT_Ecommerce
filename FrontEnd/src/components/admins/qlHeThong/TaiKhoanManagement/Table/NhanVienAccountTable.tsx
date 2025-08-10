@@ -16,14 +16,6 @@ export const NhanVienAccountTable: React.FC<NhanVienAccountTableProps> = ({
 }) => {
   const nhanVienColumns = [
     {
-      key: "maTaiKhoan",
-      title: "Mã TK",
-      dataIndex: "maTaiKhoan" as keyof NhanVienTaiKhoanDTO,
-      width: 120,
-      render: (value: string) => TableHelpers.getCodeCell(value),
-      className: "font-mono text-gray-900 group-hover:font-bold transition-all",
-    },
-    {
       key: "userName",
       title: "Tên đăng nhập",
       dataIndex: "userName" as keyof NhanVienTaiKhoanDTO,

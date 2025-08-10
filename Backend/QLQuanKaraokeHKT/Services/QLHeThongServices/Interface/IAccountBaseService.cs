@@ -1,4 +1,5 @@
-﻿using QLQuanKaraokeHKT.Helpers;
+﻿using QLQuanKaraokeHKT.DTOs.AuthDTOs;
+using QLQuanKaraokeHKT.Helpers;
 using QLQuanKaraokeHKT.Models;
 
 namespace QLQuanKaraokeHKT.Services.QLHeThongServices.Interface
@@ -7,7 +8,6 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices.Interface
     {
         Task<ServiceResult> CheckEmailExistsAsync(string email);
         Task<ServiceResult> SendWelcomeEmailAsync(string email, string hoTen, string password);
-
 
     }
 }

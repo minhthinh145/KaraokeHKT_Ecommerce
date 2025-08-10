@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"; // ✅ Đồng nhất
 import {
   clearAdminAccountError,
@@ -11,11 +12,17 @@ import {
 import { useAccountLockToggle } from "../shared/useLockableAccount";
 import type { AddAdminAccountDTO } from "../../api";
 import { message } from "antd";
-import { deleteAccountThunk } from "../../redux/admin/QLHeThong";
+import {
+  deleteAccountThunk,
+  updateAdminAccountThunk,
+} from "../../redux/admin/QLHeThong";
+import type { UpdateAccountDTO } from "../../api/types/admins/QLHeThongtypes";
+import type { AppDispatch, RootState } from "../../redux/store";
 import { useToast } from "../useToast";
 
 export const useAdminAccount = ({ autoLoad = true } = {}) => {
   const dispatch = useAppDispatch();
+  const adminAccount = useSelector((s: RootState) => s.qlHeThong.adminAccount);
 
   // Selectors
   const adminAccountState = useAppSelector(selectAdminAccountState); // ✅ useAppSelector
@@ -71,6 +78,28 @@ export const useAdminAccount = ({ autoLoad = true } = {}) => {
     },
     [refreshAdminAccountData]
   );
+
+  // Update admin account
+  const updateAccount = useCallback(
+    async (payload: UpdateAccountDTO) => {
+      try {
+        const res = await dispatch(updateAdminAccountThunk(payload));
+        if (res.meta.requestStatus === "fulfilled") {
+          showSuccess("Cập nhật tài khoản thành công");
+          refreshAdminAccountData();
+          return { success: true };
+        } else {
+          showError("Cập nhật tài khoản thất bại");
+          return { success: false };
+        }
+      } catch (error: any) {
+        showError("Cập nhật tài khoản thất bại");
+        return { success: false, error: error.message };
+      }
+    },
+    [refreshAdminAccountData]
+  );
+
   // Actions
   const actions = useMemo(
     () => ({
@@ -99,6 +128,7 @@ export const useAdminAccount = ({ autoLoad = true } = {}) => {
     lockHandlers: adminAccountLockHandlers,
     addAdminAccount: handleAddAdminAccount,
     deleteAdminAccount: handleDeleteAdminAccount,
+    updateAdminAccount: updateAccount,
     thunks,
   };
 };

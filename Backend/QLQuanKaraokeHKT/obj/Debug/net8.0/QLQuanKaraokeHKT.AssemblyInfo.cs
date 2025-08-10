@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QLQuanKaraokeHKT")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6390936121957b382514bd04423d605145a8102b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+731e1e9d988e531cb1acc7bfac81a0be5f09a15d")]
 [assembly: System.Reflection.AssemblyProductAttribute("QLQuanKaraokeHKT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QLQuanKaraokeHKT")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -10,6 +10,7 @@ import {
   lockAccountThunk,
   unlockAccountThunk,
   deleteAccountThunk,
+  updateAdminAccountThunk,
 } from "./thunks";
 
 // 🔥 Extra Reducers for Async Thunks
@@ -211,5 +212,57 @@ export const qlHeThongExtraReducers = (
         state.khachHang.error =
         state.adminAccount.error =
           action.payload as string;
+    });
+
+  builder
+    .addCase(updateAdminAccountThunk.pending, (state) => {
+      state.adminAccount.loading = true;
+      state.adminAccount.error = null;
+    })
+    .addCase(updateAdminAccountThunk.fulfilled, (state, action) => {
+      state.adminAccount.loading = false;
+
+      // Thunk (đề xuất) trả về: { request: UpdateAccountDTO, apiData?: UpdatedAccount }
+      const { request, apiData } = action.payload as {
+        request: {
+          maTaiKhoan: string;
+          newUserName: string;
+          newPassword: string;
+          newLoaiTaiKhoan: string;
+        };
+        apiData?: any;
+      };
+
+      const idx = state.adminAccount.data.findIndex(
+        (acc) => acc.maTaiKhoan === request.maTaiKhoan
+      );
+      if (idx !== -1) {
+        const current = state.adminAccount.data[idx];
+        state.adminAccount.data[idx] = {
+          ...current,
+          // ưu tiên dữ liệu server trả về nếu có
+          ...(apiData || {}),
+          userName: request.newUserName || apiData?.userName || current.email,
+          loaiTaiKhoan:
+            request.newLoaiTaiKhoan ||
+            apiData?.loaiTaiKhoan ||
+            current.loaiTaiKhoan,
+          // Không đổi password ở client list (thường không hiển thị)
+        };
+      }
+
+      state.adminAccount.error = null;
+
+      // Đóng modal nếu bạn có các flag này trong UI state
+      if (state.ui) {
+        // đổi tên theo đúng state thực tế nếu khác
+        (state.ui as any).showUpdateAdminModal = false;
+        (state.ui as any).selectedAdminAccount = null;
+      }
+    })
+    .addCase(updateAdminAccountThunk.rejected, (state, action) => {
+      state.adminAccount.loading = false;
+      state.adminAccount.error =
+        (action.payload as string) || "Không thể cập nhật tài khoản";
     });
 };

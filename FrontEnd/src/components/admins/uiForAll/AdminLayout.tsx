@@ -4,7 +4,9 @@ import {
   FunnelIcon,
   Bars3Icon,
   XMarkIcon,
+  ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
+import { useAuth } from "../../../hooks/auth/useAuth"; // Đảm bảo đúng path
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -25,6 +27,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const { logout } = useAuth();
 
   return (
     <div className="h-screen w-screen bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border border-black flex overflow-hidden">
@@ -65,7 +68,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header Bar */}
         <header className="bg-white border-b border-neutral-200 px-6 py-4 flex-shrink-0">
-          <div className="flex items-center justify-between gap-8">
+          <div
+            className={`flex items-center gap-8 ${
+              !showSearch && !showFilter ? "justify-end" : "justify-between"
+            }`}
+          >
             {/* Search & Filter Section */}
             {(showSearch || showFilter) && (
               <div className="flex items-center gap-4 min-w-0">
@@ -101,8 +108,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 <span className="text-white text-sm font-bold">A</span>
               </div>
               <span className="font-medium text-gray-700 whitespace-nowrap">
-                Admin User
+                Tài khoản quản lý
               </span>
+              <button
+                onClick={logout}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-semibold transition"
+                title="Đăng xuất"
+              >
+                <ArrowRightOnRectangleIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">Đăng xuất</span>
+              </button>
             </div>
           </div>
         </header>

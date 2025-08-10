@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { useAuth } from "../../hooks/useSignInForm";
+import { useSignInForm } from "../../hooks/useSignInForm"; // 🔥 SỬA: Import đúng hook
 import { LoginOtpModal } from "./OtpVerification/LoginOtpModal";
+import { useAuth } from "../../hooks/auth/useAuth";
 
 export const LoginForm: React.FC = () => {
   const {
@@ -14,7 +15,8 @@ export const LoginForm: React.FC = () => {
     pendingEmail,
     handleActivationConfirm,
     handleActivationCancel,
-  } = useAuth();
+  } = useSignInForm(); // 🔥 SỬA: Dùng useSignInForm
+  const { userRole, navigateToDefaultRoute } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,13 +31,14 @@ export const LoginForm: React.FC = () => {
       email: email.trim(),
       password: password.trim(),
     });
-
-    // 🔥 Nếu cần activation và user confirm, show OTP modal
-    if (result.needActivation && showActivationModal) {
-      // Modal sẽ được hiển thị tự động
+    if (result.success) {
     }
   };
-
+  useEffect(() => {
+    if (userRole) {
+      navigateToDefaultRoute();
+    }
+  }, [userRole]);
   // 🔥 Handle activation confirmation
   const handleActivationConfirmAction = () => {
     const emailForOtp = handleActivationConfirm();
@@ -58,9 +61,9 @@ export const LoginForm: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <Input
-              label="Email"
-              placeholder="Nhập email của bạn"
-              type="email"
+              label="Tên đăng nhập"
+              placeholder="Nhập tên đăng nhập của bạn"
+              type="text"
               value={email}
               onChange={handleEmailChange}
               required
@@ -94,6 +97,7 @@ export const LoginForm: React.FC = () => {
         </form>
       </div>
 
+      {/* 🔥 Activation Modal */}
       {showActivationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
@@ -114,12 +118,12 @@ export const LoginForm: React.FC = () => {
         </div>
       )}
 
+      {/* 🔥 OTP Modal */}
       <LoginOtpModal
         isOpen={showOtpModal}
         onClose={() => setShowOtpModal(false)}
         onVerificationSuccess={() => {
           setShowOtpModal(false);
-          // Redirect to login page or show success message
           handleActivationConfirm();
         }}
         userEmail={pendingEmail}

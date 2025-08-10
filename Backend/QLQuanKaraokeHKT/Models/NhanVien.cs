@@ -19,9 +19,9 @@ public partial class NhanVien
 
     public Guid MaTaiKhoan { get; set; }
 
-    public virtual ICollection<CaLamViec> CaLamViecs { get; set; } = new List<CaLamViec>();
 
     public virtual TaiKhoan MaTaiKhoanNavigation { get; set; } = null!;
+    public virtual ICollection<LichLamViec> LichLamViecs { get; set; } = new List<LichLamViec>();
 
     public virtual ICollection<PhieuLuong> PhieuLuongs { get; set; } = new List<PhieuLuong>();
     public virtual ICollection<PhieuHuyHang> PhieuHuyHangs { get; set; } = new List<PhieuHuyHang>();

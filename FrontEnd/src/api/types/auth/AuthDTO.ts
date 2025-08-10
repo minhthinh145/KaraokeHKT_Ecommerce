@@ -16,7 +16,8 @@ export interface RefreshTokenRequestDTO {
   RefreshToken: string;
 }
 
-export interface TokenResponseDTO {
+export interface LoginResponseDTO {
+  loaiTaiKhoan: string;
   accessToken: string;
   refreshToken: string;
 }

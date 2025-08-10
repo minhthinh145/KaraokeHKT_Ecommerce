@@ -24,11 +24,20 @@ export interface AdminAccountDTO {
   loaiTaiKhoan: string;
 }
 
-export interface AddAdminAccountDTO{
+export interface AddAdminAccountDTO {
   userName: string;
   phoneNumber: string;
-  loaiTaiKhoan: string; 
+  loaiTaiKhoan: string;
 }
+
+//update
+export interface UpdateAccountDTO {
+  maTaiKhoan: string;
+  newUserName: string;
+  newPassword: string;
+  newLoaiTaiKhoan: string;
+}
+
 // 🎯 Khách hàng DTO (placeholder - chưa có từ backend)
 export interface KhachHangTaiKhoanDTO {
   // Thông tin khách hàng - Match C# properties
@@ -47,7 +56,6 @@ export interface KhachHangTaiKhoanDTO {
   emailConfirmed: boolean; // bool EmailConfirmed
 }
 
-
 // 🎯 Application Roles Constants
 export const ApplicationRole = {
   QuanLyKho: "QuanLyKho",
@@ -57,6 +65,7 @@ export const ApplicationRole = {
   NhanVienPhucVu: "NhanVienPhucVu",
   NhanVienTiepTan: "NhanVienTiepTan",
   QuanTriHeThong: "QuanTriHeThong",
+  KhachHang: "KhachHang",
 } as const;
 
 // 🎯 Add Tài khoản cho Nhân viên DTO

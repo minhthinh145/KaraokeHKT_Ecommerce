@@ -9,6 +9,7 @@ interface AdminAccountTableProps {
 
   onLockToggle: (maTaiKhoan: string, isLocked: boolean) => void;
   onDelete: (maTaiKhoan: string) => Promise<{ success: boolean }>;
+  onUpdate: (row: AdminAccountDTO) => void; // 🔥 thêm
 }
 
 export const AdminAccountTable: React.FC<AdminAccountTableProps> = ({
@@ -16,15 +17,9 @@ export const AdminAccountTable: React.FC<AdminAccountTableProps> = ({
   loading,
   onLockToggle,
   onDelete,
+  onUpdate, // 🔥 thêm
 }) => {
   const AdminColumns = [
-    {
-      key: "maTaiKhoan",
-      title: "Mã TK",
-      dataIndex: "maTaiKhoan" as keyof AdminAccountDTO,
-      render: (value: string) => TableHelpers.getCodeCell(value),
-      className: "font-mono text-gray-900 group-hover:font-bold transition-all",
-    },
     {
       key: "userName",
       title: "Tên đăng nhập",
@@ -56,6 +51,8 @@ export const AdminAccountTable: React.FC<AdminAccountTableProps> = ({
       rowKey="maTaiKhoan"
       onLockToggle={onLockToggle}
       onDelete={onDelete}
+      onUpdate={onUpdate} // 🔥 truyền xuống
+      showUpdateAction={true} // 🔥 bật nút Sửa
       showLockActions={true}
       showDeleteAction={true}
       lockStatusField="daBiKhoa"

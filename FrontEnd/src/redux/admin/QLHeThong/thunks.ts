@@ -13,10 +13,11 @@ import {
   getAllAdminAccount,
   addAdminAccount,
   deleteAccount,
+  updateAccount,
 } from "../../../api/services/shared";
 import type { ApiResponse } from "../../../api/types/apiResponse";
 import type { NhanVienDTO } from "../../../api/services/shared";
-import type { AddAdminAccountDTO } from "../../../api";
+import type { AddAdminAccountDTO, UpdateAccountDTO } from "../../../api";
 // 🔥 Fetch All Tài khoản Nhân viên
 export const fetchAllNhanVien = createAsyncThunk(
   "qlHeThong/fetchAllNhanVien",
@@ -199,6 +200,25 @@ export const deleteAccountThunk = createAsyncThunk(
         return response.data;
       } else {
         return rejectWithValue(response.message || "Không thể xóa tài khoản");
+      }
+    } catch (error: any) {
+      return rejectWithValue(error.message || "Lỗi hệ thống");
+    }
+  }
+);
+
+export const updateAdminAccountThunk = createAsyncThunk(
+  "qlHeThong/updateAdminAccount",
+  async (data: UpdateAccountDTO, { rejectWithValue }) => {
+    try {
+      const response = await updateAccount(data);
+      if (response.isSuccess) {
+        // Trả về cả request và apiData để reducer dùng
+        return { request: data, apiData: response.data };
+      } else {
+        return rejectWithValue(
+          response.message || "Không thể cập nhật tài khoản"
+        );
       }
     } catch (error: any) {
       return rejectWithValue(error.message || "Lỗi hệ thống");

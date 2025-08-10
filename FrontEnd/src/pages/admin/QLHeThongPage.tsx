@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { AdminLayout } from "../components/admins/uiForAll/AdminLayout";
-import { QLHeThongSidebar } from "../components/admins/qlHeThong/QLHeThongSideBar";
-import { NhanVienAccountManagement } from "../components/admins/qlHeThong/TaiKhoanManagement/NhanVienAccountManagement";
-import { KhachHangAccountManagement } from "../components/admins/qlHeThong/TaiKhoanManagement/KhachHangAccountManagement";
-import { AdminAccountManagement } from "../components/admins/qlHeThong/TaiKhoanManagement/AdminAccountManagement";
-import { useQLHeThong } from "../hooks/useQLHeThong";
+import { AdminLayout } from "../../components/admins/uiForAll/AdminLayout";
+import { QLHeThongSidebar } from "../../components/admins/qlHeThong/QLHeThongSideBar";
+import { NhanVienAccountManagement } from "../../components/admins/qlHeThong/TaiKhoanManagement/NhanVienAccountManagement";
+import { KhachHangAccountManagement } from "../../components/admins/qlHeThong/TaiKhoanManagement/KhachHangAccountManagement";
+import { AdminAccountManagement } from "../../components/admins/qlHeThong/TaiKhoanManagement/AdminAccountManagement";
+import { useQLHeThong } from "../../hooks/useQLHeThong";
 type ActiveTab = "nhan-vien" | "khach-hang" | "quan-ly";
 
 export const QLHeThongPage: React.FC = () => {

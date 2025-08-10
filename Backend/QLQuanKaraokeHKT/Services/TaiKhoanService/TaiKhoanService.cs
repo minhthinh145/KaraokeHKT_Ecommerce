@@ -73,12 +73,14 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
                 return ServiceResult.Failure("Account is not active. Please activate your account first.",data:false);
             }
             var (accessToken, refreshToken) = await _authService.GenerateTokensAsync(user);
-            var TokenResponse = new TokenResponseDTO
+            var LoginResponseDTO = new LoginResponseDTO
             {
+                loaiTaiKhoan = user.loaiTaiKhoan.ToString(),
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
             };
-            return ServiceResult.Success("Login successful.", TokenResponse);
+
+            return ServiceResult.Success("Login successful.", LoginResponseDTO);
         }
 
         public async Task<ServiceResult> SignUpAsync(SignUpDTO signup)

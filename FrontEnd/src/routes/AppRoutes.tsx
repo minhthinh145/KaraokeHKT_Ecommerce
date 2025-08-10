@@ -1,74 +1,64 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { ProtectedRoute } from "../components/Auth/ProtectedRoute";
-import { PublicRoute } from "../components/Auth/PublicRoute";
+import { Routes, Route } from "react-router-dom";
+import { RoleBasedRoute } from "../components/Auth";
+import { ROLE_GROUPS } from "../constants/auth";
+
+// Route Components
+import { AdminRoutes } from "./AdminRoutes";
+import { EmployeeRoutes } from "./EmployeeRoutes";
+import { CustomerRoutes } from "./CustomerRoutes";
+
+// Public Pages - 🔥 SỬA: Dùng đúng path hiện có
 import { LoginPage } from "../pages/login";
-import { SignUpPage } from "../pages/signup";
 import { HomePage } from "../pages/HomePage";
-import { ProfilePage } from "../pages/ProfilePage";
-import { AdminRoutes } from "./AdminRoute";
+
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Home Page - Public, ai cũng vào được */}
+      {/* 🔓 Public Routes */}
       <Route path="/" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
 
-      {/* Auth Routes - chỉ truy cập được khi chưa đăng nhập */}
+      {/* 🏛️ Admin Routes - Admin + Manager */}
       <Route
-        path="/login"
+        path="/admin/*"
         element={
-          <PublicRoute>
-            <LoginPage />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/signup"
-        element={
-          <PublicRoute>
-            <SignUpPage />
-          </PublicRoute>
-        }
-      />
-      <Route path="/admin/*" element={<AdminRoutes />} />
-
-      {/* Các chức năng khác - Protected, cần login */}
-      <Route
-        path="/booking"
-        element={
-          <ProtectedRoute>
-            <div>Booking Page (Coming Soon)</div>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/services"
-        element={
-          <ProtectedRoute>
-            <div>Services Page (Coming Soon)</div>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/contact"
-        element={
-          <ProtectedRoute>
-            <div>Contact Page (Coming Soon)</div>
-          </ProtectedRoute>
+          <RoleBasedRoute
+            allowedRoles={[...ROLE_GROUPS.ADMIN, ...ROLE_GROUPS.MANAGER]}
+          >
+            <AdminRoutes />
+          </RoleBasedRoute>
         }
       />
 
-      {/* 404 Route */}
+      {/* 👷‍♂️ Employee Routes - Nhân viên */}
+      <Route
+        path="/employee/*"
+        element={
+          <RoleBasedRoute
+            allowedRoles={[
+              ...ROLE_GROUPS.ADMIN,
+              ...ROLE_GROUPS.MANAGER,
+              ...ROLE_GROUPS.EMPLOYEE,
+            ]}
+          >
+            <EmployeeRoutes />
+          </RoleBasedRoute>
+        }
+      />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* 👤 Customer Routes - Khách hàng */}
+      <Route
+        path="/customer/*"
+        element={
+          <RoleBasedRoute allowedRoles={[...ROLE_GROUPS.CUSTOMER]}>
+            <CustomerRoutes />
+          </RoleBasedRoute>
+        }
+      />
+
+      {/* 404 Page */}
+      <Route path="*" element={<div>404 - Không tìm thấy trang</div>} />
     </Routes>
   );
 };

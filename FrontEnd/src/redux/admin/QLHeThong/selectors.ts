@@ -1,3 +1,8 @@
+import {
+  EMPLOYEE_ROLES,
+  MANAGER_ROLES,
+  RoleDescriptions,
+} from "../../../constants/auth";
 import { createSelector } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 
@@ -32,44 +37,42 @@ export const selectAdminAccountState = createSelector(
 export const selectFilteredNhanVien = createSelector(
   [selectNhanVienState, selectUIState],
   (nhanVienState, uiState) => {
-    let filteredData = [...nhanVienState.data];
+    const { data } = nhanVienState;
+    const { searchQuery, filters } = uiState;
+    const base = data.filter((item) =>
+      EMPLOYEE_ROLES.includes(item.loaiTaiKhoan as any)
+    );
 
-    // Search filter
-    if (uiState.searchQuery.trim()) {
-      const query = uiState.searchQuery.toLowerCase();
-      filteredData = filteredData.filter(
-        (nv) =>
-          nv.hoTen.toLowerCase().includes(query) ||
-          nv.email.toLowerCase().includes(query) ||
-          nv.userName.toLowerCase().includes(query)
-      );
+    let result = base;
+
+    // Filter role cụ thể (trong nhóm nhân viên)
+    if (filters.loaiTaiKhoan && filters.loaiTaiKhoan !== "All") {
+      result = result.filter((r) => r.loaiTaiKhoan === filters.loaiTaiKhoan);
     }
 
-    // Role filter
-    if (
-      uiState.filters.loaiTaiKhoan &&
-      uiState.filters.loaiTaiKhoan !== "All"
-    ) {
-      filteredData = filteredData.filter(
-        (nv) => nv.loaiTaiKhoan === uiState.filters.loaiTaiKhoan
-      );
-    }
-
-    // Status filter
-    if (uiState.filters.trangThai) {
-      filteredData = filteredData.filter((nv) => {
-        if (uiState.filters.trangThai === "active") {
-          return nv.daKichHoat && !nv.daBiKhoa;
-        } else if (uiState.filters.trangThai === "inactive") {
-          return !nv.daKichHoat;
-        } else if (uiState.filters.trangThai === "locked") {
-          return nv.daBiKhoa;
-        }
+    // Trạng thái
+    if (filters.trangThai) {
+      result = result.filter((acc) => {
+        if (filters.trangThai === "active")
+          return acc.daKichHoat && !acc.daBiKhoa;
+        if (filters.trangThai === "inactive") return !acc.daKichHoat;
+        if (filters.trangThai === "locked") return acc.daBiKhoa;
         return true;
       });
     }
 
-    return filteredData;
+    // Search
+    if (searchQuery?.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (acc) =>
+          (acc.hoTen || "").toLowerCase().includes(q) ||
+          (acc.email || "").toLowerCase().includes(q) ||
+          (acc.userName || "").toLowerCase().includes(q)
+      );
+    }
+
+    return result;
   }
 );
 
@@ -192,3 +195,13 @@ export const selectAdminAccountStats = createSelector(
     locked: filteredData.filter((item) => item.daBiKhoa).length,
   })
 );
+
+// Options cho dropdown role theo “context” (employee | manager)
+export const makeSelectRoleFilterOptions = (context: "employee" | "manager") =>
+  createSelector([], () => {
+    const roles = context === "employee" ? EMPLOYEE_ROLES : MANAGER_ROLES;
+    return [
+      { value: "All", label: "Tất cả vai trò" },
+      ...roles.map((r) => ({ value: r, label: RoleDescriptions[r] || r })),
+    ];
+  });

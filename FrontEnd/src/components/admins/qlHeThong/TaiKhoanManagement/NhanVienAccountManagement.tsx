@@ -3,6 +3,8 @@ import { AddAccountModal } from "./featureComponents/AddAccountModal";
 import { StatsCardHelpers, StatsCards } from "../../uiForAll/StatsCards";
 import { NhanVienAccountTable } from "./Table/NhanVienAccountTable";
 import type { useQLHeThong } from "../../../../hooks/useQLHeThong";
+import { AccountFilterBar } from "../../uiForAll/AccountFilterBar";
+import { RoleDescriptions, EMPLOYEE_ROLES } from "../../../../constants/auth";
 
 export const NhanVienAccountManagement: React.FC<{
   qlHeThong: ReturnType<typeof useQLHeThong>;
@@ -27,6 +29,12 @@ export const NhanVienAccountManagement: React.FC<{
     StatsCardHelpers.activeCard(activeNhanVien),
     StatsCardHelpers.lockedCard(lockedNhanVien),
   ];
+
+  const roleOptions = EMPLOYEE_ROLES.map((r) => ({
+    value: r,
+    label: RoleDescriptions[r] || r,
+  }));
+
   return (
     <div className="space-y-6">
       {/* Header - GIỮ NGUYÊN LAYOUT DÀI */}
@@ -39,6 +47,7 @@ export const NhanVienAccountManagement: React.FC<{
             Quản lý thông tin tài khoản và nhân viên trong hệ thống
           </p>
         </div>
+
         <button
           onClick={() => setShowModal(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -69,69 +78,24 @@ export const NhanVienAccountManagement: React.FC<{
         </div>
       )}
 
-      {/* Filter Bar - GIỮ NGUYÊN */}
-      <div className="bg-white p-4 rounded-lg border border-neutral-200">
-        <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="🔍 Tìm kiếm theo tên, email, username..."
-              value={ui.searchQuery}
-              onChange={(e) => actions.setSearchQuery(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          {/* Filter by Role */}
-          <select
-            value={ui.filters.loaiTaiKhoan || ""}
-            onChange={(e) => actions.setRoleFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Tất cả vai trò</option>
-            {ui.filterOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-
-          {/* Filter by Status */}
-          <select
-            value={ui.filters.trangThai || ""}
-            onChange={(e) => actions.setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Tất cả trạng thái</option>
-            <option value="active">Hoạt động</option>
-            <option value="inactive">Chưa kích hoạt</option>
-            <option value="locked">Bị khóa</option>
-          </select>
-
-          {/* Action Buttons */}
-          <button
-            onClick={actions.loadNhanVien}
-            disabled={loading.nhanVien}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
-          >
-            {loading.nhanVien ? "⏳" : "🔄"} Làm mới
-          </button>
-
-          <button
-            onClick={actions.clearAllFilters}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            🗑️ Xóa lọc
-          </button>
-        </div>
-
-        <div className="mt-2 text-sm text-gray-600">
-          Đang hiển thị:{" "}
-          <span className="font-bold text-blue-600">{filteredNhanVien}</span> /{" "}
-          {totalNhanVien} tài khoản
-        </div>
-      </div>
+      {/* Filter Bar (chuẩn hoá) */}
+      <AccountFilterBar
+        colorTheme="blue"
+        searchPlaceholder="🔍 Tìm kiếm theo tên, email, username..."
+        searchValue={ui.searchQuery}
+        onSearchChange={actions.setSearchQuery}
+        showRoleFilter
+        roleValue={ui.filters.loaiTaiKhoan || ""}
+        roleOptions={roleOptions}
+        roleAllLabel="Tất cả nhân viên"
+        onRoleChange={actions.setRoleFilter}
+        showStatusFilter
+        statusValue={ui.filters.trangThai || ""}
+        onStatusChange={actions.setStatusFilter}
+        onRefresh={actions.loadNhanVien}
+        refreshing={loading.nhanVien}
+        onClearAll={actions.clearAllFilters}
+      />
 
       <NhanVienAccountTable
         data={ui.filteredNhanVien}

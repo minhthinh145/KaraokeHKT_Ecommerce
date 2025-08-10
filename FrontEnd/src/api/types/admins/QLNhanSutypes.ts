@@ -1,7 +1,4 @@
 // 🎯 Base Response Interface (reuse existing)
-import type { ApiResponse } from "../apiResponse";
-import type { AddNhanVienDTO } from "./QLHeThongtypes";
-// 🎯 Add Nhân viên DTO (cho tạo mới) - Remove password, backend sẽ dùng email
 
 // 🎯 Nhân viên DTO cho QL Nhân Sự (khác với QLHeThong)
 export interface NhanVienDTO {

@@ -1,4 +1,5 @@
 import type { AuthState } from "./types";
+import type { AuthUser } from "../../types/auth";
 
 // 🔥 Safe localStorage operations
 export const safeLocalStorageOperation = (operation: () => void) => {
@@ -20,14 +21,15 @@ export const clearAuthData = () => {
 
 // 🔥 Save auth data
 export const saveAuthData = (
-  user?: any,
-  accessToken?: string,
-  refreshToken?: string
+  user?: AuthUser,
+  accessToken?: string | null,
+  refreshToken?: string | null
 ) => {
   safeLocalStorageOperation(() => {
     if (user) localStorage.setItem("user", JSON.stringify(user));
     if (accessToken) localStorage.setItem("accessToken", accessToken);
     if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+    if (user?.loaiTaiKhoan) localStorage.setItem("userRole", user.loaiTaiKhoan);
   });
 };
 
@@ -47,7 +49,6 @@ export const getInitialState = (): AuthState => {
       isAuthenticated: !!savedAccessToken,
     };
   } catch (error) {
-    console.warn("Failed to restore auth state:", error);
     clearAuthData();
     return {
       user: null,

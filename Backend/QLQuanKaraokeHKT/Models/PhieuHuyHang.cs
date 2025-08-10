@@ -15,7 +15,7 @@ public partial class PhieuHuyHang
 
     public decimal TongTienThatThoat { get; set; }
 
-    public int MaNhanVien { get; set; }
+    public Guid MaNhanVien { get; set; }
     public virtual NhanVien NhanVien { get; set; } = null!;
 
     public virtual ICollection<ChiTietPhieuHuyHang> ChiTietPhieuHuyHangs { get; set; } = new List<ChiTietPhieuHuyHang>();

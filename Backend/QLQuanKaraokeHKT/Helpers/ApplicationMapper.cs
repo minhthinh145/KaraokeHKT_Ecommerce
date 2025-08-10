@@ -116,7 +116,7 @@ namespace QLQuanKaraokeHKT.Helpers
                 .ForMember(dest => dest.ThuePhongs, opt => opt.Ignore());
 
             // TokenResponseDTO mappings (if needed for complex scenarios)
-            CreateMap<(string AccessToken, string RefreshToken), TokenResponseDTO>()
+            CreateMap<(string AccessToken, string RefreshToken), LoginResponseDTO>()
                 .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.AccessToken))
                 .ForMember(dest => dest.RefreshToken, opt => opt.MapFrom(src => src.RefreshToken));
 
@@ -213,6 +213,13 @@ namespace QLQuanKaraokeHKT.Helpers
                 .ForMember(dest => dest.ConcurrencyStamp, opt => opt.Ignore())
             .ReverseMap();
 
+
+            CreateMap<UpdateAccountDTO, TaiKhoan>()
+    .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.newUserName))
+    .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.newUserName))
+    .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.newLoaiTaiKhoan))
+    .ForMember(dest => dest.Id, opt => opt.Ignore())
+    .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
         }
     }
 }

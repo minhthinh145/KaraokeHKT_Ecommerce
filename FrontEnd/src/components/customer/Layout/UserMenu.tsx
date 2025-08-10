@@ -58,7 +58,7 @@ export const UserMenu: React.FC = () => {
           <div className="w-8 h-8 bg-black rounded-full" />
         </div>
         <span className="text-black text-xl font-medium font-['Space_Grotesk']">
-          {user?.userName || "User"}
+          {user?.profile?.userName || "User"}
         </span>
       </button>
 
@@ -67,13 +67,13 @@ export const UserMenu: React.FC = () => {
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
           <div className="py-2">
             <button
-              onClick={() => handleNavigation("/profile")}
+              onClick={() => handleNavigation("/customer/profile")}
               className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Thông tin cá nhân
             </button>
             <button
-              onClick={() => handleNavigation("/booking")}
+              onClick={() => handleNavigation("/customer/booking")}
               className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Lịch sử đặt phòng

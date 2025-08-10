@@ -10,7 +10,7 @@ export const HeroSection: React.FC = () => {
 
   const handleBookingClick = () => {
     if (isAuthenticated) {
-      navigate("/booking");
+      navigate("/customer/booking");
     } else {
       navigate("/login");
     }

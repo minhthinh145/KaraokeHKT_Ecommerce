@@ -7,9 +7,9 @@ export const Navigation: React.FC = () => {
 
   const navigationItems = [
     { label: "Trang chủ", path: "/" },
-    { label: "Đặt phòng", path: "/booking" },
-    { label: "Dịch vụ", path: "/services" },
-    { label: "Liên hệ", path: "/contact" },
+    { label: "Đặt phòng", path: "/customer/booking" },
+    { label: "Dịch vụ", path: "/customer/services" },
+    { label: "Liên hệ", path: "/customer/contact" },
   ];
 
   const handleNavigation = (path: string) => {

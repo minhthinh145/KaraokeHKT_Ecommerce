@@ -18,12 +18,15 @@ interface GenericQLTableProps<T> {
   columns: TableColumn<T>[];
   rowKey: keyof T;
   onLockToggle?: (id: string, isLocked: boolean) => void;
-  onDelete?: (id: string) => Promise<{ success: boolean }>; // 🔥 Thêm optional delete
+  onDelete?: (id: string) => Promise<{ success: boolean }>;
   showLockActions?: boolean;
-  showDeleteAction?: boolean; // 🔥 Thêm flag để show/hide delete
-  lockStatusField?: keyof T; // field để check trạng thái khóa
+  showDeleteAction?: boolean;
+  lockStatusField?: keyof T;
   emptyMessage?: string;
   tableName?: string;
+  onUpdate?: (row: T) => void; // 🔥 thêm
+  showUpdateAction?: boolean; // 🔥 thêm
+  extraRowActions?: (row: T) => React.ReactNode; // (nếu vẫn muốn tuỳ biến)
 }
 
 export function GenericQLTable<T extends Record<string, any>>({
@@ -32,12 +35,15 @@ export function GenericQLTable<T extends Record<string, any>>({
   columns,
   rowKey,
   onLockToggle,
-  onDelete, // 🔥 Nhận prop delete
+  onDelete,
   showLockActions = false,
-  showDeleteAction = false, // 🔥 Default false
+  showDeleteAction = false,
   lockStatusField,
   emptyMessage = "Không có dữ liệu",
   tableName = "mục",
+  onUpdate, // 🔥 thêm
+  showUpdateAction = false,
+  extraRowActions, // 🔥 destructure
 }: GenericQLTableProps<T>) {
   const { showConfirm, ConfirmDialogComponent } = useConfirmDialog();
 
@@ -269,17 +275,54 @@ export function GenericQLTable<T extends Record<string, any>>({
     );
   };
 
+  // 🔥 Nút Update
+  const getUpdateActionButton = (record: T) => {
+    if (!showUpdateAction || !onUpdate) return null;
+    return (
+      <button
+        onClick={() => onUpdate(record)}
+        className="
+          inline-flex items-center gap-2 px-3 py-2 text-sm font-medium
+          text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-lg
+          hover:bg-indigo-100 hover:border-indigo-300
+          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+          transition-all duration-200
+        "
+        title="Sửa"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M11 5h2m-1 0v14m9-7H3"
+          />
+        </svg>
+        <span>Sửa</span>
+      </button>
+    );
+  };
+
   // 🔥 Render cột thao tác với cả lock và delete
   const getActionButtons = (record: T) => {
     const lockButton = getLockActionButton(record);
     const deleteButton = getDeleteActionButton(record);
+    const updateButton = getUpdateActionButton(record); // 🔥 thêm
+    const extra = extraRowActions ? extraRowActions(record) : null;
 
-    if (!lockButton && !deleteButton) return null;
+    if (!lockButton && !deleteButton && !updateButton && !extra) return null;
 
     return (
       <div className="flex items-center justify-center gap-2">
         {lockButton}
         {deleteButton}
+        {updateButton}
+        {extra}
       </div>
     );
   };
@@ -366,10 +409,13 @@ export function GenericQLTable<T extends Record<string, any>>({
                     {column.title}
                   </th>
                 ))}
-                {(showLockActions || showDeleteAction) && (
+                {(showLockActions ||
+                  showDeleteAction ||
+                  showUpdateAction ||
+                  extraRowActions) && (
                   <th
                     className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap border-b-2 border-blue-200"
-                    style={{ width: 110, minWidth: 90, maxWidth: 140 }} // 👈 Thêm width cố định
+                    style={{ width: 140, minWidth: 110, maxWidth: 200 }}
                   >
                     Thao tác
                   </th>
@@ -403,7 +449,10 @@ export function GenericQLTable<T extends Record<string, any>>({
                         : ""}
                     </td>
                   ))}
-                  {(showLockActions || showDeleteAction) && (
+                  {(showLockActions ||
+                    showDeleteAction ||
+                    showUpdateAction ||
+                    extraRowActions) && (
                     <td className="px-6 py-4 text-center whitespace-nowrap">
                       {getActionButtons(record)}
                     </td>
@@ -519,7 +568,7 @@ export const TableHelpers = {
   getUserNameCell: (userName: string) => (
     <div className="flex items-center justify-center space-x-2">
       <svg
-        className="w-5 h-5 text-blue-500"
+        className="w-5 h-5 text-indigo-500"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -531,10 +580,18 @@ export const TableHelpers = {
           d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"
         />
       </svg>
-      <span>{userName}</span>
+      <span
+        className="
+        font-bold text-indigo-500 bg-gradient-to-r from-indigo-50 to-indigo-100
+        px-2 py-1 rounded-md shadow-sm tracking-wide
+        group-hover:bg-indigo-200  transition-all
+      "
+        style={{ fontSize: "1.05em" }}
+      >
+        {userName}
+      </span>
     </div>
   ),
-
   getCodeCell: (code: string) => (
     <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-2 py-1 rounded-md">
       {code.substring(0, 8)}...

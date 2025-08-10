@@ -17,7 +17,7 @@ public partial class PhieuNhapHang
 
     public int MaNhaCungCap { get; set; }
 
-    public int MaNhanVien { get; set; }
+    public Guid MaNhanVien { get; set; }
     public virtual NhanVien NhanVien { get; set; } = null!;
     public virtual ICollection<ChiTietPhieuNhapHang> ChiTietPhieuNhapHangs { get; set; } = new List<ChiTietPhieuNhapHang>();
 

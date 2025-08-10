@@ -4,6 +4,7 @@ import type {
   NhanVienTaiKhoanDTO,
   KhachHangTaiKhoanDTO,
   AddTaiKhoanForNhanVienDTO,
+  UpdateAccountDTO,
 } from "../../types/admins/QLHeThongtypes";
 
 // ✅ GET /api/QLHeThong/taikhoan/nhanvien
@@ -102,5 +103,19 @@ export const deleteAccount = async (
     return response.data as ApiResponse<any>;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Lỗi khi xóa tài khoản");
+  }
+};
+
+//update /api/QLHeThong/TaiKhoan/update
+export const updateAccount = async (
+  data: UpdateAccountDTO
+): Promise<ApiResponse<any>> => {
+  try {
+    const response = await axiosInstance.put(`QLHeThong/taikhoan/update`, data);
+    return response.data as ApiResponse<any>;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "Lỗi khi cập nhật tài khoản"
+    );
   }
 };
