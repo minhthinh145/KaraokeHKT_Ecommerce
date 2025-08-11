@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AdminLayout } from "../../components/admins/uiForAll/AdminLayout";
 import { QLNhanSuSidebar } from "../../components/admins/qlNhanSu/QLNhanSuSidebar";
 import { NhanVienManagement } from "../../components/admins/qlNhanSu/NhanVienManagement/NhanVienManagement"; // 🔥 Add import
+import { TienLuongManagement } from "../../components/admins/qlNhanSu/TienLuongManagement/TienLuongManagement";
 
 type TabParent = "quan-ly-ca-lam" | "quan-ly-tien-luong" | "quan-ly-nhan-vien";
 type TabChild =
@@ -80,24 +81,7 @@ export const QLNhanSuPage: React.FC = () => {
         );
 
       case "dieu-chinh-luong":
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-black font-['Space_Grotesk']">
-                Điều chỉnh lương
-              </h1>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                Cập nhật lương
-              </button>
-            </div>
-
-            <div className="bg-white rounded-lg border border-neutral-200 p-6">
-              <p className="text-gray-600">
-                💰 Trang điều chỉnh lương đang được phát triển...
-              </p>
-            </div>
-          </div>
-        );
+        return <TienLuongManagement />;
 
       default:
         return (

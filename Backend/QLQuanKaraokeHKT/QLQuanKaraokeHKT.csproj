@@ -25,8 +25,8 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Repositories\QlKho\Implementations\" />
-    <Folder Include="Repositories\QlKho\interfaces\" />
+    <Folder Include="Repositories\QLKho\Implementations\" />
+    <Folder Include="Repositories\QLKho\interfaces\" />
   </ItemGroup>
 
 </Project>

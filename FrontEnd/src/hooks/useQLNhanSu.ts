@@ -1,49 +1,87 @@
 import { useNhanVien } from "./QLNhanSu/useNhanVien";
 import { useNhanVienUI } from "./QLNhanSu/useNhanVienUI";
 import { useNhanVienFilters } from "./QLNhanSu/useNhanVienFilters";
+import { useTienLuong } from "./QLNhanSu/useTienLuong";
 
 export const useQLNhanSu = () => {
+  // Nhân viên
   const nhanVien = useNhanVien({ autoLoad: true });
-  const ui = useNhanVienUI();
-  const filters = useNhanVienFilters();
+  const nhanVienUI = useNhanVienUI();
+  const nhanVienFilters = useNhanVienFilters();
+
+  // Tiền lương
+  const tienLuong = useTienLuong({ autoLoad: true });
 
   // Actions
-  const actions = {
-    loadNhanVien: nhanVien.refreshNhanVienData,
-    setSearchQuery: filters.setSearchQuery,
-    setRoleFilter: filters.setRoleFilter,
-    setStatusFilter: filters.setStatusFilter,
-    clearAllFilters: filters.clearAllFilters,
-    openAddModal: ui.openAddModal,
-    closeAddModal: ui.closeAddModal,
-    openEditModal: ui.openEditModal,
-    closeEditModal: ui.closeEditModal,
+  const nhanVienActions = {
+    load: nhanVien.refreshNhanVienData,
+    setSearchQuery: nhanVienFilters.setSearchQuery,
+    setRoleFilter: nhanVienFilters.setRoleFilter,
+    setStatusFilter: nhanVienFilters.setStatusFilter,
+    clearAllFilters: nhanVienFilters.clearAllFilters,
+    openAddModal: nhanVienUI.openAddModal,
+    closeAddModal: nhanVienUI.closeAddModal,
+    openEditModal: nhanVienUI.openEditModal,
+    closeEditModal: nhanVienUI.closeEditModal,
+  };
+
+  const tienLuongActions = {
+    load: tienLuong.refreshTienLuongData,
+    setSearchQuery: tienLuong.setSearch,
+    setCaFilter: tienLuong.setCaFilter,
+    setDateRange: tienLuong.setDateRangeFilter,
+    clearAllFilters: tienLuong.clearFilters,
+    openAddModal: tienLuong.openAdd,
+    closeAddModal: tienLuong.closeAdd,
+    openEditModal: tienLuong.openEdit,
+    closeEditModal: tienLuong.closeEdit,
+    setCurrent: tienLuong.setCurrent,
+    clearError: tienLuong.clearError,
   };
 
   // Handlers
-  const handlers = {
-    addNhanVien: nhanVien.addNhanVien,
-    updateNhanVien: nhanVien.updateNhanVien,
-    deleteNhanVien: nhanVien.deleteNhanVien,
+  const nhanVienHandlers = {
+    add: nhanVien.addNhanVien,
+    update: nhanVien.updateNhanVien,
+    delete: nhanVien.deleteNhanVien,
+  };
+
+  const tienLuongHandlers = {
+    add: tienLuong.addTienLuong,
+    delete: tienLuong.removeTienLuong,
+    // ...bổ sung nếu có các hàm khác
   };
 
   return {
+    // Nhân viên
     nhanVienData: nhanVien.nhanVienData,
-    filteredNhanVien: filters.filteredNhanVien,
+    filteredNhanVien: nhanVienFilters.filteredNhanVien,
     nhanVienStats: nhanVien.nhanVienStats,
-    loading: { nhanVien: nhanVien.loading },
-    errors: { nhanVien: nhanVien.error },
-    ui: {
-      searchQuery: filters.searchQuery,
+    nhanVienUI: {
+      ...nhanVienUI,
+      searchQuery: nhanVienFilters.searchQuery,
       filters: {
-        loaiNhanVien: filters.roleFilter,
-        trangThai: filters.statusFilter,
+        loaiNhanVien: nhanVienFilters.roleFilter,
+        trangThai: nhanVienFilters.statusFilter,
       },
-      showAddModal: ui.showAddModal,
-      showEditModal: ui.showEditModal,
-      selectedNhanVien: ui.selectedNhanVien,
+      setSearchQuery: nhanVienFilters.setSearchQuery,
+      setRoleFilter: nhanVienFilters.setRoleFilter,
+      setStatusFilter: nhanVienFilters.setStatusFilter,
+      clearAllFilters: nhanVienFilters.clearAllFilters,
     },
-    actions,
-    handlers,
+    nhanVienLoading: nhanVien.loading,
+    nhanVienError: nhanVien.error,
+    nhanVienActions,
+    nhanVienHandlers,
+
+    // Tiền lương
+    tienLuongData: tienLuong.tienLuongData,
+    filteredTienLuong: tienLuong.filteredTienLuong,
+    tienLuongStats: tienLuong.tienLuongStats,
+    tienLuongUI: tienLuong.ui,
+    tienLuongLoading: tienLuong.loading,
+    tienLuongError: tienLuong.error,
+    tienLuongActions,
+    tienLuongHandlers,
   };
 };

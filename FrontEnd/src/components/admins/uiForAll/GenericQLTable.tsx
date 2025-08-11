@@ -21,6 +21,8 @@ interface GenericQLTableProps<T> {
   onDelete?: (id: string) => Promise<{ success: boolean }>;
   showLockActions?: boolean;
   showDeleteAction?: boolean;
+  titleDeleteAction?: string;
+  messageDeleteAction?: string;
   lockStatusField?: keyof T;
   emptyMessage?: string;
   tableName?: string;
@@ -38,6 +40,8 @@ export function GenericQLTable<T extends Record<string, any>>({
   onDelete,
   showLockActions = false,
   showDeleteAction = false,
+  titleDeleteAction = "Xóa mục này?",
+  messageDeleteAction = "Bạn có chắc chắn muốn xóa mục này? Hành động này không thể hoàn tác.",
   lockStatusField,
   emptyMessage = "Không có dữ liệu",
   tableName = "mục",
@@ -239,9 +243,8 @@ export function GenericQLTable<T extends Record<string, any>>({
         onClick={() => {
           showConfirm(
             {
-              title: "Xóa tài khoản",
-              message:
-                "Bạn có chắc chắn muốn xóa tài khoản này? Hành động này không thể hoàn tác.",
+              title: titleDeleteAction,
+              message: messageDeleteAction,
               confirmText: "Xóa",
               cancelText: "Hủy",
               variant: "danger",

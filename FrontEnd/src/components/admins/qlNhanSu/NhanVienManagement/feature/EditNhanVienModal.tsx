@@ -9,7 +9,6 @@ import {
   Typography,
   Alert,
   DatePicker,
-  Radio,
 } from "antd";
 import {
   EditOutlined,
@@ -17,7 +16,6 @@ import {
   MailOutlined,
   PhoneOutlined,
   TeamOutlined,
-  IdcardOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -42,7 +40,7 @@ export const EditNhanVienModal: React.FC<EditNhanVienModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
-  const { handlers } = useQLNhanSu();
+  const { nhanVienHandlers } = useQLNhanSu();
 
   // Role options
   const ROLE_OPTIONS = [
@@ -77,7 +75,7 @@ export const EditNhanVienModal: React.FC<EditNhanVienModalProps> = ({
         ngaySinh: values.ngaySinh?.format("YYYY-MM-DD"),
       };
 
-      const result = await handlers.updateNhanVien(updateData);
+      const result = await nhanVienHandlers.update(updateData);
 
       if (result.success) {
         onSuccess();

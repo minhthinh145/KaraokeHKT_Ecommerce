@@ -1,0 +1,37 @@
+Dưới đây là prompt mẫu giúp bạn mô tả rõ ràng quy trình khi yêu cầu thêm một tính năng mới, đúng chuẩn flow dự án của bạn:
+
+Prompt mẫu cho yêu cầu tính năng mới
+Tôi muốn thêm tính năng mới cho module [Tên module, ví dụ: qlNhanSu].
+
+Mô tả tính năng:
+
+[Mô tả ngắn gọn, ví dụ: Thêm quản lý thưởng phạt cho nhân viên]
+Yêu cầu types:
+
+Tạo/bổ sung types ở services/types/admins/[TênFile].ts (ghi rõ tên file nếu có)
+Yêu cầu API:
+
+Thêm hàm call API ở services/shared/[TênFile].ts (ghi rõ endpoint, method, params)
+Yêu cầu Redux:
+
+Nếu là object mới: tạo đủ 5 file (extraReducers, reducers, selectors, slice, thunks) trong redux/admin/QLNhanSu/[TênObject]/
+Nếu là object cũ: bổ sung vào các file tương ứng
+Bổ sung/bổ sung init state + state ở redux/admin/QLNhanSu/types.ts
+Yêu cầu export:
+
+Cập nhật index.ts để export các module cần thiết
+Cập nhật store nếu cần
+Custom hook:
+
+Tạo custom hook để sử dụng các tính năng redux vừa thêm
+Component:
+
+Hướng dẫn tích hợp vào component, tuân thủ bố cục và logic như các module qlHeThong, qlNhanSu đã làm
+Lưu ý:
+
+Giữ nguyên convention đặt tên, import types, logic như các module hiện tại
+Nếu có UI/UX đặc biệt, mô tả rõ mong muốn
+Nếu có logic đặc biệt (ví dụ: lọc, phân trang, xác thực...), ghi rõ
+Ví dụ code hiện tại (nếu cần):
+
+Hãy hướng dẫn tôi từng bước, chỉ rõ cần sửa/viết gì ở đâu, giải thích ngắn gọn logic và đảm bảo đồng bộ với kiến trúc dự án.

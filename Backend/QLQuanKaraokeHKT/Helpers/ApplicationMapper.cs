@@ -220,6 +220,14 @@ namespace QLQuanKaraokeHKT.Helpers
     .ForMember(dest => dest.loaiTaiKhoan, opt => opt.MapFrom(src => src.newLoaiTaiKhoan))
     .ForMember(dest => dest.Id, opt => opt.Ignore())
     .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+
+            CreateMap<CaLamViec, CaLamViecDTO>().ReverseMap();
+            CreateMap<CaLamViec, AddCaLamViecDTO>().ReverseMap();
+            CreateMap<LuongCaLamViec, AddLuongCaLamViecDTO>().ReverseMap();
+            CreateMap<LuongCaLamViec, LuongCaLamViecDTO>()
+                .ForMember(dest => dest.TenCaLamViec, opt => opt.MapFrom(src => src.CaLamViec.TenCa))
+                .ReverseMap();
+
         }
     }
 }

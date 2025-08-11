@@ -1,41 +1,100 @@
-import type { NhanVienDTO, AddNhanVienDTO } from "../../../api/index";
+import type {
+  NhanVienDTO,
+  LuongCaLamViecDTO,
+  CaLamViecDTO,
+} from "../../../api/index";
 
-// 🎯 Redux State Interface cho QL Nhân Sú
-export interface QLNhanSuState {
-  nhanVien: {
-    data: NhanVienDTO[];
-    loading: boolean;
-    error: string | null;
-    total: number;
+export interface NhanVienUISubState {
+  searchQuery: string;
+  filters: {
+    loaiNhanVien: string;
+    trangThai?: string;
   };
-
-  ui: {
-    searchQuery: string;
-    filters: {
-      loaiNhanVien: string; // "All" | specific types
-      trangThai?: string;
-    };
-    selectedNhanVien?: NhanVienDTO | null;
-    showAddModal: boolean;
-    showEditModal: boolean;
-  };
+  selectedNhanVien: NhanVienDTO | null;
+  showAddModal: boolean;
+  showEditModal: boolean;
 }
 
-// 🎯 Initial State
-export const qlNhanSuInitialState: QLNhanSuState = {
-  nhanVien: {
-    data: [],
-    loading: false,
-    error: null,
-    total: 0,
-  },
+export interface NhanVienSliceState {
+  data: NhanVienDTO[];
+  loading: boolean;
+  error: string | null;
+  total: number;
+  ui: NhanVienUISubState;
+}
+
+// ✨ Thêm UI state cho TienLuong
+export interface TienLuongUISubState {
+  searchQuery: string;
+  filters: {
+    selectedCa: number | "ALL";
+    dateRange: [string | null, string | null];
+  };
+  selectedTienLuong: LuongCaLamViecDTO | null;
+  showAddModal: boolean;
+  showEditModal: boolean;
+}
+
+export interface TienLuongSliceState {
+  data: LuongCaLamViecDTO[];
+  loading: boolean;
+  error: string | null;
+  total: number;
+  current: LuongCaLamViecDTO | null;
+  ui: TienLuongUISubState; // ✨ Thêm UI state
+}
+
+export interface CaLamViecSliceState {
+  data: CaLamViecDTO[];
+  current: CaLamViecDTO | null;
+  loading: boolean;
+  error: string | null;
+  lastFetch: number | null;
+}
+
+export const nhanVienInitialState: NhanVienSliceState = {
+  data: [],
+  loading: false,
+  error: null,
+  total: 0,
   ui: {
     searchQuery: "",
-    filters: {
-      loaiNhanVien: "All",
-    },
+    filters: { loaiNhanVien: "All" },
     selectedNhanVien: null,
     showAddModal: false,
     showEditModal: false,
   },
 };
+
+export const tienLuongInitialState: TienLuongSliceState = {
+  data: [],
+  loading: false,
+  error: null,
+  total: 0,
+  current: null,
+  ui: {
+    searchQuery: "",
+    filters: {
+      selectedCa: "ALL",
+      dateRange: [null, null],
+    },
+    selectedTienLuong: null,
+    showAddModal: false,
+    showEditModal: false,
+  },
+};
+
+export const caLamViecInitialState: CaLamViecSliceState = {
+  data: [],
+  current: null,
+  loading: false,
+  error: null,
+  lastFetch: null,
+};
+
+// Domain state = kết quả combineReducers nên không cần qlNhanSuInitialState tổng.
+export interface QLNhanSuState {
+  nhanVien: NhanVienSliceState;
+  tienLuong: TienLuongSliceState;
+  caLamViec: CaLamViecSliceState;
+}

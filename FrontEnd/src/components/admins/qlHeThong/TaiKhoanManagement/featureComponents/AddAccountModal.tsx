@@ -39,7 +39,6 @@ export const AddAccountModal: React.FC<AddAccountModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // 🔥 Sử dụng hook để handle submit
   const { handlers } = useQLHeThong();
 
   useEffect(() => {

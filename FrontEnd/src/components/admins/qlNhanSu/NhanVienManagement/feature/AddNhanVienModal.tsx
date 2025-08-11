@@ -41,7 +41,7 @@ export const AddNhanVienModal: React.FC<AddNhanVienModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
-  const { handlers } = useQLNhanSu();
+  const { nhanVienHandlers } = useQLNhanSu();
 
   const handleSubmit = async () => {
     try {
@@ -57,7 +57,7 @@ export const AddNhanVienModal: React.FC<AddNhanVienModalProps> = ({
         loaiTaiKhoan: values.loaiTaiKhoan,
       };
 
-      const result = await handlers.addNhanVien(createData);
+      const result = await nhanVienHandlers.add(createData);
 
       if (result.success) {
         form.resetFields();

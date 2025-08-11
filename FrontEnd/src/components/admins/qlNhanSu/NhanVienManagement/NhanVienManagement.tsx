@@ -18,29 +18,25 @@ const NHAN_VIEN_ROLE_OPTIONS = [
 
 export const NhanVienManagement: React.FC = () => {
   const {
-    nhanVienData,
     filteredNhanVien,
     nhanVienStats,
-    loading,
-    errors,
-    ui,
-    actions,
-    handlers,
+    nhanVienLoading,
+    nhanVienError,
+    nhanVienUI,
+    nhanVienActions,
+    nhanVienHandlers,
   } = useQLNhanSu();
 
   useEffect(() => {
-    actions.loadNhanVien();
+    nhanVienActions.load();
   }, []);
 
   const handleEdit = (nhanVien: NhanVienDTO) => {
-    actions.openEditModal(nhanVien);
+    nhanVienActions.openEditModal(nhanVien);
   };
 
   const handleDelete = async (maNv: string) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
-      // Trả về promise đúng kiểu
-      return handlers.deleteNhanVien(maNv);
-    }
+    return nhanVienHandlers.delete(maNv);
     // Nếu không xóa, vẫn trả về đúng kiểu
     return Promise.resolve({ success: false });
   };
@@ -68,7 +64,7 @@ export const NhanVienManagement: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={actions.openAddModal}
+          onClick={nhanVienActions.openAddModal}
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
         >
           <svg
@@ -92,7 +88,7 @@ export const NhanVienManagement: React.FC = () => {
       <StatsCards cards={statsCards} gridCols={4} />
 
       {/* Error Display */}
-      {errors.nhanVien && (
+      {nhanVienError && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex">
             <svg
@@ -112,7 +108,7 @@ export const NhanVienManagement: React.FC = () => {
               <h3 className="text-sm font-medium text-red-800">
                 Có lỗi xảy ra
               </h3>
-              <p className="text-sm text-red-700 mt-1">{errors.nhanVien}</p>
+              <p className="text-sm text-red-700 mt-1">{nhanVienError}</p>
             </div>
           </div>
         </div>
@@ -122,44 +118,41 @@ export const NhanVienManagement: React.FC = () => {
       <AccountFilterBar
         colorTheme="green"
         searchPlaceholder="Tìm kiếm nhân viên theo tên, email, SĐT..."
-        searchValue={ui.searchQuery}
-        onSearchChange={actions.setSearchQuery}
+        searchValue={nhanVienUI.searchQuery}
+        onSearchChange={nhanVienActions.setSearchQuery}
         showRoleFilter
-        roleValue={ui.filters.loaiNhanVien || ""}
+        roleValue={nhanVienUI.filters.loaiNhanVien || ""}
         roleOptions={NHAN_VIEN_ROLE_OPTIONS}
-        onRoleChange={actions.setRoleFilter}
-        onRefresh={actions.loadNhanVien}
-        refreshing={loading.nhanVien}
-        onClearAll={actions.clearAllFilters}
+        onRoleChange={nhanVienActions.setRoleFilter}
+        onRefresh={nhanVienActions.load}
+        refreshing={nhanVienLoading}
+        onClearAll={nhanVienActions.clearAllFilters}
       />
 
-      {/* Table */}
       <NhanVienTable
         data={filteredNhanVien}
-        loading={loading.nhanVien}
+        loading={nhanVienLoading}
         onUpdate={handleEdit}
         onDelete={handleDelete}
       />
 
-      {/* Add Modal */}
       <AddNhanVienModal
-        isOpen={ui.showAddModal}
-        onClose={actions.closeAddModal}
+        isOpen={nhanVienUI.showAddModal}
+        onClose={nhanVienActions.closeAddModal}
         onSuccess={() => {
-          actions.closeAddModal();
-          actions.loadNhanVien();
+          nhanVienActions.closeAddModal();
+          nhanVienActions.load();
         }}
         roleOptions={NHAN_VIEN_ROLE_OPTIONS}
       />
 
-      {/* Edit Modal */}
       <EditNhanVienModal
-        isOpen={ui.showEditModal}
-        onClose={actions.closeEditModal}
-        nhanVien={ui.selectedNhanVien ?? null}
+        isOpen={nhanVienUI.showEditModal}
+        onClose={nhanVienActions.closeEditModal}
+        nhanVien={nhanVienUI.selectedNhanVien ?? null}
         onSuccess={() => {
-          actions.closeEditModal();
-          actions.loadNhanVien();
+          nhanVienActions.closeEditModal();
+          nhanVienActions.load();
         }}
       />
     </div>

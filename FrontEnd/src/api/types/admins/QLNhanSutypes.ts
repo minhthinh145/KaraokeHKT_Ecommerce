@@ -60,3 +60,34 @@ export interface AddNhanVienFormData {
 export interface UpdateNhanVienFormData extends NhanVienDTO {
   diaChi?: string; // Có thể cần thêm địa chỉ cho update
 }
+
+// ====== Lương Ca Làm Việc (QL Tiền Lương) ======
+export interface AddLuongCaLamViecDTO {
+  maCa: number;
+  ngayApDung?: string | null; // ISO date (backend dùng DateOnly)
+  ngayKetThuc?: string | null; // ISO date
+  giaCa: number;
+  isDefault?: boolean;
+}
+
+export interface LuongCaLamViecDTO {
+  maLuongCaLamViec: number;
+  maCa: number;
+  giaCa: number;
+  isDefault: boolean;
+  tenCaLamViec: string;
+  ngayApDung?: string | null; // thêm (đặc biệt)
+  ngayKetThuc?: string | null; // thêm (đặc biệt)
+}
+export interface CaLamViecDTO {
+  maCa: number;
+  tenCa: string;
+  gioBatDauCa: string; // hoặc TimeOnly nếu bạn đã custom type
+  gioKetThucCa: string;
+}
+
+export interface AddCaLamViecDTO {
+  tenCa: string;
+  gioBatDauCa: string;
+  gioKetThucCa: string;
+}

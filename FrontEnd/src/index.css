@@ -71,3 +71,16 @@ html,body{
 .overflow-x-auto::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+.ant-typography,
+.ant-card,
+.ant-card-head-title,
+.ant-card-body,
+.ant-btn,
+.ant-divider,
+.ant-tooltip,
+.ant-modal,
+.ant-modal-title,
+.ant-modal-content {
+  font-family: 'Space Grotesk', sans-serif !important;
+}

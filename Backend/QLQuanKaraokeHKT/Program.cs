@@ -11,12 +11,16 @@ using QLQuanKaraokeHKT.Helpers;
 using QLQuanKaraokeHKT.Models;
 using QLQuanKaraokeHKT.Repositories.Implementation;
 using QLQuanKaraokeHKT.Repositories.Interfaces;
+using QLQuanKaraokeHKT.Repositories.QLNhanSu.Implementations;
+using QLQuanKaraokeHKT.Repositories.QLNhanSu.Interfaces;
 using QLQuanKaraokeHKT.Repositories.TaiKhoanRepo;
 using QLQuanKaraokeHKT.Services.Implementation;
 using QLQuanKaraokeHKT.Services.Interfaces;
 using QLQuanKaraokeHKT.Services.QLHeThongServices;
 using QLQuanKaraokeHKT.Services.QLHeThongServices.Implementation;
 using QLQuanKaraokeHKT.Services.QLHeThongServices.Interface;
+using QLQuanKaraokeHKT.Services.QLNhanSuServices.QLCaLamViecServices;
+using QLQuanKaraokeHKT.Services.QLNhanSuServices.QLTienLuongServices;
 using QLQuanKaraokeHKT.Services.TaiKhoanService;
 using System.Text;
 
@@ -122,7 +126,8 @@ builder.Services.AddScoped<IAdminAccountService, AdminAccountService>();
 builder.Services.AddScoped<INhanVienAccountService, NhanVienAccountService>();
 builder.Services.AddScoped<IKhachHangAccountService, KhachHangAccountService>();
 builder.Services.AddScoped<IAccountManagementService, AccountManagementService>();
-
+builder.Services.AddScoped<IQLCaLamViecService, QLCaLamViecService>();
+builder.Services.AddScoped<IQuanLyTienLuongService, QuanLyTienLuongService>();
 
 // Repositories
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
@@ -131,6 +136,8 @@ builder.Services.AddScoped<IMaOtpRepository, MaOtpRepository>();
 builder.Services.AddScoped<IKhacHangRepository, KhacHangRepository>();
 builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
 builder.Services.AddScoped<ITaiKhoanQuanLyRepository, TaiKhoanQuanLyRepository>();
+builder.Services.AddScoped<ICaLamViecRepository, CaLamViecRepository>();
+builder.Services.AddScoped<ILuongCaLamViecRepository, LuongCaLamViecRepository>();
 
 
 // OTP Services

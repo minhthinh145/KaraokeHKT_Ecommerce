@@ -1,7 +1,48 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\OOAD_Project\\Backend\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\dtos\\qlnhansudtos\\luongcalamviecdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\dtos\\qlnhansudtos\\luongcalamviecdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\dtos\\qlnhansudtos\\calamviecdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\dtos\\qlnhansudtos\\calamviecdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\dtos\\qlnhansudtos\\addnhanviendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\dtos\\qlnhansudtos\\addnhanviendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\dtos\\qlnhansudtos\\addluongcalamviecdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\dtos\\qlnhansudtos\\addluongcalamviecdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\controllers\\qlnhansucontroller\\qlnhansucontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\controllers\\qlnhansucontroller\\qlnhansucontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\controllers\\qlnhansucontroller\\qltienluongcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\controllers\\qlnhansucontroller\\qltienluongcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\controllers\\qlnhansucontroller\\qlcalamvieccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\controllers\\qlnhansucontroller\\qlcalamvieccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\services\\qlnhansuservices\\qltienluongservices\\iquanlytienluongservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\services\\qlnhansuservices\\qltienluongservices\\iquanlytienluongservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\services\\qlnhansuservices\\qlcalamviecservices\\qlcalamviecservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\services\\qlnhansuservices\\qlcalamviecservices\\qlcalamviecservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +50,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 986,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,6 +63,136 @@
             {
               "$type": "Bookmark",
               "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AddNhanVienDTO.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\AddNhanVienDTO.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\AddNhanVienDTO.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\AddNhanVienDTO.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\AddNhanVienDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T13:50:46.866Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LuongCaLamViecDTO.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\LuongCaLamViecDTO.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\LuongCaLamViecDTO.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\LuongCaLamViecDTO.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\LuongCaLamViecDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T13:41:58.545Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AddLuongCaLamViecDTO.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\AddLuongCaLamViecDTO.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\AddLuongCaLamViecDTO.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\AddLuongCaLamViecDTO.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\AddLuongCaLamViecDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T13:41:22.154Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Program.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Program.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Program.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Program.cs",
+              "ViewState": "AgIAAHAAAAAAAAAAAAAAAIQAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T13:22:04.499Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CaLamViecDTO.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\CaLamViecDTO.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\CaLamViecDTO.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\CaLamViecDTO.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\DTOs\\QLNhanSuDTOs\\CaLamViecDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T08:50:41.869Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "QLCaLamViecService.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\QLNhanSuServices\\QLCaLamViecServices\\QLCaLamViecService.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Services\\QLNhanSuServices\\QLCaLamViecServices\\QLCaLamViecService.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\QLNhanSuServices\\QLCaLamViecServices\\QLCaLamViecService.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Services\\QLNhanSuServices\\QLCaLamViecServices\\QLCaLamViecService.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAuwB4AAABhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T05:58:53.483Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IQuanLyTienLuongService.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\QLNhanSuServices\\QLTienLuongServices\\IQuanLyTienLuongService.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Services\\QLNhanSuServices\\QLTienLuongServices\\IQuanLyTienLuongService.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\QLNhanSuServices\\QLTienLuongServices\\IQuanLyTienLuongService.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Services\\QLNhanSuServices\\QLTienLuongServices\\IQuanLyTienLuongService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAoAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T05:57:31.016Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "QLTienLuongController.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLTienLuongController.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLTienLuongController.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLTienLuongController.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLTienLuongController.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAwwEAAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T05:57:08.5Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "QLNhanSuController.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLNhanSuController.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLNhanSuController.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLNhanSuController.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLNhanSuController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAACoAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T05:56:47.116Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "QLCaLamViecController.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLCaLamViecController.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLCaLamViecController.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLCaLamViecController.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Controllers\\QLNhanSuController\\QLCaLamViecController.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAowAwAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-11T05:56:46.451Z",
+              "EditorCaption": ""
             }
           ]
         },
