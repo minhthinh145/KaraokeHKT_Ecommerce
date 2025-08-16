@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { AdminLayout } from "../../components/admins/uiForAll/AdminLayout";
 import { QLNhanSuSidebar } from "../../components/admins/qlNhanSu/QLNhanSuSidebar";
-import { NhanVienManagement } from "../../components/admins/qlNhanSu/NhanVienManagement/NhanVienManagement"; // 🔥 Add import
+import { NhanVienManagement } from "../../components/admins/qlNhanSu/NhanVienManagement/NhanVienManagement";
 import { TienLuongManagement } from "../../components/admins/qlNhanSu/TienLuongManagement/TienLuongManagement";
+import { LichLamViecManagement } from "../../components/admins/qlNhanSu/LichLamViecManagement/LichLamViecManagement";
+import { YeuCauChuyenCaManagement } from "../../components/admins/qlNhanSu/PheDuyetYeuCau";
 
 type TabParent = "quan-ly-ca-lam" | "quan-ly-tien-luong" | "quan-ly-nhan-vien";
 type TabChild =
@@ -18,47 +20,13 @@ export const QLNhanSuPage: React.FC = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case "thong-tin-nhan-vien":
-        return <NhanVienManagement />; // 🔥 Use actual component
+        return <NhanVienManagement />;
 
       case "sap-xep-lich":
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-black font-['Space_Grotesk']">
-                Sắp xếp lịch làm
-              </h1>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Tạo lịch mới
-              </button>
-            </div>
-
-            <div className="bg-white rounded-lg border border-neutral-200 p-6">
-              <p className="text-gray-600">
-                📅 Trang sắp xếp lịch làm đang được phát triển...
-              </p>
-            </div>
-          </div>
-        );
+        return <LichLamViecManagement />;
 
       case "duyet-yeu-cau":
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-black font-['Space_Grotesk']">
-                Duyệt yêu cầu đổi ca
-              </h1>
-              <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
-                Xem tất cả yêu cầu
-              </button>
-            </div>
-
-            <div className="bg-white rounded-lg border border-neutral-200 p-6">
-              <p className="text-gray-600">
-                🔄 Trang duyệt yêu cầu đổi ca đang được phát triển...
-              </p>
-            </div>
-          </div>
-        );
+        return <YeuCauChuyenCaManagement />;
 
       case "thong-ke-luong":
         return (

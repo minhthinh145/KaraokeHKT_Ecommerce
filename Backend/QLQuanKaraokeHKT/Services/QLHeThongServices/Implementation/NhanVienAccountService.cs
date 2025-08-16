@@ -200,6 +200,14 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices.Implementation
             return ServiceResult.Success("Liên kết tài khoản thành công.");
         }
 
-
+        public async Task<ServiceResult> GetProfileByUserIdAsync(Guid userId)
+        {
+            var taiKhoan = await _taiKhoanRepository.FindByUserIDAsync(userId.ToString());
+            if (taiKhoan == null) return ServiceResult.Failure("Không tìm thấy tài khoản.");
+            var nhanVien = await _nhanVienRepository.GetNhanVienByTaiKhoanIdAsync(taiKhoan.Id);
+            if (nhanVien == null) return ServiceResult.Failure("Không tìm thấy nhân viên.");
+            var dto = _mapper.Map<NhanVienTaiKhoanDTO>(nhanVien);
+            return ServiceResult.Success("Lấy profile thành công.", dto);
+        }
     }
 }

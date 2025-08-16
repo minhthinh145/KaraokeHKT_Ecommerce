@@ -11,18 +11,32 @@ using QLQuanKaraokeHKT.Helpers;
 using QLQuanKaraokeHKT.Models;
 using QLQuanKaraokeHKT.Repositories.Implementation;
 using QLQuanKaraokeHKT.Repositories.Interfaces;
+using QLQuanKaraokeHKT.Repositories.QLKho.Implementations;
+using QLQuanKaraokeHKT.Repositories.QLKho.Interfaces;
 using QLQuanKaraokeHKT.Repositories.QLNhanSu.Implementations;
 using QLQuanKaraokeHKT.Repositories.QLNhanSu.Interfaces;
+using QLQuanKaraokeHKT.Repositories.QLPhong.Implementations;
+using QLQuanKaraokeHKT.Repositories.QLPhong.Interfaces;
 using QLQuanKaraokeHKT.Repositories.TaiKhoanRepo;
 using QLQuanKaraokeHKT.Services.Implementation;
 using QLQuanKaraokeHKT.Services.Interfaces;
 using QLQuanKaraokeHKT.Services.QLHeThongServices;
 using QLQuanKaraokeHKT.Services.QLHeThongServices.Implementation;
 using QLQuanKaraokeHKT.Services.QLHeThongServices.Interface;
+using QLQuanKaraokeHKT.Services.QLKhoServices;
 using QLQuanKaraokeHKT.Services.QLNhanSuServices.QLCaLamViecServices;
+using QLQuanKaraokeHKT.Services.QLNhanSuServices.QLLichLamViecServices;
 using QLQuanKaraokeHKT.Services.QLNhanSuServices.QLTienLuongServices;
+using QLQuanKaraokeHKT.Services.QLNhanSuServices.QLYeuCauChuyenCaServices;
+using QLQuanKaraokeHKT.Services.QLPhongServices;
 using QLQuanKaraokeHKT.Services.TaiKhoanService;
 using System.Text;
+
+// ✅ THÊM USING CHO BOOKING SYSTEM
+using QLQuanKaraokeHKT.Repositories.BookingRepositories;
+using QLQuanKaraokeHKT.Services.BookingServices;
+using QLQuanKaraokeHKT.Services.VNPayServices;
+using QLQuanKaraokeHKT.Services.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -110,11 +124,14 @@ builder.Services.AddCors(options =>
 // Fix AutoMapper registration - use the actual ApplicationMapper profile
 builder.Services.AddAutoMapper(typeof(ApplicationMapper));
 
+builder.Services.Configure<VNPayConfig>(builder.Configuration.GetSection("VNPay"));
+
 //Dependencies
 // Authentication Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IVerifyAuthService, VerifyAuthService>();
 builder.Services.AddScoped<IKhachHangService, KhachHangService>();
+
 //ChangePassword Service
 builder.Services.AddScoped<IChangePasswordService, ChangePasswordService>();
 
@@ -128,6 +145,11 @@ builder.Services.AddScoped<IKhachHangAccountService, KhachHangAccountService>();
 builder.Services.AddScoped<IAccountManagementService, AccountManagementService>();
 builder.Services.AddScoped<IQLCaLamViecService, QLCaLamViecService>();
 builder.Services.AddScoped<IQuanLyTienLuongService, QuanLyTienLuongService>();
+builder.Services.AddScoped<IQLLichLamViecService, QLLichLamViecService>();
+builder.Services.AddScoped<IQLVatLieuService, QLVatLieuService>();
+builder.Services.AddScoped<IQLLoaiPhongService, QLLoaiPhongService>();
+builder.Services.AddScoped<IQLPhongHatService, QLPhongHatService>();
+builder.Services.AddScoped<IQLYeuCauChuyenCaService, QLYeuCauChuyenCaService>();
 
 // Repositories
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
@@ -138,13 +160,27 @@ builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
 builder.Services.AddScoped<ITaiKhoanQuanLyRepository, TaiKhoanQuanLyRepository>();
 builder.Services.AddScoped<ICaLamViecRepository, CaLamViecRepository>();
 builder.Services.AddScoped<ILuongCaLamViecRepository, LuongCaLamViecRepository>();
+builder.Services.AddScoped<ILichLamViecRepository, LichLamViecRepository>();
+builder.Services.AddScoped<IVatLieuRepository, VatLieuRepository>();
+builder.Services.AddScoped<ISanPhamDichVuRepository, SanPhamDichVuRepository>();
+builder.Services.AddScoped<IMonAnRepository, MonAnRepository>();
+builder.Services.AddScoped<IGiaVatLieuRepository, GiaVatLieuRepository>();
+builder.Services.AddScoped<IGiaDichVuRepository, GiaDichVuRepository>();
+builder.Services.AddScoped<IPhongHatRepository, PhongHatRepository>();
+builder.Services.AddScoped<ILoaiPhongRepository, LoaiPhongRepository>();
+builder.Services.AddScoped<IYeuCauChuyenCaRepository, YeuCauChuyenCaRepository>();
+builder.Services.AddScoped<ILichSuSuDungPhongRepository, LichSuSuDungPhongRepository>();
+builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
+builder.Services.AddScoped<IThuePhongRepository, ThuePhongRepository>();
 
+builder.Services.AddScoped<IKhachHangDatPhongService, KhachHangDatPhongService>();
+builder.Services.AddScoped<IVNPayService, VNPayService>();
 
-// OTP Services
 builder.Services.AddScoped<IMaOtpService, MaOtpService>();
-// External Services
+
 builder.Services.AddScoped<ISendEmailService, SendEmailService>();
 
+builder.Services.AddHostedService<AutoBookingService>();
 
 var app = builder.Build();
 

@@ -24,7 +24,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
   // Chỉ hiển thị buttons khi đang ở tab profile
   const showProfileButtons = activeTab === "profile";
-  console.log(user);
   return (
     <div
       className={`px-6 py-8 ${

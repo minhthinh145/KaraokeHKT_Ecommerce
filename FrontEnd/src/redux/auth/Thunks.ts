@@ -11,12 +11,13 @@ import type { AuthState, SignUpResponse } from "./types";
 import { saveAuthData, clearAuthData } from "./utils";
 import type { AuthUser } from "../../types/auth";
 import type { UserRole } from "../../constants/auth";
+import { fetchNhanVienProfile } from "../../redux/nhanVien/thunks";
 
 // 🔥 Sign In Thunk - return đúng type
 export const signInThunk = createAsyncThunk<
   { accessToken: string; refreshToken: string; user: AuthUser },
   SignInDTO
->("auth/signIn", async (payload, { rejectWithValue }) => {
+>("auth/signIn", async (payload, { rejectWithValue, dispatch }) => {
   try {
     const loginResponse = await SignIn(payload);
     if (!loginResponse.isSuccess || !loginResponse.data) {
@@ -32,6 +33,8 @@ export const signInThunk = createAsyncThunk<
     };
 
     saveAuthData(user, accessToken, refreshToken);
+
+    dispatch(fetchNhanVienProfile()); // lấy profile ngay sau khi login thành công
 
     return {
       accessToken,

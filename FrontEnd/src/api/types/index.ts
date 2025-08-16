@@ -5,3 +5,5 @@ export * from "./apiResponse";
 export * from "./auth/ChangePassword";
 export * from "./admins/QLHeThongtypes";
 export * from "./admins/QLNhanSutypes";
+export * from "./admins/QLKhotypes";
+export * from "./admins/QLPhong";

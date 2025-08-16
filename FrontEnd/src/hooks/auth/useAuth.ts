@@ -135,9 +135,7 @@ export const useAuth = (): UseAuthReturn => {
 
   // Navigation helpers
   const navigateToDefaultRoute = useCallback(() => {
-    console.log(userRole);
     const route = getDefaultRoute(userRole);
-    console.log(route);
     navigate(route);
   }, [userRole, navigate]);
 

@@ -4,66 +4,38 @@ import { RoleBasedRoute } from "../components/Auth";
 import { ApplicationRole } from "../api/types/admins/QLHeThongtypes";
 
 // Employee Pages
-import { NhanVienKhoPage } from "../pages/employee/NhanVienKhoPage";
-import { NhanVienPhucVuPage } from "../pages/employee/NhanVienPhucVuPage";
-import { NhanVienTiepTanPage } from "../pages/employee/NhanVienTiepTanPage";
+import { NhanVienFrontDeskServicePage } from "../pages/employees/NhanVienFrontDeskServicePage";
+import { NhanVienKhoPage } from "../pages/employees/NhanVienKhoPage";
 
 export const EmployeeRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* 📦 Nhân viên kho */}
       <Route
-        path="nhan-vien-kho"
+        path="nhan-vien-phuc-vu/:weekStart?"
         element={
-          <RoleBasedRoute
-            allowedRoles={[
-              ApplicationRole.QuanTriHeThong,
-              ApplicationRole.QuanLyKho,
-              ApplicationRole.NhanVienKho,
-            ]}
-          >
+          <RoleBasedRoute allowedRoles={[ApplicationRole.NhanVienPhucVu]}>
+            <NhanVienFrontDeskServicePage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="nhan-vien-tiep-tan/:weekStart?"
+        element={
+          <RoleBasedRoute allowedRoles={[ApplicationRole.NhanVienTiepTan]}>
+            <NhanVienFrontDeskServicePage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="nhan-vien-kho/:weekStart?"
+        element={
+          <RoleBasedRoute allowedRoles={[ApplicationRole.NhanVienKho]}>
             <NhanVienKhoPage />
           </RoleBasedRoute>
         }
       />
-
-      {/* 🍻 Nhân viên phục vụ */}
-      <Route
-        path="nhan-vien-phuc-vu"
-        element={
-          <RoleBasedRoute
-            allowedRoles={[
-              ApplicationRole.QuanTriHeThong,
-              ApplicationRole.QuanLyPhongHat,
-              ApplicationRole.NhanVienPhucVu,
-            ]}
-          >
-            <NhanVienPhucVuPage />
-          </RoleBasedRoute>
-        }
-      />
-
-      {/* 🎫 Nhân viên tiếp tân */}
-      <Route
-        path="nhan-vien-tiep-tan"
-        element={
-          <RoleBasedRoute
-            allowedRoles={[
-              ApplicationRole.QuanTriHeThong,
-              ApplicationRole.QuanLyPhongHat,
-              ApplicationRole.NhanVienTiepTan,
-            ]}
-          >
-            <NhanVienTiepTanPage />
-          </RoleBasedRoute>
-        }
-      />
-
-      {/* Default redirect */}
-      <Route
-        path="*"
-        element={<Navigate to="/employee/nhan-vien-kho" replace />}
-      />
+      <Route index element={<Navigate to="nhan-vien-phuc-vu" replace />} />
+      <Route path="*" element={<Navigate to="nhan-vien-phuc-vu" replace />} />
     </Routes>
   );
 };

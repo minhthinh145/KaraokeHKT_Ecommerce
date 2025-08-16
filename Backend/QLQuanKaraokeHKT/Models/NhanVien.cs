@@ -19,6 +19,7 @@ public partial class NhanVien
 
     public Guid MaTaiKhoan { get; set; }
 
+    public bool DaNghiViec { get; set; } = false;
 
     public virtual TaiKhoan MaTaiKhoanNavigation { get; set; } = null!;
     public virtual ICollection<LichLamViec> LichLamViecs { get; set; } = new List<LichLamViec>();

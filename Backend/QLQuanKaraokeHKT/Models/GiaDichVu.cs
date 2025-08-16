@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QLQuanKaraokeHKT.Models;
 
@@ -14,6 +15,10 @@ public partial class GiaDichVu
     public DateOnly NgayApDung { get; set; }
 
     public string TrangThai { get; set; } = null!;
+    [Column("MaCa")]
+    public int? MaCa { get; set; }
 
     public virtual SanPhamDichVu MaSanPhamNavigation { get; set; } = null!;
+    public virtual CaLamViec? MaCaNavigation { get; set; }
+
 }

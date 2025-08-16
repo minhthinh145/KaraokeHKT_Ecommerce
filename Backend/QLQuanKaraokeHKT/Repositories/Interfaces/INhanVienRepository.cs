@@ -14,5 +14,6 @@ namespace QLQuanKaraokeHKT.Repositories.Interfaces
         Task<NhanVien> GetByIdWithTaiKhoanAsync(Guid maNhanVien);
         Task<List<NhanVien>> GetAllByLoaiTaiKhoanWithTaiKhoanAsync(string loaiTaiKhoan);
         Task<List<NhanVien>> GetAllNhanVienWithTaiKhoanAsync();
+        Task<bool> UpdateNhanVienDaNghiViecAsync(Guid maNhanVien, bool daNghiViec);
     }
 }

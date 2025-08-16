@@ -11,6 +11,7 @@ import {
 } from "../../redux/admin";
 import { useToast } from "../useToast";
 import type { AddNhanVienDTO, NhanVienDTO } from "../../api/services/shared";
+import { updateNhanVienDaNghiViecThunk } from "../../redux/admin/QLNhanSu/nhanVien/thunks";
 
 export const useNhanVien = ({ autoLoad = true } = {}) => {
   const dispatch = useAppDispatch();
@@ -77,6 +78,21 @@ export const useNhanVien = ({ autoLoad = true } = {}) => {
     },
     [dispatch, showSuccess, showError]
   );
+  const toggleNghiViec = useCallback(
+    async (maNhanVien: string, nextDaNghiViec: boolean) => {
+      try {
+        const res = await dispatch(
+          updateNhanVienDaNghiViecThunk({ maNhanVien, daNghiViec: nextDaNghiViec })
+        ).unwrap();
+        showSuccess(res?.message || (nextDaNghiViec ? "Đã cho nghỉ việc" : "Đã trở lại làm việc"));
+        return { success: true };
+      } catch (e: any) {
+        showError(e || "Cập nhật thất bại");
+        return { success: false };
+      }
+    },
+    [dispatch, showSuccess, showError]
+  );
 
   // Clear error
   const clearError = useCallback(() => {
@@ -92,6 +108,7 @@ export const useNhanVien = ({ autoLoad = true } = {}) => {
     updateNhanVien,
     deleteNhanVien,
     refreshNhanVienData,
+    toggleNghiViec,
     clearError,
   };
 };

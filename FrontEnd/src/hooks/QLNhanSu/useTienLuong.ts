@@ -4,6 +4,7 @@ import {
   fetchAllTienLuong,
   createTienLuong,
   deleteTienLuong,
+  updateTienLuong as updateTienLuongThunk,
   setCurrentTienLuong,
   clearTienLuongError,
   clearTienLuongCurrent,
@@ -50,6 +51,12 @@ export const useTienLuong = ({
   const defaultLuongCardsData = useAppSelector(selectDefaultLuongCardsData);
   const tienLuongStats = useAppSelector(selectTienLuongStats);
   const { showSuccess, showError } = useToast();
+
+  useEffect(() => {
+    if (!autoLoad) return;
+    dispatch(fetchAllTienLuong());
+  }, [autoLoad, dispatch])
+
   // Data Actions
   const refreshTienLuongData = useCallback(() => {
     dispatch(fetchAllTienLuong());
@@ -77,6 +84,20 @@ export const useTienLuong = ({
         return { success: true, data: res };
       } catch (error) {
         showError("Xóa lương ca làm việc thất bại");
+        return { success: false };
+      }
+    },
+    [dispatch, showSuccess, showError]
+  );
+
+  const updateTienLuong = useCallback(
+    async (payload: LuongCaLamViecDTO) => {
+      try {
+        const res = await dispatch(updateTienLuongThunk(payload));
+        showSuccess("Cập nhật lương ca làm việc thành công");
+        return { success: true, data: res };
+      } catch (error) {
+        showError("Cập nhật lương ca làm việc thất bại");
         return { success: false };
       }
     },
@@ -172,6 +193,7 @@ export const useTienLuong = ({
     refreshTienLuongData,
     addTienLuong,
     removeTienLuong,
+    updateTienLuong,
     setCurrent,
     clearError,
     clearCurrent,

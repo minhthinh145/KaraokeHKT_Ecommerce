@@ -12,6 +12,8 @@ public partial class PhongHatKaraoke
     public int MaLoaiPhong { get; set; }
 
     public bool DangSuDung { get; set; }
+    public bool NgungHoatDong { get; set; } = false;
+
 
     public virtual ICollection<LichSuSuDungPhong> LichSuSuDungPhongs { get; set; } = new List<LichSuSuDungPhong>();
 

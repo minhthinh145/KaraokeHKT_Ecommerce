@@ -84,3 +84,17 @@ html,body{
 .ant-modal-content {
   font-family: 'Space Grotesk', sans-serif !important;
 }
+.custom-lichlamviec-table .ant-table-thead > tr > th {
+  text-align: center !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+}
+.custom-lichlamviec-table .ant-table-cell {
+  text-align: center !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+}/* Thêm vào file css chung hoặc module */
+.custom-lichlamviec-table {
+  width: 100% !important;
+  min-width: 0 !important;
+}

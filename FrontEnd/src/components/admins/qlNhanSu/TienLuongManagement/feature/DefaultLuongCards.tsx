@@ -21,7 +21,6 @@ interface Props {
 
 export const DefaultLuongCards: React.FC<Props> = ({ defaults, onEdit }) => {
   const { caLamViecList } = useCaLamViec(); // Để tính số giờ ca
-
   return (
     <div className="mb-8">
       <div className="flex items-center gap-2 mb-4">

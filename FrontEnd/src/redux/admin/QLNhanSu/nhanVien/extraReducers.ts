@@ -1,6 +1,7 @@
 import type { ActionReducerMapBuilder } from "@reduxjs/toolkit";
 import type { NhanVienSliceState } from "../types";
-import { fetchAllNhanVien, createNhanVien, updateNhanVien } from "./thunks";
+import { fetchAllNhanVien, createNhanVien, updateNhanVien, updateNhanVienDaNghiViecThunk } from "./thunks";
+import { updateNhanVienDaNghiViec } from "../../../../api/services";
 
 export const nhanVienExtraReducers = (
   builder: ActionReducerMapBuilder<NhanVienSliceState>
@@ -51,4 +52,13 @@ export const nhanVienExtraReducers = (
       state.loading = false;
       state.error = action.payload as string;
     });
+  builder.addCase(updateNhanVienDaNghiViecThunk.fulfilled, (state, action) => {
+    const { maNhanVien, daNghiViec } = action.payload;
+    const i = state.data.findIndex((x) => x.maNv === maNhanVien);
+    if (i !== -1) state.data[i] = { ...state.data[i], daNghiViec };
+    // nếu có filteredData/entities, cập nhật tương tự
+  });
+  builder.addCase(updateNhanVienDaNghiViecThunk.rejected, (state, action) => {
+    state.error = action.payload || "Cập nhật trạng thái nghỉ việc thất bại";
+  });
 };

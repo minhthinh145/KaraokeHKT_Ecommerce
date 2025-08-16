@@ -44,16 +44,14 @@ export function SideBarForAdmin<
     setExpanded((prev) => ({ ...prev, [activeParent]: true }));
   }, [activeParent]);
 
-  const toggleParent = useCallback(
-    (p: TabParent) => {
-      setExpanded((prev) => ({
-        ...prev,
-        [p]: !prev[p],
-      }));
-      if (p !== activeParent) onParentChange(p);
-    },
-    [activeParent, onParentChange]
-  );
+  const toggleParent = useCallback((p: TabParent) => {
+    setExpanded((prev) => ({
+      ...prev,
+      [p]: !prev[p],
+    }));
+    // XÓA dòng này để không set activeParent khi bấm cha
+    // if (p !== activeParent) onParentChange(p);
+  }, []);
 
   const colorStyles = useMemo(
     () => ({
@@ -97,7 +95,10 @@ export function SideBarForAdmin<
   );
 
   const renderParent = (node: (typeof treeData)[number]) => {
-    const isActiveParent = activeParent === node.id;
+    // Cha active nếu: chính nó active hoặc có con active
+    const isActiveParent =
+      activeParent === node.id ||
+      node.children.some((child) => activeTab === child.id);
     const isExpanded = expanded[node.id];
     const styles = colorStyles[node.color];
 
@@ -155,7 +156,8 @@ export function SideBarForAdmin<
                 <button
                   key={child.id}
                   onClick={() => {
-                    onParentChange(node.id);
+                    // Khi chọn con, set luôn parent là active
+                    if (activeParent !== node.id) onParentChange(node.id);
                     onTabChange(child.id);
                   }}
                   className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors

@@ -44,6 +44,8 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
     public virtual DbSet<VatLieu> VatLieus { get; set; }
     public virtual DbSet<LichLamViec> LichLamViecs { get; set; }
     public virtual DbSet<LuongCaLamViec> LuongCaLamViecs { get; set; }
+    public virtual DbSet<YeuCauChuyenCa> YeuCauChuyenCas { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=localhost;Database=QLKaraokeHKT;Trusted_Connection=True;TrustServerCertificate=True;");
@@ -51,6 +53,45 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<YeuCauChuyenCa>(entity =>
+        {
+            entity.HasKey(e => e.MaYeuCau).HasName("PK_YeuCauChuyenCa");
+            entity.ToTable("YeuCauChuyenCa");
+
+            entity.Property(e => e.MaYeuCau).HasColumnName("maYeuCau");
+            entity.Property(e => e.MaLichLamViecGoc).HasColumnName("maLichLamViecGoc");
+            entity.Property(e => e.NgayLamViecMoi).HasColumnName("ngayLamViecMoi");
+            entity.Property(e => e.MaCaMoi).HasColumnName("maCaMoi");
+            entity.Property(e => e.LyDoChuyenCa)
+                .HasMaxLength(500)
+                .HasColumnName("lyDoChuyenCa");
+            entity.Property(e => e.DaPheDuyet).HasColumnName("daPheDuyet");
+            entity.Property(e => e.KetQuaPheDuyet).HasColumnName("ketQuaPheDuyet");
+            entity.Property(e => e.GhiChuPheDuyet)
+                .HasMaxLength(500)
+                .HasColumnName("ghiChuPheDuyet");
+            entity.Property(e => e.NgayTaoYeuCau)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("ngayTaoYeuCau");
+            entity.Property(e => e.NgayPheDuyet)
+                .HasColumnType("datetime")
+                .HasColumnName("ngayPheDuyet");
+
+            // Foreign key constraints
+            entity.HasOne(d => d.LichLamViecGoc)
+                .WithMany()
+                .HasForeignKey(d => d.MaLichLamViecGoc)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_YeuCauChuyenCa_LichLamViec");
+
+            entity.HasOne(d => d.CaMoi)
+                .WithMany()
+                .HasForeignKey(d => d.MaCaMoi)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_YeuCauChuyenCa_CaLamViec");
+        });
 
         modelBuilder.Entity<CaLamViec>(entity =>
         {
@@ -162,7 +203,8 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
             entity.ToTable("GiaDichVu");
 
             entity.HasIndex(e => new { e.MaSanPham, e.NgayApDung }, "IX_GiaDichVu_SanPham_NgayApDung");
-
+            entity.Property(e => e.MaCa).HasColumnName("MaCa");
+    
             entity.Property(e => e.MaGiaDichVu).HasColumnName("maGiaDichVu");
             entity.Property(e => e.DonGia)
                 .HasColumnType("decimal(15, 2)")
@@ -176,11 +218,18 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
                 .HasDefaultValue("HieuLuc")
                 .HasColumnName("trangThai");
 
+
             entity.HasOne(d => d.MaSanPhamNavigation).WithMany(p => p.GiaDichVus)
                 .HasForeignKey(d => d.MaSanPham)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__GiaDichVu__maSan__30C33EC3");
+
+            entity.HasOne(d => d.MaCaNavigation)
+                .WithMany(p => p.GiaDichVus)
+                .HasForeignKey(d => d.MaCa)
+                .OnDelete(DeleteBehavior.SetNull);
         });
+      
 
         modelBuilder.Entity<GiaVatLieu>(entity =>
         {
@@ -218,7 +267,6 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
             entity.HasIndex(e => e.MaKhachHang, "IX_HoaDon_KhachHang");
 
             entity.HasIndex(e => e.NgayTao, "IX_HoaDon_NgayTao");
-
             entity.HasIndex(e => e.TrangThai, "IX_HoaDon_TrangThai");
 
             entity.Property(e => e.MaHoaDon)
@@ -242,11 +290,13 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
                 .HasMaxLength(20)
                 .HasDefaultValue("ChoThanhToan")
                 .HasColumnName("trangThai");
-
+            
             entity.HasOne(d => d.MaKhachHangNavigation).WithMany(p => p.HoaDonDichVus)
                 .HasForeignKey(d => d.MaKhachHang)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__HoaDonDic__maKha__3864608B");
+
+          
         });
 
         modelBuilder.Entity<KhachHang>(entity =>
@@ -305,6 +355,10 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
                 .HasForeignKey(d => d.MaPhong)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__LichSuSuD__maPho__489AC854");
+
+            entity.HasOne(d => d.MaThuePhongNavigation).WithMany(p => p.LichSuSuDungPhongs)
+                .HasForeignKey(d => d.MaThuePhong)
+                .HasConstraintName("FK__LichSuSuD__maThu__4B7734FF");
         });
 
         modelBuilder.Entity<LoaiPhongHatKaraoke>(entity =>
@@ -361,6 +415,11 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
                 .HasForeignKey(d => d.MaSanPham)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__MonAn__maSanPham__22751F6C");
+
+            entity.HasOne(m => m.VatLieu)
+                   .WithOne(m => m.MonAn)
+                   .HasForeignKey<MonAn>(m => m.MaVatLieu)
+                   .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<NhaCungCap>(entity =>
@@ -585,6 +644,7 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
             entity.Property(e => e.moTa).HasColumnName("moTa");
         });
 
+
         modelBuilder.Entity<ThuePhong>(entity =>
         {
             entity.HasKey(e => e.MaThuePhong).HasName("PK__ThuePhon__99717FBF068C52BC");
@@ -592,7 +652,7 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
             entity.ToTable("ThuePhong");
 
             entity.HasIndex(e => e.MaPhong, "IX_ThuePhong_Phong");
-
+            entity.HasIndex(e => e.MaHoaDon, "IX_ThuePhong_HoaDon");
             entity.HasIndex(e => e.TrangThai, "IX_ThuePhong_TrangThai");
 
             entity.Property(e => e.MaThuePhong)
@@ -600,6 +660,7 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
                 .HasColumnName("maThuePhong");
             entity.Property(e => e.MaKhachHang).HasColumnName("maKhachHang");
             entity.Property(e => e.MaPhong).HasColumnName("maPhong");
+            entity.Property(e => e.MaHoaDon).HasColumnName("maHoaDon");
             entity.Property(e => e.ThoiGianBatDau)
                 .HasColumnType("datetime")
                 .HasColumnName("thoiGianBatDau");
@@ -620,6 +681,11 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
                 .HasForeignKey(d => d.MaPhong)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__ThuePhong__maPho__43D61337");
+
+            entity.HasOne(d => d.MaHoaDonNavigation).WithMany(p => p.ThuePhongs)
+                .HasForeignKey(d => d.MaHoaDon)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK__ThuePhong__maHoa__45BE5BA9");
         });
 
         modelBuilder.Entity<VatLieu>(entity =>
@@ -664,6 +730,7 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
     .HasOne(l => l.CaLamViec)
     .WithMany(c => c.LuongCaLamViecs)
     .HasForeignKey(l => l.MaCa);
+
 
         modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("AspNetUserClaims");
         modelBuilder.Entity<IdentityUserLogin<Guid>>().ToTable("AspNetUserLogins");

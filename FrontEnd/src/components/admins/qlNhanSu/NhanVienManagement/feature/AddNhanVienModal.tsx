@@ -54,7 +54,7 @@ export const AddNhanVienModal: React.FC<AddNhanVienModalProps> = ({
         soDienThoai: values.soDienThoai,
         loaiNhanVien: values.loaiNhanVien,
         ngaySinh: values.ngaySinh?.format("YYYY-MM-DD"),
-        loaiTaiKhoan: values.loaiTaiKhoan,
+        loaiTaiKhoan: values.loaiNhanVien,
       };
 
       const result = await nhanVienHandlers.add(createData);

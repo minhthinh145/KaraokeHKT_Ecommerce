@@ -6,12 +6,11 @@ namespace QLQuanKaraokeHKT.Models;
 public partial class VatLieu
 {
     public int MaVatLieu { get; set; }
-
     public string TenVatLieu { get; set; } = null!;
-
     public string DonViTinh { get; set; } = null!;
-
     public int SoLuongTonKho { get; set; }
+    public virtual MonAn? MonAn { get; set; }
+    public bool NgungCungCap { get; set; } = false;
 
     public virtual ICollection<ChiTietPhieuHuyHang> ChiTietPhieuHuyHangs { get; set; } = new List<ChiTietPhieuHuyHang>();
 

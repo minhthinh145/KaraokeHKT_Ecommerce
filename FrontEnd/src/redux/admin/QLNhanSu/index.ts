@@ -3,11 +3,15 @@ import nhanVienReducer from "./nhanVien/slice";
 import tienLuongReducer from "./tienLuong/slice";
 import type { RootState } from "../../store";
 import caLamViecReducer from "./caLamViec/slice";
+import lichLamViecReducer from "./lichLamViec/slice";
+import pheDuyetYeuCauReducer from "./pheDuyetYeuCau/slice";
 
 export const qlNhanSuReducer = combineReducers({
   nhanVien: nhanVienReducer,
   tienLuong: tienLuongReducer,
   caLamViec: caLamViecReducer,
+  lichLamViec: lichLamViecReducer,
+  pheDuyetYeuCau: pheDuyetYeuCauReducer, // thêm
 });
 
 // State type
@@ -61,6 +65,7 @@ export {
   fetchAllTienLuong,
   createTienLuong,
   deleteTienLuong,
+  updateTienLuong,
 } from "./tienLuong/thunks";
 
 export {
@@ -89,8 +94,48 @@ export {
   selectFilteredTienLuong,
   selectDefaultLuongCardsData,
   selectTienLuongStats,
+
 } from "./tienLuong/selectors";
 //ca làm việc export
 export * from "./caLamViec/thunks";
 export * from "./caLamViec/slice";
 export * from "./caLamViec/selectors";
+
+// Thunks export
+export {
+  fetchAllLichLamViec,
+  fetchLichLamViecByNhanVienThunk,
+  createLichLamViecThunk,
+  fetchLichLamViecByRangeThunk,
+  deleteLichLamViecThunk,
+  updateLichLamViecThunk,
+  sendNotiWorkSchedulesThunk
+} from "./lichLamViec/thunks";
+
+// Actions với alias rõ ràng
+export {
+  setSearchQuery as setSearchQueryLichLamViec,
+  setSelectedNhanVien as setSelectedNhanVienLichLamViec,
+  setDateRange as setDateRangeLichLamViec,
+  clearAllFilters as clearAllFiltersLichLamViec,
+  clearLichLamViecError as clearLichLamViecErrorQLNhanSu,
+  setCurrentLichLamViec,
+  resetLichLamViecState,
+  setSendingNoti
+
+} from "./lichLamViec/slice";
+
+// Selectors
+export {
+  selectLichLamViecSlice,
+  selectLichLamViecData,
+  selectLichLamViecLoading,
+  selectLichLamViecError,
+  selectLichLamViecUI,
+  selectFilteredLichLamViec,
+  selectLichLamViecStats,
+  selectLichLamViecCurrent
+
+} from "./lichLamViec/selectors";
+// phe duyet yeu cau exports
+export * from "./pheDuyetYeuCau"; // re-export nhóm mới

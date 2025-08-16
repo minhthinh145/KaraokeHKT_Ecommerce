@@ -36,9 +36,6 @@ export const KhachHangAccountManagement: React.FC<{
             Quản lý thông tin tài khoản và khách hàng trong hệ thống
           </p>
         </div>
-        <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-          Thêm khách hàng
-        </button>
       </div>
 
       {/* Stats Cards */}

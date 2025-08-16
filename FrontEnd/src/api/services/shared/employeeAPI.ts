@@ -56,3 +56,20 @@ export const updateEmployee = async (
     );
   }
 };
+
+export const updateNhanVienDaNghiViec = async (
+  maNhanVien: string,
+  daNghiViec: boolean
+): Promise<ApiResponse<null>> => {
+  try {
+    const res = await axiosInstance.patch(`QLNhanSu/nhanvien/danghiviec`,
+      null,
+      { params: { maNhanVien, daNghiViec } }
+    );
+    return res.data as ApiResponse<null>;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "Lỗi khi cập nhật trạng thái nghỉ việc"
+    );
+  }
+}

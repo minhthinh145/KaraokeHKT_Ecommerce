@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { AdminLayout } from "../../components/admins/uiForAll/AdminLayout";
 import { QLKhoSidebar } from "../../components/admins/qlKho/QLKhoSideBar";
+import {
+  QLVatLieuManagement,
+  ThongKeKhoPage,
+} from "../../components/admins/qlKho";
 
 // Tab cha
 type TabParent = "chuc-nang-thong-ke" | "chuc-nang-quan-ly";
@@ -21,18 +25,7 @@ export const QLKhoPage: React.FC = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case "thong-ke-kho-hang":
-        return (
-          <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-black font-['Space_Grotesk']">
-              Thống kê kho hàng
-            </h1>
-            <div className="bg-white rounded-lg border border-neutral-200 p-6">
-              <p className="text-gray-600">
-                📦 Trang thống kê kho hàng đang được phát triển...
-              </p>
-            </div>
-          </div>
-        );
+        return <ThongKeKhoPage />;
       case "thong-ke-nhap-xuat":
         return (
           <div className="space-y-6">
@@ -47,18 +40,7 @@ export const QLKhoPage: React.FC = () => {
           </div>
         );
       case "quan-ly-hang-hoa":
-        return (
-          <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-black font-['Space_Grotesk']">
-              Quản lý hàng hóa
-            </h1>
-            <div className="bg-white rounded-lg border border-neutral-200 p-6">
-              <p className="text-gray-600">
-                🗃️ Trang quản lý hàng hóa đang được phát triển...
-              </p>
-            </div>
-          </div>
-        );
+        return <QLVatLieuManagement />;
       case "don-huy-hang":
         return (
           <div className="space-y-6">

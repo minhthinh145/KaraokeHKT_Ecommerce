@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { useSignInForm } from "../../hooks/useSignInForm"; // 🔥 SỬA: Import đúng hook
@@ -34,11 +34,14 @@ export const LoginForm: React.FC = () => {
     if (result.success) {
     }
   };
+  const navigatedRef = useRef(false);
+
   useEffect(() => {
-    if (userRole) {
+    if (userRole && !navigatedRef.current) {
+      navigatedRef.current = true;
       navigateToDefaultRoute();
     }
-  }, [userRole]);
+  }, [userRole, navigateToDefaultRoute]);
   // 🔥 Handle activation confirmation
   const handleActivationConfirmAction = () => {
     const emailForOtp = handleActivationConfirm();

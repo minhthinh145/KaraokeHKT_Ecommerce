@@ -5,7 +5,9 @@ import {
   fetchTienLuongById,
   createTienLuong,
   deleteTienLuong,
+  updateTienLuong,
 } from "./thunks";
+import { deleteLichLamViec, updateLichLamViec } from "../../../../api/services/admin";
 
 export const tienLuongExtraReducers = (
   b: ActionReducerMapBuilder<TienLuongSliceState>
@@ -43,5 +45,13 @@ export const tienLuongExtraReducers = (
       s.data = s.data.filter((x) => x.maLuongCaLamViec !== a.payload);
       s.total = s.data.length;
       if (s.current?.maLuongCaLamViec === a.payload) s.current = null;
+    })
+    .addCase(updateTienLuong.fulfilled, (s, a) => {
+      const updated = a.payload;
+      const idx = s.data.findIndex((d) => d.maLuongCaLamViec === updated.maLuongCaLamViec);
+      if (idx !== -1) {
+        s.data[idx] = updated;
+      }
     });
+
 };

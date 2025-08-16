@@ -22,6 +22,8 @@ public partial class HoaDonDichVu
     public virtual ICollection<ChiTietHoaDonDichVu> ChiTietHoaDonDichVus { get; set; } = new List<ChiTietHoaDonDichVu>();
 
     public virtual ICollection<LichSuSuDungPhong> LichSuSuDungPhongs { get; set; } = new List<LichSuSuDungPhong>();
+    public virtual ICollection<ThuePhong> ThuePhongs { get; set; } = new List<ThuePhong>();
 
     public virtual KhachHang MaKhachHangNavigation { get; set; } = null!;
+
 }

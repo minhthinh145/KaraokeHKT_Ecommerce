@@ -308,6 +308,10 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasColumnType("decimal(15, 2)")
                         .HasColumnName("donGia");
 
+                    b.Property<int?>("MaCa")
+                        .HasColumnType("int")
+                        .HasColumnName("MaCa");
+
                     b.Property<int>("MaSanPham")
                         .HasColumnType("int")
                         .HasColumnName("maSanPham");
@@ -328,6 +332,8 @@ namespace QLQuanKaraokeHKT.Migrations
 
                     b.HasKey("MaGiaDichVu")
                         .HasName("PK__GiaDichV__E5242F374B0CF2DF");
+
+                    b.HasIndex("MaCa");
 
                     b.HasIndex(new[] { "MaSanPham", "NgayApDung" }, "IX_GiaDichVu_SanPham_NgayApDung");
 
@@ -513,6 +519,9 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasColumnType("int")
                         .HasColumnName("maPhong");
 
+                    b.Property<Guid?>("MaThuePhong")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("ThoiGianBatDau")
                         .HasColumnType("datetime")
                         .HasColumnName("thoiGianBatDau");
@@ -529,6 +538,8 @@ namespace QLQuanKaraokeHKT.Migrations
                     b.HasIndex("MaKhachHang");
 
                     b.HasIndex("MaPhong");
+
+                    b.HasIndex("MaThuePhong");
 
                     b.ToTable("LichSuSuDungPhong", (string)null);
                 });
@@ -642,6 +653,9 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasColumnType("int")
                         .HasColumnName("maSanPham");
 
+                    b.Property<int?>("MaVatLieu")
+                        .HasColumnType("int");
+
                     b.Property<int>("SoLuongConLai")
                         .HasColumnType("int")
                         .HasColumnName("soLuongConLai");
@@ -650,6 +664,10 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasName("PK__MonAn__2D20DD221681F916");
 
                     b.HasIndex("MaSanPham");
+
+                    b.HasIndex("MaVatLieu")
+                        .IsUnique()
+                        .HasFilter("[MaVatLieu] IS NOT NULL");
 
                     b.ToTable("MonAn", (string)null);
                 });
@@ -692,6 +710,9 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("maNV")
                         .HasDefaultValueSql("(newid())");
+
+                    b.Property<bool>("DaNghiViec")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -920,6 +941,9 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasColumnType("int")
                         .HasColumnName("maSanPham");
 
+                    b.Property<bool>("NgungHoatDong")
+                        .HasColumnType("bit");
+
                     b.HasKey("MaPhong")
                         .HasName("PK__PhongHat__4CD55E1057E1C2E4");
 
@@ -1090,6 +1114,10 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasColumnName("maThuePhong")
                         .HasDefaultValueSql("(newid())");
 
+                    b.Property<Guid?>("MaHoaDon")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("maHoaDon");
+
                     b.Property<Guid>("MaKhachHang")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("maKhachHang");
@@ -1118,6 +1146,8 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasName("PK__ThuePhon__99717FBF068C52BC");
 
                     b.HasIndex("MaKhachHang");
+
+                    b.HasIndex(new[] { "MaHoaDon" }, "IX_ThuePhong_HoaDon");
 
                     b.HasIndex(new[] { "MaPhong" }, "IX_ThuePhong_Phong");
 
@@ -1173,6 +1203,9 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("donViTinh");
 
+                    b.Property<bool>("NgungCungCap")
+                        .HasColumnType("bit");
+
                     b.Property<int>("SoLuongTonKho")
                         .HasColumnType("int")
                         .HasColumnName("soLuongTonKho");
@@ -1187,6 +1220,65 @@ namespace QLQuanKaraokeHKT.Migrations
                         .HasName("PK__VatLieu__1B9590FA537F995B");
 
                     b.ToTable("VatLieu", (string)null);
+                });
+
+            modelBuilder.Entity("QLQuanKaraokeHKT.Models.YeuCauChuyenCa", b =>
+                {
+                    b.Property<int>("MaYeuCau")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("maYeuCau");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaYeuCau"));
+
+                    b.Property<bool>("DaPheDuyet")
+                        .HasColumnType("bit")
+                        .HasColumnName("daPheDuyet");
+
+                    b.Property<string>("GhiChuPheDuyet")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("ghiChuPheDuyet");
+
+                    b.Property<bool?>("KetQuaPheDuyet")
+                        .HasColumnType("bit")
+                        .HasColumnName("ketQuaPheDuyet");
+
+                    b.Property<string>("LyDoChuyenCa")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("lyDoChuyenCa");
+
+                    b.Property<int>("MaCaMoi")
+                        .HasColumnType("int")
+                        .HasColumnName("maCaMoi");
+
+                    b.Property<int>("MaLichLamViecGoc")
+                        .HasColumnType("int")
+                        .HasColumnName("maLichLamViecGoc");
+
+                    b.Property<DateOnly>("NgayLamViecMoi")
+                        .HasColumnType("date")
+                        .HasColumnName("ngayLamViecMoi");
+
+                    b.Property<DateTime?>("NgayPheDuyet")
+                        .HasColumnType("datetime")
+                        .HasColumnName("ngayPheDuyet");
+
+                    b.Property<DateTime>("NgayTaoYeuCau")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasColumnName("ngayTaoYeuCau")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.HasKey("MaYeuCau")
+                        .HasName("PK_YeuCauChuyenCa");
+
+                    b.HasIndex("MaCaMoi");
+
+                    b.HasIndex("MaLichLamViecGoc");
+
+                    b.ToTable("YeuCauChuyenCa", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -1322,11 +1414,18 @@ namespace QLQuanKaraokeHKT.Migrations
 
             modelBuilder.Entity("QLQuanKaraokeHKT.Models.GiaDichVu", b =>
                 {
+                    b.HasOne("QLQuanKaraokeHKT.Models.CaLamViec", "MaCaNavigation")
+                        .WithMany("GiaDichVus")
+                        .HasForeignKey("MaCa")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("QLQuanKaraokeHKT.Models.SanPhamDichVu", "MaSanPhamNavigation")
                         .WithMany("GiaDichVus")
                         .HasForeignKey("MaSanPham")
                         .IsRequired()
                         .HasConstraintName("FK__GiaDichVu__maSan__30C33EC3");
+
+                    b.Navigation("MaCaNavigation");
 
                     b.Navigation("MaSanPhamNavigation");
                 });
@@ -1400,11 +1499,18 @@ namespace QLQuanKaraokeHKT.Migrations
                         .IsRequired()
                         .HasConstraintName("FK__LichSuSuD__maPho__489AC854");
 
+                    b.HasOne("QLQuanKaraokeHKT.Models.ThuePhong", "MaThuePhongNavigation")
+                        .WithMany("LichSuSuDungPhongs")
+                        .HasForeignKey("MaThuePhong")
+                        .HasConstraintName("FK__LichSuSuD__maThu__4B7734FF");
+
                     b.Navigation("MaHoaDonNavigation");
 
                     b.Navigation("MaKhachHangNavigation");
 
                     b.Navigation("MaPhongNavigation");
+
+                    b.Navigation("MaThuePhongNavigation");
                 });
 
             modelBuilder.Entity("QLQuanKaraokeHKT.Models.LuongCaLamViec", b =>
@@ -1438,7 +1544,14 @@ namespace QLQuanKaraokeHKT.Migrations
                         .IsRequired()
                         .HasConstraintName("FK__MonAn__maSanPham__22751F6C");
 
+                    b.HasOne("QLQuanKaraokeHKT.Models.VatLieu", "VatLieu")
+                        .WithOne("MonAn")
+                        .HasForeignKey("QLQuanKaraokeHKT.Models.MonAn", "MaVatLieu")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("MaSanPhamNavigation");
+
+                    b.Navigation("VatLieu");
                 });
 
             modelBuilder.Entity("QLQuanKaraokeHKT.Models.NhanVien", b =>
@@ -1537,6 +1650,12 @@ namespace QLQuanKaraokeHKT.Migrations
 
             modelBuilder.Entity("QLQuanKaraokeHKT.Models.ThuePhong", b =>
                 {
+                    b.HasOne("QLQuanKaraokeHKT.Models.HoaDonDichVu", "MaHoaDonNavigation")
+                        .WithMany("ThuePhongs")
+                        .HasForeignKey("MaHoaDon")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK__ThuePhong__maHoa__45BE5BA9");
+
                     b.HasOne("QLQuanKaraokeHKT.Models.KhachHang", "MaKhachHangNavigation")
                         .WithMany("ThuePhongs")
                         .HasForeignKey("MaKhachHang")
@@ -1549,13 +1668,36 @@ namespace QLQuanKaraokeHKT.Migrations
                         .IsRequired()
                         .HasConstraintName("FK__ThuePhong__maPho__43D61337");
 
+                    b.Navigation("MaHoaDonNavigation");
+
                     b.Navigation("MaKhachHangNavigation");
 
                     b.Navigation("MaPhongNavigation");
                 });
 
+            modelBuilder.Entity("QLQuanKaraokeHKT.Models.YeuCauChuyenCa", b =>
+                {
+                    b.HasOne("QLQuanKaraokeHKT.Models.CaLamViec", "CaMoi")
+                        .WithMany()
+                        .HasForeignKey("MaCaMoi")
+                        .IsRequired()
+                        .HasConstraintName("FK_YeuCauChuyenCa_CaLamViec");
+
+                    b.HasOne("QLQuanKaraokeHKT.Models.LichLamViec", "LichLamViecGoc")
+                        .WithMany()
+                        .HasForeignKey("MaLichLamViecGoc")
+                        .IsRequired()
+                        .HasConstraintName("FK_YeuCauChuyenCa_LichLamViec");
+
+                    b.Navigation("CaMoi");
+
+                    b.Navigation("LichLamViecGoc");
+                });
+
             modelBuilder.Entity("QLQuanKaraokeHKT.Models.CaLamViec", b =>
                 {
+                    b.Navigation("GiaDichVus");
+
                     b.Navigation("LichLamViecs");
 
                     b.Navigation("LuongCaLamViecs");
@@ -1566,6 +1708,8 @@ namespace QLQuanKaraokeHKT.Migrations
                     b.Navigation("ChiTietHoaDonDichVus");
 
                     b.Navigation("LichSuSuDungPhongs");
+
+                    b.Navigation("ThuePhongs");
                 });
 
             modelBuilder.Entity("QLQuanKaraokeHKT.Models.KhachHang", b =>
@@ -1644,6 +1788,11 @@ namespace QLQuanKaraokeHKT.Migrations
                     b.Navigation("RefreshTokens");
                 });
 
+            modelBuilder.Entity("QLQuanKaraokeHKT.Models.ThuePhong", b =>
+                {
+                    b.Navigation("LichSuSuDungPhongs");
+                });
+
             modelBuilder.Entity("QLQuanKaraokeHKT.Models.VatLieu", b =>
                 {
                     b.Navigation("ChiTietPhieuHuyHangs");
@@ -1653,6 +1802,8 @@ namespace QLQuanKaraokeHKT.Migrations
                     b.Navigation("ChiTietPhieuNhapHangs");
 
                     b.Navigation("GiaVatLieus");
+
+                    b.Navigation("MonAn");
                 });
 #pragma warning restore 612, 618
         }

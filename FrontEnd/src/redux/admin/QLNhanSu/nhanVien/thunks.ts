@@ -6,6 +6,7 @@ import {
   type NhanVienDTO,
   type AddNhanVienDTO,
   type ApiResponse,
+  updateNhanVienDaNghiViec,
 } from "../../../../api/services/shared";
 
 // Fetch all nhân viên
@@ -52,3 +53,18 @@ export const updateNhanVien = createAsyncThunk<
     return rejectWithValue(e.message || "Lỗi hệ thống");
   }
 });
+
+export const updateNhanVienDaNghiViecThunk = createAsyncThunk<
+  { maNhanVien: string; daNghiViec: boolean; message?: string },
+  { maNhanVien: string; daNghiViec: boolean },
+  { rejectValue: string }
+>("qlNhanSu/nhanVien/updateDaNghiViec", async ({ maNhanVien, daNghiViec }, { rejectWithValue }) => {
+  try {
+    const res: ApiResponse<null> = await updateNhanVienDaNghiViec(maNhanVien, daNghiViec);
+    if (res.isSuccess) return { maNhanVien, daNghiViec };
+    return rejectWithValue(res.message || "Lỗi khi cập nhật trạng thái nghỉ việc");
+  } catch (e: any) {
+    return rejectWithValue(e.message || "Lỗi hệ thống");
+  }
+}
+);

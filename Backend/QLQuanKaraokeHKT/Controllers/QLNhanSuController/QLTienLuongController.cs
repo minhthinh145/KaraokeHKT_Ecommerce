@@ -95,5 +95,28 @@ namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
             }
 
         }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateLuongCaLamViecAsync([FromBody] LuongCaLamViecDTO luongCaLamViecDto)
+        {
+            try
+            {
+                if (luongCaLamViecDto == null)
+                {
+                    return BadRequest("Dữ liệu không hợp lệ.");
+                }
+                var result = await _service.UpdateLuongCaLamViecAsync(luongCaLamViecDto);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi hệ thống khi cập nhật lương ca làm việc.",
+                    success = false,
+                    error = ex.Message
+                });
+            }
+        }
     }
 }

@@ -7,12 +7,14 @@ interface Props {
   data: LuongCaLamViecDTO[];
   loading: boolean;
   onDelete: (id: string) => Promise<{ success: boolean }>;
+  onUpdate: (luongCaLam: LuongCaLamViecDTO) => void;
 }
 
 export const TienLuongTable: React.FC<Props> = ({
   data,
   loading,
   onDelete,
+  onUpdate,
 }) => {
   const { caMap } = useCaLamViec(); // Lấy caMap từ hook
 
@@ -61,6 +63,7 @@ export const TienLuongTable: React.FC<Props> = ({
       showDeleteAction={true}
       showUpdateAction={true}
       onDelete={onDelete}
+      onUpdate={onUpdate}
       rowKey="maLuongCaLamViec"
       emptyMessage="Không có lương ngày đặc biệt"
       titleDeleteAction="Xóa lương ngày đặc biệt"

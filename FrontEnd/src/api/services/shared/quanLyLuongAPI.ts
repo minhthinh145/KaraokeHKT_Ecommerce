@@ -69,3 +69,16 @@ export const deleteLuongCaLamViec = async (
     );
   }
 };
+
+//sửa
+export const updateLuongCaLamViec = async (data: LuongCaLamViecDTO) => {
+  try {
+    const res = await axiosInstance.put(`${BASE}/update`, data);
+    return res.data as ApiResponse<LuongCaLamViecDTO>;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message ||
+        "Có lỗi xảy ra khi cập nhật lương ca làm việc"
+    );
+  }
+};

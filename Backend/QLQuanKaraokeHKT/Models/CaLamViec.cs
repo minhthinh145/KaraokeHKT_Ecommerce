@@ -10,5 +10,6 @@
         public virtual ICollection<LuongCaLamViec> LuongCaLamViecs { get; set; } = new List<LuongCaLamViec>();
 
         public virtual ICollection<LichLamViec> LichLamViecs { get; set; } = new List<LichLamViec>();
+        public virtual ICollection<GiaDichVu> GiaDichVus { get; set; } = new List<GiaDichVu>();
     }
 }

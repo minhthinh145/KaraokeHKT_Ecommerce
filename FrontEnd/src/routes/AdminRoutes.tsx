@@ -7,7 +7,9 @@ import { ApplicationRole } from "../api/types/admins/QLHeThongtypes";
 import { QLHeThongPage } from "../pages/admin/QLHeThongPage";
 import { QLNhanSuPage } from "../pages/admin/QLNhanSuPage";
 import { QLKhoPage } from "../pages/admin/QlKhoPage";
-import { QuanLyPhongHatPage } from "../pages/admin/QuanLyPhongHatPage";
+import { QLPhongPage } from "../pages/admin/QLPhongPage";
+import { BookingSuccessPage } from "../pages/customer/BookingSuccessPage";
+import { BookingFailedPage } from "../pages/customer/BookingFailedPage";
 
 export const AdminRoutes: React.FC = () => {
   return (
@@ -47,10 +49,14 @@ export const AdminRoutes: React.FC = () => {
         path="quan-ly-phong-hat"
         element={
           <RoleBasedRoute allowedRoles={[ApplicationRole.QuanLyPhongHat]}>
-            <QuanLyPhongHatPage />
+            <QLPhongPage />
           </RoleBasedRoute>
         }
       />
+
+      {/* Đường dẫn cho trang thành công và thất bại của booking */}
+      <Route path="/booking/success" element={<BookingSuccessPage />} />
+      <Route path="/booking/failed" element={<BookingFailedPage />} />
 
       {/* Default redirect cho admin routes */}
       <Route

@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
-import { Modal, Form, Select, InputNumber, DatePicker, Typography } from "antd";
+import { Modal, Form, Select, InputNumber, Typography, DatePicker } from "antd";
 import { useCaLamViec } from "../../../../../hooks/QLNhanSu/useCaLamViec";
 import dayjs, { Dayjs } from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 dayjs.extend(isSameOrAfter);
 
 const { Text } = Typography;
-
+const { RangePicker } = DatePicker;
 interface AddLuongModalProps {
   open: boolean;
   onClose: () => void;
@@ -54,8 +54,8 @@ export const AddLuongModal: React.FC<AddLuongModalProps> = ({
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      const ap: Dayjs = values.ngayApDung;
-      const kt: Dayjs = values.ngayKetThuc;
+      const [ap, kt] = values.range;
+
       await onSubmit({
         maCa: values.maCa,
         giaCa,
@@ -127,36 +127,26 @@ export const AddLuongModal: React.FC<AddLuongModalProps> = ({
         </Form.Item>
 
         <Form.Item
-          label="Ngày áp dụng"
-          name="ngayApDung"
-          rules={[{ required: true, message: "Chọn ngày áp dụng" }]}
-        >
-          <DatePicker
-            style={{ width: "100%" }}
-            disabled={disabledFields}
-            format="YYYY-MM-DD"
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Ngày kết thúc"
-          name="ngayKetThuc"
-          dependencies={["ngayApDung"]}
+          label="Khoảng ngày áp dụng"
+          name="range"
           rules={[
-            { required: true, message: "Chọn ngày kết thúc" },
-            ({ getFieldValue }) => ({
-              validator(_, value: Dayjs) {
-                const start = getFieldValue("ngayApDung");
-                if (!value || !start || value.isSameOrAfter(start, "day"))
+            {
+              required: true,
+              message: "Chọn khoảng ngày áp dụng!",
+              type: "array",
+            },
+            {
+              validator: (_, value: [Dayjs, Dayjs]) => {
+                if (!value || value.length !== 2)
+                  return Promise.reject("Chọn đủ 2 ngày!");
+                if (value[1].isSameOrAfter(value[0], "day"))
                   return Promise.resolve();
-                return Promise.reject(
-                  new Error("Ngày kết thúc phải >= ngày áp dụng")
-                );
+                return Promise.reject("Ngày kết thúc phải >= ngày áp dụng");
               },
-            }),
+            },
           ]}
         >
-          <DatePicker
+          <RangePicker
             style={{ width: "100%" }}
             disabled={disabledFields}
             format="YYYY-MM-DD"

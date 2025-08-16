@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { formatDateForDisplay } from "../../../api/services/admin/utils/dateUtils";
 import { useConfirmDialog } from "../../../hooks/shared/useConfirmDialog";
+import { Space, Button } from "antd";
 
 // Generic interface cho table configuration
 interface TableColumn<T> {
@@ -12,7 +13,7 @@ interface TableColumn<T> {
   className?: string;
 }
 
-interface GenericQLTableProps<T> {
+export interface GenericQLTableProps<T> {
   data: T[];
   loading: boolean;
   columns: TableColumn<T>[];
@@ -26,9 +27,11 @@ interface GenericQLTableProps<T> {
   lockStatusField?: keyof T;
   emptyMessage?: string;
   tableName?: string;
-  onUpdate?: (row: T) => void; // 🔥 thêm
-  showUpdateAction?: boolean; // 🔥 thêm
-  extraRowActions?: (row: T) => React.ReactNode; // (nếu vẫn muốn tuỳ biến)
+  onUpdate?: (row: T) => void;
+  showUpdateAction?: boolean;
+  extraRowActions?: (row: T) => React.ReactNode;
+  onToggleNghiViec?: (row: T, next: boolean) => void | Promise<void>;
+  showNghiViecAction?: boolean; // 🔥 thêm
 }
 
 export function GenericQLTable<T extends Record<string, any>>({
@@ -45,9 +48,11 @@ export function GenericQLTable<T extends Record<string, any>>({
   lockStatusField,
   emptyMessage = "Không có dữ liệu",
   tableName = "mục",
-  onUpdate, // 🔥 thêm
+  onUpdate,
   showUpdateAction = false,
-  extraRowActions, // 🔥 destructure
+  extraRowActions,
+  onToggleNghiViec,
+  showNghiViecAction = false, // 🔥 thêm
 }: GenericQLTableProps<T>) {
   const { showConfirm, ConfirmDialogComponent } = useConfirmDialog();
 
@@ -311,20 +316,62 @@ export function GenericQLTable<T extends Record<string, any>>({
     );
   };
 
+  // 🔥 Nút Nghỉ việc/Trở lại làm việc (kèm confirm)
+  const getNghiViecActionButton = (record: T) => {
+    if (!showNghiViecAction || !onToggleNghiViec) return null;
+    if (typeof record.daNghiViec === "undefined") return null;
+
+    const isDaNghi = Boolean(record.daNghiViec);
+    const title = isDaNghi ? "Trở lại làm việc?" : "Cho nghỉ việc?";
+    const message = isDaNghi
+      ? "Xác nhận mở khóa tài khoản và đánh dấu nhân viên đang làm việc?"
+      : "Xác nhận khóa tài khoản và đánh dấu nhân viên đã nghỉ việc?";
+
+    return (
+      <Button
+        size="small"
+        danger={!isDaNghi}
+        onClick={() =>
+          showConfirm(
+            {
+              title,
+              message,
+              confirmText: isDaNghi ? "Trở lại" : "Cho nghỉ",
+              cancelText: "Hủy",
+              variant: isDaNghi ? "primary" : "danger",
+            },
+            () => onToggleNghiViec(record, !isDaNghi)
+          )
+        }
+      >
+        {isDaNghi ? "Trở lại làm việc" : "Cho nghỉ việc"}
+      </Button>
+    );
+  };
+
   // 🔥 Render cột thao tác với cả lock và delete
   const getActionButtons = (record: T) => {
     const lockButton = getLockActionButton(record);
     const deleteButton = getDeleteActionButton(record);
-    const updateButton = getUpdateActionButton(record); // 🔥 thêm
+    const updateButton = getUpdateActionButton(record);
+    const nghiViecButton = getNghiViecActionButton(record); // 🔥 thêm
     const extra = extraRowActions ? extraRowActions(record) : null;
 
-    if (!lockButton && !deleteButton && !updateButton && !extra) return null;
+    if (
+      !lockButton &&
+      !deleteButton &&
+      !updateButton &&
+      !nghiViecButton &&
+      !extra
+    )
+      return null;
 
     return (
       <div className="flex items-center justify-center gap-2">
         {lockButton}
         {deleteButton}
         {updateButton}
+        {nghiViecButton} {/* 🔥 thêm */}
         {extra}
       </div>
     );
@@ -415,6 +462,7 @@ export function GenericQLTable<T extends Record<string, any>>({
                 {(showLockActions ||
                   showDeleteAction ||
                   showUpdateAction ||
+                  showNghiViecAction || // 🔥 thêm
                   extraRowActions) && (
                   <th
                     className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap border-b-2 border-blue-200"
@@ -455,6 +503,7 @@ export function GenericQLTable<T extends Record<string, any>>({
                   {(showLockActions ||
                     showDeleteAction ||
                     showUpdateAction ||
+                    showNghiViecAction || // 🔥 thêm
                     extraRowActions) && (
                     <td className="px-6 py-4 text-center whitespace-nowrap">
                       {getActionButtons(record)}

@@ -3,7 +3,7 @@ import React from "react";
 interface ConfirmDialogProps {
   isOpen: boolean;
   title: string;
-  message: string;
+  message: React.ReactNode; // SỬA ở đây
   confirmText?: string;
   cancelText?: string;
   confirmButtonVariant?: "danger" | "primary" | "success";
@@ -105,9 +105,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
                   {title}
                 </h3>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500">{message}</p>
-                </div>
+                <div className="text-sm text-gray-500">{message}</div>
               </div>
             </div>
           </div>

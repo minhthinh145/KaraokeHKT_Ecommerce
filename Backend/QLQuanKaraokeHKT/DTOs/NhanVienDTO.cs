@@ -14,5 +14,7 @@
 
         public string? LoaiNhanVien { get; set; }
 
+        public bool DaNghiViec { get; set; }
+
     }
 }

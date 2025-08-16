@@ -8,6 +8,7 @@ export interface NhanVienDTO {
   ngaySinh: string; // DateOnly from C# -> string (optional)
   soDienThoai?: string;
   loaiNhanVien?: string;
+  daNghiViec?: boolean; // Thêm trường này nếu chưa có
 }
 
 // 🎯 QL Nhân Sự State Types
@@ -91,3 +92,68 @@ export interface AddCaLamViecDTO {
   gioBatDauCa: string;
   gioKetThucCa: string;
 }
+
+export interface AddLichLamViecDTO {
+  ngayLamViec: string; // DateOnly -> string (ISO)
+  maNhanVien: string; // Guid -> string
+  maCa: number;
+}
+
+export interface LichLamViecDTO {
+  maLichLamViec: number;
+  ngayLamViec: string; // DateOnly -> string (ISO)
+  maNhanVien: string; // Guid -> string
+  maCa: number;
+
+  // Joined info
+  tenNhanVien?: string;
+  loaiNhanVien?: string;
+}
+
+// ========== Shift Change (Yêu Cầu Chuyển Ca) Types (REUSED by employee self-service) ==========
+export interface YeuCauChuyenCaDTO {
+  maYeuCau: number;
+  maLichLamViecGoc: number;
+  ngayLamViecMoi: string;
+  maCaMoi: number;
+  lyDoChuyenCa?: string | null;
+  daPheDuyet: boolean;
+  ketQuaPheDuyet?: boolean | null;
+  ghiChuPheDuyet?: string | null;
+  ngayTaoYeuCau: string;
+  ngayPheDuyet?: string | null;
+  tenNhanVien?: string | null;
+  ngayLamViecGoc: string;
+  tenCaGoc?: string | null;
+  tenCaMoi?: string | null;
+}
+
+export interface AddYeuCauChuyenCaDTO {
+  maLichLamViecGoc: number;
+  ngayLamViecMoi: string;
+  maCaMoi: number;
+  lyDoChuyenCa?: string;
+}
+
+export interface PheDuyetYeuCauChuyenCaDTO {
+  maYeuCau: number;
+  ketQuaPheDuyet: boolean;
+  ghiChuPheDuyet?: string | null;
+}
+
+// 🎯 Map chức vụ (key backend) -> tiếng Việt có dấu
+export const QL_NHAN_SU_ROLE_LABEL_MAP: Record<string, string> = {
+  All: "Tất cả",
+  NhanVienKho: "Nhân viên kho",
+  NhanVienPhucVu: "Nhân viên phục vụ",
+  NhanVienTiepTan: "Nhân viên tiếp tân",
+  QuanLyKho: "Quản lý kho",
+  QuanLyNhanSu: "Quản lý nhân sự",
+  QuanLyPhongHat: "Quản lý phòng hát",
+};
+
+// Helper: map loaiNhanVien -> label có dấu
+export const mapLoaiNhanVienToLabel = (loai?: string): string => {
+  if (!loai) return "";
+  return QL_NHAN_SU_ROLE_LABEL_MAP[loai] || loai;
+};

@@ -43,7 +43,7 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices
             }
         }
 
-        public async Task<ServiceResult> AddNhanVienAndAccounAsync(AddNhanVienDTO addNhanVienDto, string password)
+        public async Task<ServiceResult> AddNhanVienAndAccountAsync(AddNhanVienDTO addNhanVienDto, string password)
         {
             try
             {
@@ -128,6 +128,33 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices
             catch (Exception ex)
             {
                 return ServiceResult.Failure($"Lỗi hệ thống khi cập nhật nhân viên: {ex.Message}");
+            }
+        }
+        public async Task<ServiceResult> UpdateNhanVienDaNghiViecAsync(Guid maNhanVien, bool daNghiViec)
+        {
+            try
+            {
+                var existingNhanVien = await _nhanVienRepository.GetNhanVienByIdAsync(maNhanVien);
+                if (existingNhanVien == null)
+                    return ServiceResult.Failure("Không tìm thấy nhân viên.");
+
+                var updateResult = await _nhanVienRepository.UpdateNhanVienDaNghiViecAsync(maNhanVien, daNghiViec);
+                if (!updateResult)
+                    return ServiceResult.Failure("Cập nhật trạng thái nhân viên thất bại.");
+
+                if (daNghiViec)
+                {
+                    await _taiKhoanRepository.LockAccountAsync(existingNhanVien.MaTaiKhoan);
+                    return ServiceResult.Success("Nhân viên đã được đánh dấu là đã nghỉ việc và tài khoản đã bị khóa.");
+                }
+                else
+                {
+                    await _taiKhoanRepository.UnlockAccountAsync(existingNhanVien.MaTaiKhoan);
+                    return ServiceResult.Success("Nhân viên đã được đánh dấu là đang làm việc và tài khoản đã được mở khóa.");
+                }
+            } catch(Exception ex)
+            {
+                return ServiceResult.Failure($"Lỗi hệ thống khi cập nhật trạng thái nhân viên: {ex.Message}");
             }
         }
 
@@ -302,6 +329,8 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices
 
             return ServiceResult.Success("Cập nhật nhân viên thành công.");
         }
+
+    
 
         #endregion
     }

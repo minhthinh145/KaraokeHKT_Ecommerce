@@ -18,9 +18,9 @@ const NHAN_VIEN_ROLE_OPTIONS = [
 
 export const NhanVienManagement: React.FC = () => {
   const {
-    filteredNhanVien,
+    filteredNhanVien: data,
     nhanVienStats,
-    nhanVienLoading,
+    nhanVienLoading: loading,
     nhanVienError,
     nhanVienUI,
     nhanVienActions,
@@ -41,6 +41,9 @@ export const NhanVienManagement: React.FC = () => {
     return Promise.resolve({ success: false });
   };
 
+  const handleNghiViec = (nhanVien: NhanVienDTO, value: boolean) => {
+    nhanVienHandlers.updateDaNghiViec(nhanVien.maNv, value);
+  };
   // ✨ Stats cards data với helper functions
   const statsCards = [
     StatsCardHelpers.totalNhanVienCard(nhanVienStats.total),
@@ -52,6 +55,16 @@ export const NhanVienManagement: React.FC = () => {
       nhanVienStats.byType.NhanVienTiepTan || 0
     ),
   ];
+
+  // Tách 2 danh sách
+  const nhanVienDangLam = React.useMemo(
+    () => data.filter((x) => !x.daNghiViec),
+    [data]
+  );
+  const nhanVienDaNghi = React.useMemo(
+    () => data.filter((x) => x.daNghiViec),
+    [data]
+  );
 
   return (
     <div className="space-y-6">
@@ -125,16 +138,39 @@ export const NhanVienManagement: React.FC = () => {
         roleOptions={NHAN_VIEN_ROLE_OPTIONS}
         onRoleChange={nhanVienActions.setRoleFilter}
         onRefresh={nhanVienActions.load}
-        refreshing={nhanVienLoading}
+        refreshing={loading}
         onClearAll={nhanVienActions.clearAllFilters}
       />
 
-      <NhanVienTable
-        data={filteredNhanVien}
-        loading={nhanVienLoading}
-        onUpdate={handleEdit}
-        onDelete={handleDelete}
-      />
+      {/* Bảng Nhân viên đang làm việc: có Sửa + Cho nghỉ việc */}
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-gray-900">
+          Nhân viên đang làm việc ({nhanVienDangLam.length})
+        </h3>
+        <NhanVienTable
+          data={nhanVienDangLam}
+          loading={loading}
+          onUpdate={handleEdit}
+          onToggleNghiViec={(nv, next) => handleNghiViec(nv, next)}
+          showUpdateAction={true}
+          showNghiViecAction={true}
+        />
+      </div>
+
+      {/* Bảng Nhân viên đã nghỉ việc: chỉ Trở lại làm việc, KHÔNG sửa */}
+      <div className="space-y-2">
+        <h3 className="text-base font-semibold text-gray-900">
+          Nhân viên đã nghỉ việc ({nhanVienDaNghi.length})
+        </h3>
+        <NhanVienTable
+          data={nhanVienDaNghi}
+          loading={loading}
+          onUpdate={handleEdit} // sẽ không hiện vì showUpdateAction=false
+          onToggleNghiViec={(nv) => handleNghiViec(nv, false)}
+          showUpdateAction={false}
+          showNghiViecAction={true}
+        />
+      </div>
 
       <AddNhanVienModal
         isOpen={nhanVienUI.showAddModal}

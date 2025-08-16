@@ -8,18 +8,27 @@ import { AdminRoutes } from "./AdminRoutes";
 import { EmployeeRoutes } from "./EmployeeRoutes";
 import { CustomerRoutes } from "./CustomerRoutes";
 
-// Public Pages - 🔥 SỬA: Dùng đúng path hiện có
+// Public Pages
 import { LoginPage } from "../pages/login";
 import { HomePage } from "../pages/HomePage";
+import { SignUpPage } from "../pages/signup";
 
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* 🔓 Public Routes */}
-      <Route path="/" element={<HomePage />} />
+      {/* 👤 HomePage chỉ cho CUSTOMER */}
+      <Route
+        path="/"
+        element={
+          <RoleBasedRoute allowedRoles={[...ROLE_GROUPS.CUSTOMER]}>
+            <HomePage />
+          </RoleBasedRoute>
+        }
+      />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
 
-      {/* 🏛️ Admin Routes - Admin + Manager */}
+      {/* 🏛️ Admin Routes */}
       <Route
         path="/admin/*"
         element={
@@ -31,7 +40,7 @@ export const AppRoutes: React.FC = () => {
         }
       />
 
-      {/* 👷‍♂️ Employee Routes - Nhân viên */}
+      {/* 👷‍♂️ Employee Routes */}
       <Route
         path="/employee/*"
         element={
@@ -47,7 +56,7 @@ export const AppRoutes: React.FC = () => {
         }
       />
 
-      {/* 👤 Customer Routes - Khách hàng */}
+      {/* 👤 Customer Routes */}
       <Route
         path="/customer/*"
         element={

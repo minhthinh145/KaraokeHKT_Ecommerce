@@ -66,7 +66,7 @@ namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
                     });
                 }
 
-                var result = await _qlHeThongService.AddNhanVienAndAccounAsync(request, request.Email);
+                var result = await _qlHeThongService.AddNhanVienAndAccountAsync(request, request.Email);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
@@ -111,6 +111,40 @@ namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
                 return StatusCode(500, new
                 {
                     message = "Lỗi hệ thống khi cập nhật nhân viên.",
+                    success = false,
+                    error = ex.Message
+                });
+            }
+        }
+
+        /// <summary>
+        /// Đánh dấu hoặc bỏ đánh dấu nhân viên đã nghỉ việc (và tự động khóa/mở khóa tài khoản)
+        /// </summary>
+        /// <param name="maNhanVien">Mã nhân viên</param>
+        /// <param name="daNghiViec">true: nghỉ việc, false: đang làm</param>
+        /// <returns>Kết quả cập nhật trạng thái</returns>
+        [HttpPatch("nhanvien/danghiviec")]
+        public async Task<IActionResult> UpdateNhanVienDaNghiViec([FromQuery] Guid maNhanVien, [FromQuery] bool daNghiViec)
+        {
+            try
+            {
+                if (maNhanVien == Guid.Empty)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Mã nhân viên không hợp lệ.",
+                        success = false
+                    });
+                }
+
+                var result = await _qlHeThongService.UpdateNhanVienDaNghiViecAsync(maNhanVien, daNghiViec);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi hệ thống khi cập nhật trạng thái nghỉ việc của nhân viên.",
                     success = false,
                     error = ex.Message
                 });

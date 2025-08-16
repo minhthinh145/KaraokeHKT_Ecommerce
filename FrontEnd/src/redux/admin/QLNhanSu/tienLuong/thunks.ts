@@ -4,6 +4,7 @@ import {
   getLuongCaLamViecById,
   createLuongCaLamViec,
   deleteLuongCaLamViec,
+  updateLuongCaLamViec,
 } from "../../../../api/services/shared";
 import type {
   LuongCaLamViecDTO,
@@ -68,3 +69,18 @@ export const deleteTienLuong = createAsyncThunk<
     return rejectWithValue(e.message || "Lỗi hệ thống");
   }
 });
+
+export const updateTienLuong = createAsyncThunk(
+  "qlNhanSu/tienLuong/update",
+  async (payload: LuongCaLamViecDTO, { rejectWithValue }) => {
+    try {
+      const res: ApiResponse<LuongCaLamViecDTO> = await updateLuongCaLamViec(
+        payload
+      );
+      if (res.isSuccess && res.data) return res.data;
+      return rejectWithValue(res.message || "Cập nhật thất bại");
+    } catch (e: any) {
+      return rejectWithValue(e.message || "Lỗi hệ thống");
+    }
+  }
+);

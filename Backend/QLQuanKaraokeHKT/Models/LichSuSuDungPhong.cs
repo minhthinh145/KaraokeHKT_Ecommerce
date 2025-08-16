@@ -16,6 +16,8 @@ public partial class LichSuSuDungPhong
     public Guid MaKhachHang { get; set; }
 
     public Guid? MaHoaDon { get; set; }
+    public Guid? MaThuePhong { get; set; }
+    public virtual ThuePhong? MaThuePhongNavigation { get; set; }
 
     public virtual HoaDonDichVu? MaHoaDonNavigation { get; set; }
 

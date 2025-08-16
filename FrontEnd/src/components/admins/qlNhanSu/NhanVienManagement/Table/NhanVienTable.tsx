@@ -3,19 +3,25 @@ import { formatDateForDisplay } from "../../../../../api/services/admin/utils/da
 import type { NhanVienDTO } from "../../../../../api";
 import { GenericQLTable, TableHelpers } from "../../../uiForAll/GenericQLTable";
 import { renderRoleBadge } from "../../../uiForAll/roleMacros";
+import { QLActionButton } from "../../../uiForAll/QLActionButton";
 
 interface NhanVienTableProps {
   data: NhanVienDTO[];
   loading: boolean;
   onUpdate: (nhanVien: NhanVienDTO) => void;
-  onDelete: (maNv: string) => Promise<{ success: boolean }>;
+  onToggleNghiViec: (nhanVien: NhanVienDTO, value: boolean) => void;
+  // thêm cờ điều khiển action (mặc định giữ nguyên UI hiện tại)
+  showUpdateAction?: boolean;
+  showNghiViecAction?: boolean;
 }
 
 export const NhanVienTable: React.FC<NhanVienTableProps> = ({
   data,
   loading,
   onUpdate,
-  onDelete,
+  onToggleNghiViec,
+  showUpdateAction = true,
+  showNghiViecAction = true,
 }) => {
   const nhanVienColumns = [
     {
@@ -56,7 +62,79 @@ export const NhanVienTable: React.FC<NhanVienTableProps> = ({
       width: 160,
       render: renderRoleBadge,
     },
+    // Đã nghỉ việc: làm nổi bật bằng BG trong cell, không đổi layout
+    {
+      key: "daNghiViec",
+      title: "Đã nghỉ việc",
+      dataIndex: "daNghiViec" as keyof NhanVienDTO,
+      width: 120,
+      className: "text-gray-700",
+      render: (value: boolean | undefined) => (
+        <span
+          className={[
+            "block w-full px-2 py-1 rounded text-xs font-medium border text-center",
+            value
+              ? "bg-red-50 text-red-700 border-red-200"
+              : "bg-emerald-50 text-emerald-700 border-emerald-200",
+          ].join(" ")}
+        >
+          {value ? "Đã nghỉ việc" : "Đang làm việc"}
+        </span>
+      ),
+    },
   ];
+
+  const extraRowActions = (row: NhanVienDTO) => (
+    <div className="flex items-center justify-center gap-2">
+      {row.daNghiViec ? (
+        <QLActionButton
+          onClick={() => onToggleNghiViec(row, false)}
+          color="green"
+          title="Khôi phục làm việc"
+          icon={
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          }
+        >
+          Khôi phục
+        </QLActionButton>
+      ) : (
+        <QLActionButton
+          onClick={() => onToggleNghiViec(row, true)}
+          color="red"
+          title="Nghỉ việc"
+          icon={
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M18.364 5.636l-1.414 1.414M6.343 17.657l-1.415 1.415M5.636 5.636l1.414 1.414M17.657 17.657l1.415 1.415M12 8v4m0 4h.01"
+              />
+            </svg>
+          }
+        >
+          Nghỉ việc
+        </QLActionButton>
+      )}
+    </div>
+  );
 
   if (loading) {
     return (
@@ -107,13 +185,13 @@ export const NhanVienTable: React.FC<NhanVienTableProps> = ({
       loading={loading}
       columns={nhanVienColumns}
       rowKey="maNv"
-      showLockActions={false} // Nhân viên không cần lock/unlock
-      showDeleteAction={true}
-      onDelete={onDelete}
-      showUpdateAction={true}
+      showLockActions={false}
+      showUpdateAction={showUpdateAction} // dùng cờ truyền vào
       onUpdate={onUpdate}
       emptyMessage="Không tìm thấy nhân viên nào phù hợp với tiêu chí tìm kiếm"
       tableName="nhân viên"
+      showNghiViecAction={showNghiViecAction} // dùng cờ truyền vào
+      extraRowActions={extraRowActions}
     />
   );
 };

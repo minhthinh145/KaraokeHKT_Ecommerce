@@ -43,12 +43,10 @@ namespace QLQuanKaraokeHKT.Repositories.QLNhanSu.Implementations
 
         }
 
-        public async Task<List<CaLamViec>> GetCaLamViecsByTenCaAsync(string tenCa)
+        public async Task<int> GetIdCaLamViecByTenCaAsync(string tenCa)
         {
-           var caLamViecs = await _context.CaLamViecs
-                .Where(c => c.TenCa.Contains(tenCa, StringComparison.OrdinalIgnoreCase))
-                .ToListAsync();
-            return caLamViecs ?? new List<CaLamViec>();
+           var caLamViecs = await _context.CaLamViecs.FirstOrDefaultAsync(c => c.TenCa == tenCa);
+            return caLamViecs.MaCa;
         }
 
         public async Task<CaLamViec> UpdateCaLamViecAsync(CaLamViec caLamViec)
@@ -61,6 +59,15 @@ namespace QLQuanKaraokeHKT.Repositories.QLNhanSu.Implementations
             _context.CaLamViecs.Update(caLamViec);
             await _context.SaveChangesAsync();
             return caLamViec;
+        }
+
+
+        public async Task<List<CaLamViec>> GetCaLamViecByTenCaAsync(List<string> tenCaList)
+        {
+            return await _context.CaLamViecs
+                .Where(c => tenCaList.Contains(c.TenCa))
+                .OrderBy(c => c.TenCa)
+                .ToListAsync();
         }
     }
 }

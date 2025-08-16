@@ -68,6 +68,9 @@ export const ApplicationRole = {
   KhachHang: "KhachHang",
 } as const;
 
+// Tạo type từ ApplicationRole:
+export type ApplicationRoleType = typeof ApplicationRole[keyof typeof ApplicationRole];
+
 // 🎯 Add Tài khoản cho Nhân viên DTO
 export interface AddTaiKhoanForNhanVienDTO {
   maNhanVien: string; // Guid -> string

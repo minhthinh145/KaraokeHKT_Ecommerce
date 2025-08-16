@@ -11,5 +11,9 @@ public partial class MonAn
 
     public int SoLuongConLai { get; set; }
 
+    public int? MaVatLieu { get; set; }
+    public virtual VatLieu? VatLieu { get; set; }
+
+
     public virtual SanPhamDichVu MaSanPhamNavigation { get; set; } = null!;
 }

@@ -10,5 +10,6 @@ namespace QLQuanKaraokeHKT.Services.QLHeThongServices.Interface
         Task<ServiceResult> GetAllTaiKhoanNhanVienByLoaiTaiKhoanAsync(string loaiTaiKhoan);
         Task<ServiceResult> AddTaiKhoanForNhanVienAsync(AddTaiKhoanForNhanVienDTO addTaiKhoanForNhanVienDto);
 
+        Task<ServiceResult> GetProfileByUserIdAsync(Guid userId);
     }
 }

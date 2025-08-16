@@ -1,37 +1,101 @@
-Dưới đây là prompt mẫu giúp bạn mô tả rõ ràng quy trình khi yêu cầu thêm một tính năng mới, đúng chuẩn flow dự án của bạn:
+Prompt chuẩn yêu cầu tính năng (Frontend + Redux Domain)
 
-Prompt mẫu cho yêu cầu tính năng mới
-Tôi muốn thêm tính năng mới cho module [Tên module, ví dụ: qlNhanSu].
+Tôi muốn thêm/chỉnh sửa tính năng cho module [Tên domain, ví dụ: qlPhong].
 
-Mô tả tính năng:
+1. Mô tả tổng quan
+[Ngắn gọn: mục tiêu nghiệp vụ, user role nào dùng]
 
-[Mô tả ngắn gọn, ví dụ: Thêm quản lý thưởng phạt cho nhân viên]
-Yêu cầu types:
+2. Phạm vi
+- Slice mới hay bổ sung slice cũ? (nếu mới: tên slice)
+- Có cần tích hợp vào domain combine (state.[domain].[slice])? YES/NO
+- Các view / component cần tạo / sửa
 
-Tạo/bổ sung types ở services/types/admins/[TênFile].ts (ghi rõ tên file nếu có)
-Yêu cầu API:
+3. Types / DTO
+- Backend DTO đã có hay cần mới? Liệt kê:
+  interface TenDTO { ... }
+  interface AddTenDTO { ... }
+  interface UpdateTenDTO { ... }
+- Nếu đã có trong api/types => ghi "tái sử dụng"
 
-Thêm hàm call API ở services/shared/[TênFile].ts (ghi rõ endpoint, method, params)
-Yêu cầu Redux:
+4. API Spec
+BASE: /api/[Controller]
+Endpoints:
+- GET /[endpoint] (mô tả, params)
+- GET /[endpoint]/{id}
+- POST /[endpoint] (body AddDTO)
+- PUT /[endpoint] (body UpdateDTO)
+- DELETE /[endpoint]/{id} (nếu có)
+Yêu cầu hàm call API chuẩn:
+export const apiFunc = async (payload?: Type): Promise<ApiResponse<ReturnType>> => {
+  try {
+    const res = await axiosInstance.[method](`${BASE}/...`, payload);
+    return res.data as ApiResponse<ReturnType>;
+  } catch (e:any) {
+    throw new Error(e.response?.data?.message || "Có lỗi xảy ra khi [mô tả]");
+  }
+};
 
-Nếu là object mới: tạo đủ 5 file (extraReducers, reducers, selectors, slice, thunks) trong redux/admin/QLNhanSu/[TênObject]/
-Nếu là object cũ: bổ sung vào các file tương ứng
-Bổ sung/bổ sung init state + state ở redux/admin/QLNhanSu/types.ts
-Yêu cầu export:
+5. Redux (5 file pattern)
+Tạo / Cập nhật:
+- thunks.ts (createAsyncThunk, rejectWithValue chuẩn, check res.isSuccess)
+- reducers.ts (pure UI/data reducers)
+- extraReducers.ts (handle pending/fulfilled/rejected)
+- slice.ts (createSlice kết hợp reducers + extraReducers)
+- selectors.ts (trả về state.[domain].[slice].field)
+Bổ sung vào:
+- types.ts (InitialState + DomainState)
+- index.ts (combineReducers domain + export)
 
-Cập nhật index.ts để export các module cần thiết
-Cập nhật store nếu cần
-Custom hook:
+State chuẩn slice:
+{
+  data: T[];
+  loading: boolean;
+  error: string | null;
+  total: number;
+  ui: { searchQuery: string; ...modal flags...; selected: T | null; ...filters }
+}
 
-Tạo custom hook để sử dụng các tính năng redux vừa thêm
-Component:
+6. Hooks
+- Tạo use[Slice] với:
+  data, loading, error, ui
+  refresh() -> dispatch fetchAll
+  add()/update()/remove() trả { success:boolean, data? }
+  openAdd/closeAdd, openEdit/closeEdit, setSearchQuery, clearFilters
+  Auto refresh: nếu options.autoLoad = true
+- Tạo use[Domain] gom các hook slice: { sliceA, sliceB, refreshAll }
 
-Hướng dẫn tích hợp vào component, tuân thủ bố cục và logic như các module qlHeThong, qlNhanSu đã làm
-Lưu ý:
+7. Component
+- Management component:
+  useDomain().sliceX
+  Lọc client bằng ui.searchQuery
+  Table truyền props:
+    data, loading, onUpdate(row), onDelete(row?) => promise { success }
+- Modals:
+  Title template gradient + icon:
+    <div className="text-center py-2">...</div>
+  Form layout="vertical"
+  Đơn vị hiển thị rõ (VD: addonAfter="người")
+  Sau onFinish: gọi add/update -> nếu success đóng modal (không reload thủ công vì hook đã refresh)
 
-Giữ nguyên convention đặt tên, import types, logic như các module hiện tại
-Nếu có UI/UX đặc biệt, mô tả rõ mong muốn
-Nếu có logic đặc biệt (ví dụ: lọc, phân trang, xác thực...), ghi rõ
-Ví dụ code hiện tại (nếu cần):
+8. UI/UX đặc biệt
+- Nêu rõ: màu badge, icon set, pagination có không, export CSV/Excel
+- Nêu rõ cần Alert hướng dẫn trong modal? (Yes/No)
 
-Hãy hướng dẫn tôi từng bước, chỉ rõ cần sửa/viết gì ở đâu, giải thích ngắn gọn logic và đảm bảo đồng bộ với kiến trúc dự án.
+9. Logic bổ sung
+- Validation phía client (range > 0, unique?)
+- Phân trang server hay client?
+- Tự động refresh sau add/update/delete: YES
+
+10. Output mong muốn
+- Liệt kê chính xác các file cần thêm/sửa (đường dẫn)
+- Code patch đầy đủ (dùng // filepath comment)
+- Ngắn gọn, không giải thích thừa
+
+Ví dụ nhanh:
+Module: qlPhong - thêm CRUD Loại Phòng
+...
+(Điền theo các mục trên)
+
+Khi trả lời: hãy tạo đầy đủ code các file mới + chỉnh sửa cần thiết theo cấu trúc sẵn.
+
+(Optional) Gợi ý: Sau khi add/update ở UI nếu muốn tránh flash loading có thể optimistic update: cập nhật state ngay trước refresh; hiện đã insert/update trong extraReducers nên flash nhẹ vẫn acceptable.

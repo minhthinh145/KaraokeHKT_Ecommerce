@@ -2,7 +2,9 @@ import { useNhanVien } from "./QLNhanSu/useNhanVien";
 import { useNhanVienUI } from "./QLNhanSu/useNhanVienUI";
 import { useNhanVienFilters } from "./QLNhanSu/useNhanVienFilters";
 import { useTienLuong } from "./QLNhanSu/useTienLuong";
-
+import { useLichLamViec } from "./QLNhanSu/useLichLamViec";
+import { useCaLamViec } from "./QLNhanSu/useCaLamViec";
+import { usePheDuyetYeuCauChuyenCa } from "./QLNhanSu/usePheDuyetYeuCauChuyenCa";
 export const useQLNhanSu = () => {
   // Nhân viên
   const nhanVien = useNhanVien({ autoLoad: true });
@@ -11,6 +13,11 @@ export const useQLNhanSu = () => {
 
   // Tiền lương
   const tienLuong = useTienLuong({ autoLoad: true });
+  const caLamViec = useCaLamViec(); // Thêm dòng này
+  const lichLamViec = useLichLamViec({ autoLoad: true });
+
+  // NEW: Phe duyet yêu cầu chuyển ca
+  const pheDuyet = usePheDuyetYeuCauChuyenCa();
 
   // Actions
   const nhanVienActions = {
@@ -23,6 +30,7 @@ export const useQLNhanSu = () => {
     closeAddModal: nhanVienUI.closeAddModal,
     openEditModal: nhanVienUI.openEditModal,
     closeEditModal: nhanVienUI.closeEditModal,
+
   };
 
   const tienLuongActions = {
@@ -44,6 +52,7 @@ export const useQLNhanSu = () => {
     add: nhanVien.addNhanVien,
     update: nhanVien.updateNhanVien,
     delete: nhanVien.deleteNhanVien,
+    updateDaNghiViec: nhanVien.toggleNghiViec,
   };
 
   const tienLuongHandlers = {
@@ -83,5 +92,65 @@ export const useQLNhanSu = () => {
     tienLuongError: tienLuong.error,
     tienLuongActions,
     tienLuongHandlers,
+
+    // Ca làm việc
+    caLamViecList: caLamViec.caLamViecList,
+    caMap: caLamViec.caMap,
+    caOptions: caLamViec.caOptions,
+    caLamViecLoading: caLamViec.loading,
+    caLamViecError: caLamViec.error,
+    refreshCaLamViec: caLamViec.refreshCaLamViec,
+    addCaLamViec: caLamViec.addCaLamViec,
+    setCurrentCaLamViec: caLamViec.setCurrent,
+    clearCaLamViecError: caLamViec.clearError,
+    clearCaLamViecCurrent: caLamViec.clearCurrent,
+    resetCaLamViecState: caLamViec.resetState,
+
+    // Lịch làm việc
+    lichLamViecData: lichLamViec.data,
+    filteredLichLamViec: lichLamViec.filtered,
+    lichLamViecStats: lichLamViec.stats,
+    lichLamViecUI: lichLamViec.ui,
+    lichLamViecLoading: lichLamViec.loading,
+    lichLamViecError: lichLamViec.error,
+    lichLamViecActions: {
+      refresh: lichLamViec.refresh,
+      setSearch: lichLamViec.setSearch,
+      setNhanVienFilter: lichLamViec.setNhanVienFilter,
+      setDateRange: lichLamViec.setDateRangeFilter,
+      clearFilters: lichLamViec.clearFiltersAction,
+      loadByNhanVien: lichLamViec.loadByNhanVien,
+      loadByRange: lichLamViec.loadByRange,
+      openEdit: lichLamViec.openEditModalAction,
+      closeEdit: lichLamViec.closeEditModalAction,     // thêm
+      sendNotiRange: lichLamViec.sendNotiRange,
+
+
+    },
+    lichLamViecHandlers: {
+      add: lichLamViec.add,
+      update: lichLamViec.update,
+      remove: lichLamViec.remove,
+    },
+    lichLamViecSendingNoti: lichLamViec.sendingNoti,
+
+    // Phe duyet yêu cau
+    pheDuyetLoading: pheDuyet.loading,
+    pheDuyetApproving: pheDuyet.approving,
+    pheDuyetLists: pheDuyet.lists,
+    pheDuyetCurrent: pheDuyet.current,
+    pheDuyetUI: pheDuyet.ui,
+    pheDuyetFiltered: pheDuyet.filtered,
+    pheDuyetError: pheDuyet.error,
+    pheDuyetActions: {
+      loadAll: pheDuyet.loadAll,
+      loadDetail: pheDuyet.loadDetail,
+      approve: pheDuyet.approve, // (maYeuCau, ghiChu?, ketQua?)
+      setSearch: pheDuyet.setSearch,
+      setStatusFilter: pheDuyet.setStatusFilter,
+      clearError: pheDuyet.clearError,
+    },
+
   };
+
 };

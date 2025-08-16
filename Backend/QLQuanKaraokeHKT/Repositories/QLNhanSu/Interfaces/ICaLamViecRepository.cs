@@ -27,6 +27,8 @@ namespace QLQuanKaraokeHKT.Repositories.QLNhanSu.Interfaces
         /// <returns>The <see cref="CaLamViec"/> entity if found; otherwise, null.</returns>
         Task<CaLamViec> GetCaLamViecByIdAsync(int maCa);
 
+
+
         /// <summary>
         /// Updates an existing work shift in the database.
         /// </summary>
@@ -46,6 +48,9 @@ namespace QLQuanKaraokeHKT.Repositories.QLNhanSu.Interfaces
         /// </summary>
         /// <param name="tenCa">The name of the work shift to search for.</param>
         /// <returns>A list of <see cref="CaLamViec"/> entities with the specified name.</returns>
-        Task<List<CaLamViec>> GetCaLamViecsByTenCaAsync(string tenCa);
+        Task<int> GetIdCaLamViecByTenCaAsync(string tenCa);
+
+        Task<List<CaLamViec>> GetCaLamViecByTenCaAsync(List<string> tenCaList);
+
     }
 }

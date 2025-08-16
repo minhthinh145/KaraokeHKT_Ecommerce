@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QLQuanKaraokeHKT.DTOs.QLNhanSuDTOs;
+using QLQuanKaraokeHKT.Helpers;
 using QLQuanKaraokeHKT.Services.QLNhanSuServices.QLCaLamViecServices;
 
 namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
 {
-    
     [Route("api/[controller]")]
     [ApiController]
     public class QLCaLamViecController : ControllerBase
@@ -16,7 +17,12 @@ namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
         {
             _service = service;
         }
+
+        /// <summary>
+        /// Tạo ca làm việc mới (Chỉ quản lý nhân sự)
+        /// </summary>
         [HttpPost("create")]
+        [Authorize(Roles = ApplicationRole.QuanLyNhanSu)] // ✅ CHỈ QUẢN LÝ NHÂN SỰ
         public async Task<IActionResult> CreateCaLamViecAsync([FromBody] AddCaLamViecDTO addCaLamViecDto)
         {
             try
@@ -27,7 +33,6 @@ namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
                 }
                 var result = await _service.CreateCaLamViecAsync(addCaLamViecDto);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
-
             }
             catch (Exception ex)
             {
@@ -40,7 +45,11 @@ namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
             }
         }
 
+        /// <summary>
+        /// Lấy danh sách tất cả ca làm việc (Tất cả nhân viên + quản lý)
+        /// </summary>
         [HttpGet("getall")]
+        [Authorize(Roles = $"{ApplicationRole.NhanVienTiepTan},{ApplicationRole.NhanVienKho},{ApplicationRole.NhanVienPhucVu},{ApplicationRole.QuanLyNhanSu}")] // ✅ TẤT CẢ NHÂN VIÊN + QUẢN LÝ
         public async Task<IActionResult> GetAllCaLamViecsAsync()
         {
             try
@@ -63,7 +72,11 @@ namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
             }
         }
 
+        /// <summary>
+        /// Lấy ca làm việc theo ID (Tất cả nhân viên + quản lý)
+        /// </summary>
         [HttpGet("getbyid/{maCa}")]
+        [Authorize(Roles = $"{ApplicationRole.NhanVienTiepTan},{ApplicationRole.NhanVienKho},{ApplicationRole.NhanVienPhucVu},{ApplicationRole.QuanLyNhanSu}")] // ✅ TẤT CẢ NHÂN VIÊN + QUẢN LÝ
         public async Task<IActionResult> GetCaLamViecByIdAsync(int maCa)
         {
             try
@@ -85,7 +98,5 @@ namespace QLQuanKaraokeHKT.Controllers.QLNhanSuController
                 });
             }
         }
-
-        
     }
 }

@@ -10,6 +10,8 @@ namespace QLQuanKaraokeHKT.Models
         public int MaCa { get; set; }
         public DateOnly? NgayApDung { get; set; }
         public DateOnly? NgayKetThuc { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+
         public decimal GiaCa { get; set; }
         public bool IsDefault { get; set; }
         [ForeignKey(nameof(MaCa))]

@@ -73,7 +73,7 @@ export const UserMenu: React.FC = () => {
               Thông tin cá nhân
             </button>
             <button
-              onClick={() => handleNavigation("/customer/booking")}
+              onClick={() => handleNavigation("/customer/booking/history")}
               className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Lịch sử đặt phòng

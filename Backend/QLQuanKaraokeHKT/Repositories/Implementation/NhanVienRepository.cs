@@ -9,7 +9,7 @@ namespace QLQuanKaraokeHKT.Repositories.Implementation
     {
         private readonly QlkaraokeHktContext _context;
 
-        public NhanVienRepository(QlkaraokeHktContext context) 
+        public NhanVienRepository(QlkaraokeHktContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -71,7 +71,7 @@ namespace QLQuanKaraokeHKT.Repositories.Implementation
                 .Include(nv => nv.MaTaiKhoanNavigation)
                 .FirstOrDefaultAsync(nv => nv.MaNv == maNhanVien);
             if (nhanVien == null)
-                {
+            {
                 throw new KeyNotFoundException($"Không tìm thấy nhân viên với ID {maNhanVien}");
             }
             return nhanVien;
@@ -98,11 +98,24 @@ namespace QLQuanKaraokeHKT.Repositories.Implementation
             var existingNhanVien = await GetNhanVienByIdAsync(nhanVien.MaNv);
             if (existingNhanVien == null)
             {
-                return false; 
+                return false;
             }
-             _context.NhanViens.Update(nhanVien);
+            _context.NhanViens.Update(nhanVien);
             await _context.SaveChangesAsync();
-            return true; 
+            return true;
+
+        }
+
+        public async Task<bool> UpdateNhanVienDaNghiViecAsync(Guid maNhanVien, bool daNghiViec)
+        {
+            var nhanVien = await _context.NhanViens.FindAsync(maNhanVien);
+            if (nhanVien == null)
+            {
+                return false;
+            }
+            nhanVien.DaNghiViec = daNghiViec;
+            await _context.SaveChangesAsync();
+            return true;
 
         }
     }

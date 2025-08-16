@@ -17,7 +17,13 @@ public partial class ThuePhong
 
     public string TrangThai { get; set; } = null!;
 
+    public Guid? MaHoaDon { get; set; }
+
     public virtual KhachHang MaKhachHangNavigation { get; set; } = null!;
 
     public virtual PhongHatKaraoke MaPhongNavigation { get; set; } = null!;
+
+    public virtual HoaDonDichVu? MaHoaDonNavigation { get; set; }
+
+    public virtual ICollection<LichSuSuDungPhong> LichSuSuDungPhongs { get; set; } = new List<LichSuSuDungPhong>();
 }
