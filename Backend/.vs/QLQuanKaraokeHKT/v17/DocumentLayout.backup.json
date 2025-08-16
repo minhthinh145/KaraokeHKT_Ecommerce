@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\OOAD_Project\\Backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\models\\hoadondichvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\models\\hoadondichvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -25,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\services\\qlphongservices\\qlphonghatservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\services\\qlphongservices\\qlphonghatservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\models\\hoadondichvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\models\\hoadondichvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\models\\thuephong.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -78,37 +78,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 986,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\appsettings.json",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\appsettings.json",
               "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\appsettings.json",
               "RelativeToolTip": "QLQuanKaraokeHKT\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-08-16T13:23:30.823Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "20250816094302_updatethuephong.cs",
-              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
-              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
-              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
-              "RelativeToolTip": "QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAgwCIAAABHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-16T09:43:02.201Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "QlkaraokeHktContext.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
@@ -132,7 +119,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "PhongHatRepository.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\QLPhong\\Implementations\\PhongHatRepository.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Repositories\\QLPhong\\Implementations\\PhongHatRepository.cs",
@@ -144,7 +131,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "QLPhonghatService.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\QLPhongServices\\QLPhonghatService.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Services\\QLPhongServices\\QLPhonghatService.cs",
@@ -156,7 +143,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "QLPhongHatController.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\QLPhongController\\QLPhongHatController.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Controllers\\QLPhongController\\QLPhongHatController.cs",
@@ -191,12 +178,8 @@
               "WhenOpened": "2025-08-16T09:04:00.326Z"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "HoaDonDichVu.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\HoaDonDichVu.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Models\\HoaDonDichVu.cs",
@@ -204,7 +187,24 @@
               "RelativeToolTip": "QLQuanKaraokeHKT\\Models\\HoaDonDichVu.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-16T09:42:09.802Z"
+              "WhenOpened": "2025-08-16T09:42:09.802Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "20250816094302_updatethuephong.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAgwCIAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-16T09:43:02.201Z"
             },
             {
               "$type": "Document",
@@ -292,15 +292,15 @@
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{131369f2-062d-44a2-8671-91ff31efb4f4}"
-            },
-            {
-              "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{131369f2-062d-44a2-8671-91ff31efb4f4}"
             },
             {
               "$type": "Bookmark",

@@ -5,7 +5,7 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 export const CreateImportPage: React.FC = () => {
   const [form] = Form.useForm();
 
-  const onFinish = (values: any) => {};
+  const onFinish = () => {};
 
   return (
     <div className="space-y-6">

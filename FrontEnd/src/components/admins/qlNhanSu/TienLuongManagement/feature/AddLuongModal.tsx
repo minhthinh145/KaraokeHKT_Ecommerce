@@ -37,8 +37,8 @@ export const AddLuongModal: React.FC<AddLuongModalProps> = ({
       const [h, m] = t.split(":").map(Number);
       return h + (m || 0) / 60;
     };
-    let start = parseTime(ca.gioBatDauCa);
-    let end = parseTime(ca.gioKetThucCa);
+    const start = parseTime(ca.gioBatDauCa);
+    const end = parseTime(ca.gioKetThucCa);
     let diff = end - start;
     if (diff <= 0) diff += 24;
     return diff;
