@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Button } from "antd";
 import { useVatLieu } from "../../../../hooks/QLKho/useVatLieu";
-import { VatLieuTable } from "./Table/VatLieuTable";
 import { CreateVatLieuModal } from "./Modals/CreateVatLieuModal";
 import { UpdateSoLuongModal } from "./Modals/UpdateSoLuongModal";
 import { EditVatLieuModal } from "./Modals/EditVatLieuModal";
@@ -17,13 +15,9 @@ import {
 
 export const QLVatLieuManagement: React.FC = () => {
   const {
-    data,
-    loading: loadingData,
-    ui: uiData,
     load,
     openCreate,
     closeCreate,
-    openUpdateSL,
     closeUpdateSL,
     openEdit,
     closeEdit,

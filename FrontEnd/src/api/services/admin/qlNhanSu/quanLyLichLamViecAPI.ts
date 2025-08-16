@@ -3,7 +3,6 @@ import type {
   ApiResponse,
   LichLamViecDTO,
   AddLichLamViecDTO,
-  NhanVienDTO,
   YeuCauChuyenCaDTO,
   PheDuyetYeuCauChuyenCaDTO,
 } from "../../../../api";

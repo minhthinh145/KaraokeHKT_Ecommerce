@@ -1,6 +1,5 @@
 import React from "react";
 import { LichLamViecTable } from "../../../uiForAll/LichLamViecTable";
-import type { LichLamViecDTO } from "../../../../../api";
 
 export interface CaBrief {
   maCa: number;

@@ -4,7 +4,6 @@ import type {
 } from "../../../../api";
 import type {
     PheDuyetYeuCauChuyenCaSliceState,
-    pheDuyetYeuCauInitialState,
 } from "../types";
 import {
     fetchAllYeuCauChuyenCa,
@@ -41,7 +40,7 @@ export const buildExtraReducers = (b: ActionReducerMapBuilder<PheDuyetYeuCauChuy
         })
         .addCase(approveYeuCauChuyenCa.fulfilled, (s, a) => {
             s.approving = false;
-            const updated = a.payload as YeuCauChuyenCaDTO;
+            const updated = a.payload as any;
             s.all = s.all.map((x) => (x.maYeuCau === updated.maYeuCau ? updated : x));
             s.pending = s.pending.filter((x) => x.maYeuCau !== updated.maYeuCau);
             if (updated.daPheDuyet) {

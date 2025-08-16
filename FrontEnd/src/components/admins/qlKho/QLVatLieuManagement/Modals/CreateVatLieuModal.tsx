@@ -6,13 +6,12 @@ import {
   InputNumber,
   Select,
   Typography,
-  Checkbox,
   Switch,
   Divider,
 } from "antd";
 import dayjs from "dayjs";
 import type { AddVatLieuDTO } from "../../../../../api/index";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 const DVT_OPTIONS = ["Lon", "Chai", "Bịch", "Hộp", "Hủ"];
@@ -35,7 +34,7 @@ export const CreateVatLieuModal: React.FC<Props> = ({
   const isImageUrl = (url?: string) =>
     !!url && /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(url.split("?")[0]);
 
-  const handleValuesChange = (changed: any, all: any) => {
+  const handleValuesChange = (changed: any) => {
     if ("hinhAnhSanPham" in changed) setImgUrl(changed.hinhAnhSanPham || "");
   };
 

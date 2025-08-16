@@ -1,5 +1,4 @@
 import React from "react";
-import type { UserProfileDTO } from "../../../api/types/auth/UserProfileDTO";
 import type { AuthUser } from "../../../types/auth";
 
 interface ProfileHeaderProps {

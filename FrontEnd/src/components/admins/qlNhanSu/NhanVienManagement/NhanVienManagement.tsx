@@ -35,12 +35,6 @@ export const NhanVienManagement: React.FC = () => {
     nhanVienActions.openEditModal(nhanVien);
   };
 
-  const handleDelete = async (maNv: string) => {
-    return nhanVienHandlers.delete(maNv);
-    // Nếu không xóa, vẫn trả về đúng kiểu
-    return Promise.resolve({ success: false });
-  };
-
   const handleNghiViec = (nhanVien: NhanVienDTO, value: boolean) => {
     nhanVienHandlers.updateDaNghiViec(nhanVien.maNv, value);
   };

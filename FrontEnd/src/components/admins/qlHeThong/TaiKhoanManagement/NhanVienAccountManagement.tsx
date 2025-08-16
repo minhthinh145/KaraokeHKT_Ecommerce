@@ -9,7 +9,7 @@ import { RoleDescriptions, EMPLOYEE_ROLES } from "../../../../constants/auth";
 export const NhanVienAccountManagement: React.FC<{
   qlHeThong: ReturnType<typeof useQLHeThong>;
 }> = ({ qlHeThong }) => {
-  const { ui, loading, errors, actions, handlers, nhanVienData, lockHandlers } =
+  const { ui, loading, errors, actions, nhanVienData, lockHandlers } =
     qlHeThong;
   const [showModal, setShowModal] = useState(false);
 

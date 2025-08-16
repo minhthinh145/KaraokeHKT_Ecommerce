@@ -79,12 +79,10 @@ namespace QLQuanKaraokeHKT.Controllers.BookingController
         {
             try
             {
-                // ✅ VALIDATION AUTHENTICATION & MODEL
                 var validationResult = this.ValidateAuthenticationAndModel(out Guid userId);
                 if (validationResult != null)
                     return validationResult;
 
-                // ✅ ĐẨY LOGIC VÀO SERVICE
                 var result = await _bookingService.TaoHoaDonDatPhongAsync(datPhongDto, userId);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }

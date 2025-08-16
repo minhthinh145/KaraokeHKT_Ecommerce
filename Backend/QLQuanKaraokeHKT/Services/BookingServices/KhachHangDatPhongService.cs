@@ -105,14 +105,12 @@ namespace QLQuanKaraokeHKT.Services.BookingServices
         {
             try
             {
-                // 1. ✅ LOGIC NHÂN VIÊN ĐƯỢC ĐẨY VÀO SERVICE
                 var khachHang = await _khachHangRepository.GetByAccountIdAsync(userId);
                 if (khachHang == null)
                     return ServiceResult.Failure("Không tìm thấy thông tin khách hàng.");
 
                 datPhongDto.MaKhachHang = khachHang.MaKhachHang;
 
-                // 2. XỬ LÝ TIMEZONE
                 var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 var thoiGianBatDauVietnam = datPhongDto.ThoiGianBatDau.Kind == DateTimeKind.Utc
                     ? TimeZoneInfo.ConvertTimeFromUtc(datPhongDto.ThoiGianBatDau, vietnamTimeZone)
@@ -120,7 +118,6 @@ namespace QLQuanKaraokeHKT.Services.BookingServices
 
                 datPhongDto.ThoiGianBatDau = thoiGianBatDauVietnam;
 
-                // 3. Validation
                 var validationResult = await ValidateDatPhongAsync(datPhongDto);
                 if (!validationResult.IsSuccess)
                     return validationResult;
@@ -129,14 +126,12 @@ namespace QLQuanKaraokeHKT.Services.BookingServices
                 if (phong?.MaSanPhamNavigation == null)
                     return ServiceResult.Failure("Thông tin phòng không hợp lệ.");
 
-                // 4. Tính toán giá tiền
                 var giaPhong = await GetGiaPhongHienTaiAsync(phong.MaSanPham);
                 var tongTien = giaPhong * datPhongDto.SoGioSuDung;
                 var thoiGianKetThucDuKien = thoiGianBatDauVietnam.AddHours(datPhongDto.SoGioSuDung);
 
                 await _phongHatRepository.UpdateDangSuDungAsync(datPhongDto.MaPhong, true);
 
-                // 5. ✅ TẠO HÓAĐƠN QUA REPOSITORY
                 var hoaDon = new HoaDonDichVu
                 {
                     MaHoaDon = Guid.NewGuid(),
@@ -150,15 +145,13 @@ namespace QLQuanKaraokeHKT.Services.BookingServices
 
                 var createdHoaDon = await _hoaDonRepository.CreateHoaDonAsync(hoaDon);
 
-                // 6. ✅ TẠO THUEPHONG VÀ LIÊN KẾT VỚI HÓA ĐƠN
                 var thuePhong = _mapper.Map<ThuePhong>(datPhongDto);
                 thuePhong.ThoiGianKetThuc = thoiGianKetThucDuKien;
                 thuePhong.TrangThai = "Pending";
-                thuePhong.MaHoaDon = createdHoaDon.MaHoaDon; // ✅ LIÊN KẾT HÓA ĐƠN
+                thuePhong.MaHoaDon = createdHoaDon.MaHoaDon; 
 
                 var createdThuePhong = await _thuePhongRepository.CreateThuePhongAsync(thuePhong);
 
-                // 7. ✅ TẠO CHI TIẾT HÓA ĐƠN QUA REPOSITORY
                 var chiTietHoaDon = new ChiTietHoaDonDichVu
                 {
                     MaHoaDon = createdHoaDon.MaHoaDon,

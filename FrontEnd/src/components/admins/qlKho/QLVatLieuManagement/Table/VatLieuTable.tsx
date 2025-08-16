@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
-import { Button } from "antd";
 import { GenericQLTable } from "../../../uiForAll/GenericQLTable";
 import { QLActionButton } from "../../../uiForAll/QLActionButton";
 import type { VatLieuDetailDTO } from "../../../../../api";
-import dayjs from "dayjs";
 
 interface Props {
   data: VatLieuDetailDTO[];

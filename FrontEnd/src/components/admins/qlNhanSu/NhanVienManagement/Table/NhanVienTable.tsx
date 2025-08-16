@@ -1,7 +1,7 @@
 import React from "react";
 import { formatDateForDisplay } from "../../../../../api/services/admin/utils/dateUtils";
 import type { NhanVienDTO } from "../../../../../api";
-import { GenericQLTable, TableHelpers } from "../../../uiForAll/GenericQLTable";
+import { GenericQLTable } from "../../../uiForAll/GenericQLTable";
 import { renderRoleBadge } from "../../../uiForAll/roleMacros";
 import { QLActionButton } from "../../../uiForAll/QLActionButton";
 

@@ -250,7 +250,7 @@ export const BookingPage: React.FC = () => {
 
       <Modal
         open={ui.showBookingModal}
-        title={<span className="text-lg font-semibold">🏠 Đặt phòng</span>}
+        title={<span className="text-lg font-semibold"> Đặt phòng</span>}
         onCancel={closeBooking}
         onOk={submitBooking}
         okText="📝 Tạo hóa đơn"

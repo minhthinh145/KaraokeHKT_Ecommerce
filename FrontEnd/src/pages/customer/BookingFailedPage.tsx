@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { Result, Button } from "antd";
-import { CustomerLayout } from "../../components/customer/CustomerLayout";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MainLayout } from "../../components/customer/Main/MainLayOut";
 
