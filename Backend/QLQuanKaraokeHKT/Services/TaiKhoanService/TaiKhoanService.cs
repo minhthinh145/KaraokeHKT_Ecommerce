@@ -83,19 +83,26 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
             return ServiceResult.Success("Login successful.", LoginResponseDTO);
         }
 
+        // Trong SignUpAsync service
         public async Task<ServiceResult> SignUpAsync(SignUpDTO signup)
         {
             try
             {
-                // Check if email already exists
-                var existingUser = await _taiKhoanRepository.FindByEmailAsync(signup.Email);
+                // ✅ Sử dụng method chuyên dụng cho signup
+                var existingUser = await _taiKhoanRepository.FindByEmailSignUpAsync(signup.Email);
                 if (existingUser != null)
                 {
                     return ServiceResult.Failure("Email đã được sử dụng bởi tài khoản khác.");
                 }
 
-                var ApplicationUser = _mapper.Map<QLQuanKaraokeHKT.Models.TaiKhoan>(signup);
-                var result = await _taiKhoanRepository.CreateUserAsync(ApplicationUser, signup.Password);
+                var applicationUser = _mapper.Map<TaiKhoan>(signup);
+                var khachHang = _mapper.Map<KhachHang>(signup);
+
+                // ✅ Sử dụng method transaction-safe
+                var (result, createdUser) = await _taiKhoanRepository.CreateCustomerAccountForSignUpAsync(
+                    applicationUser,
+                    signup.Password,
+                    khachHang);
 
                 if (!result.Succeeded)
                 {
@@ -103,11 +110,7 @@ namespace QLQuanKaraokeHKT.Services.TaiKhoanService
                     return ServiceResult.Failure("Đăng ký thất bại.", errors);
                 }
 
-                await AssignCustomerRoleAsync(ApplicationUser);
-
-                await _khachHangService.CreateKhachHangByDangKyAsync(signup);
-
-                var userProfile = _mapper.Map<UserProfileDTO>(ApplicationUser);
+                var userProfile = _mapper.Map<UserProfileDTO>(createdUser);
                 return ServiceResult.Success("Đăng ký thành công. Vui lòng kiểm tra email để kích hoạt tài khoản.", userProfile);
             }
             catch (Exception ex)

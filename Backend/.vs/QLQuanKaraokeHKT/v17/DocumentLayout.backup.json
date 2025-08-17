@@ -3,20 +3,48 @@
   "WorkspaceRootPath": "D:\\OOAD_Project\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\models\\hoadondichvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\models\\hoadondichvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\helpers\\passwordhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\helpers\\passwordhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\services\\taikhoanservice\\taikhoanservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\services\\taikhoanservice\\taikhoanservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\repositories\\taikhoanrepo\\itaikhoanrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\repositories\\taikhoanrepo\\itaikhoanrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\repositories\\taikhoanrepo\\taikhoanrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\repositories\\taikhoanrepo\\taikhoanrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\authenticationservice\\verifyauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\authenticationservice\\verifyauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\models\\qlkaraokehktcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\models\\qlkaraokehktcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\migrations\\20250816094302_updatethuephong.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\migrations\\20250816094302_updatethuephong.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\models\\qlkaraokehktcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\models\\qlkaraokehktcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\models\\hoadondichvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|solutionrelative:qlquankaraokehkt\\models\\hoadondichvu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EF2569D9-83BD-4825-8B13-8A224D8688BC}|QLQuanKaraokeHKT\\QLQuanKaraokeHKT.csproj|d:\\ooad_project\\backend\\qlquankaraokehkt\\repositories\\qlphong\\implementations\\phonghatrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -78,48 +106,69 @@
       "DocumentGroups": [
         {
           "DockedWidth": 986,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 11,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\appsettings.json",
-              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\appsettings.json",
-              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\appsettings.json",
-              "RelativeToolTip": "QLQuanKaraokeHKT\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-08-16T13:23:30.823Z",
+              "Title": "PasswordHelper.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Helpers\\PasswordHelper.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Helpers\\PasswordHelper.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Helpers\\PasswordHelper.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Helpers\\PasswordHelper.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-17T00:00:15.004Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "QlkaraokeHktContext.cs",
-              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
-              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
-              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
-              "RelativeToolTip": "QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
-              "ViewState": "AgIAAJACAAAAAAAAAAAwwKYCAAAAAAAAAAAAAA==",
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAHYAAAAAAAAAAAAuwJsAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-16T09:40:11.111Z"
+              "WhenOpened": "2025-08-16T17:57:11.795Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "ThuePhong.cs",
-              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\ThuePhong.cs",
-              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Models\\ThuePhong.cs",
-              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\ThuePhong.cs",
-              "RelativeToolTip": "QLQuanKaraokeHKT\\Models\\ThuePhong.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAA9wBwAAAABAAAAAAAAAA==",
+              "Title": "VerifyAuthService.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\AuthenticationService\\VerifyAuthService.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\AuthenticationService\\VerifyAuthService.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\AuthenticationService\\VerifyAuthService.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\AuthenticationService\\VerifyAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-16T09:38:50.511Z"
+              "WhenOpened": "2025-08-16T17:54:47.117Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Program.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Program.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Program.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Program.cs",
+              "ViewState": "AgIAAMkAAAAAAAAAAAAYwEoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-16T17:30:08.813Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "PhongHatRepository.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\QLPhong\\Implementations\\PhongHatRepository.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Repositories\\QLPhong\\Implementations\\PhongHatRepository.cs",
@@ -131,7 +180,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 13,
               "Title": "QLPhonghatService.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\QLPhongServices\\QLPhonghatService.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Services\\QLPhongServices\\QLPhonghatService.cs",
@@ -143,7 +192,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 12,
               "Title": "QLPhongHatController.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\QLPhongController\\QLPhongHatController.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Controllers\\QLPhongController\\QLPhongHatController.cs",
@@ -155,7 +204,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 15,
               "Title": "IPhongHatRepository.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\QLPhong\\Interfaces\\IPhongHatRepository.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Repositories\\QLPhong\\Interfaces\\IPhongHatRepository.cs",
@@ -167,7 +216,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 16,
               "Title": "TaoHoaDonPhongResponseDTO.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\BookingDTOs\\TaoHoaDonPhongResponseDTO.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\DTOs\\BookingDTOs\\TaoHoaDonPhongResponseDTO.cs",
@@ -180,6 +229,55 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\appsettings.json",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\appsettings.json",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\appsettings.json",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-08-16T13:23:30.823Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "TaiKhoanRepository.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\TaiKhoanRepo\\TaiKhoanRepository.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Repositories\\TaiKhoanRepo\\TaiKhoanRepository.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\TaiKhoanRepo\\TaiKhoanRepository.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Repositories\\TaiKhoanRepo\\TaiKhoanRepository.cs",
+              "ViewState": "AgIAAPoAAAAAAAAAAAAkwKsBAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-16T17:57:51.591Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ITaiKhoanRepository.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\TaiKhoanRepo\\ITaiKhoanRepository.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Repositories\\TaiKhoanRepo\\ITaiKhoanRepository.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\TaiKhoanRepo\\ITaiKhoanRepository.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Repositories\\TaiKhoanRepo\\ITaiKhoanRepository.cs",
+              "ViewState": "AgIAAIMAAAAAAAAAAAAgwMAAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-16T18:04:35.169Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TaiKhoanService.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\TaiKhoanService\\TaiKhoanService.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Services\\TaiKhoanService\\TaiKhoanService.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\TaiKhoanService\\TaiKhoanService.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Services\\TaiKhoanService\\TaiKhoanService.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAADwv3cAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-16T18:04:52.305Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "HoaDonDichVu.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\HoaDonDichVu.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Models\\HoaDonDichVu.cs",
@@ -187,16 +285,11 @@
               "RelativeToolTip": "QLQuanKaraokeHKT\\Models\\HoaDonDichVu.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-16T09:42:09.802Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+              "WhenOpened": "2025-08-16T09:42:09.802Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 9,
               "Title": "20250816094302_updatethuephong.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Migrations\\20250816094302_updatethuephong.cs",
@@ -208,7 +301,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 8,
+              "Title": "QlkaraokeHktContext.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Models\\QlkaraokeHktContext.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAywC8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-16T09:40:11.111Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ThuePhong.cs",
+              "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\ThuePhong.cs",
+              "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Models\\ThuePhong.cs",
+              "ToolTip": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Models\\ThuePhong.cs",
+              "RelativeToolTip": "QLQuanKaraokeHKT\\Models\\ThuePhong.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAA9wBwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-16T09:38:50.511Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
               "Title": "KhachHangBookingController.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Controllers\\BookingController\\KhachHangBookingController.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Controllers\\BookingController\\KhachHangBookingController.cs",
@@ -220,7 +337,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 19,
               "Title": "ILoaiPhongRepository.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\QLPhong\\Interfaces\\ILoaiPhongRepository.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Repositories\\QLPhong\\Interfaces\\ILoaiPhongRepository.cs",
@@ -232,7 +349,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 20,
               "Title": "IKhachHangDatPhongService.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\BookingServices\\IKhachHangDatPhongService.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Services\\BookingServices\\IKhachHangDatPhongService.cs",
@@ -244,7 +361,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 18,
               "Title": "KhachHangDatPhongService.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\BookingServices\\KhachHangDatPhongService.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Services\\BookingServices\\KhachHangDatPhongService.cs",
@@ -256,7 +373,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 21,
               "Title": "BookingTimeoutService.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Services\\BackgroundServices\\BookingTimeoutService.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Services\\BackgroundServices\\BookingTimeoutService.cs",
@@ -268,7 +385,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 22,
               "Title": "XacNhanThanhToanDTO.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\DTOs\\BookingDTOs\\XacNhanThanhToanDTO.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\DTOs\\BookingDTOs\\XacNhanThanhToanDTO.cs",
@@ -280,7 +397,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 23,
               "Title": "ThuePhongRepository.cs",
               "DocumentMoniker": "D:\\OOAD_Project\\Backend\\QLQuanKaraokeHKT\\Repositories\\BookingRepositories\\ThuePhongRepository.cs",
               "RelativeDocumentMoniker": "QLQuanKaraokeHKT\\Repositories\\BookingRepositories\\ThuePhongRepository.cs",
@@ -292,23 +409,11 @@
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
             },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{131369f2-062d-44a2-8671-91ff31efb4f4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{c9c0ae26-aa77-11d2-b3f0-0000f87570ee}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
             }
           ]
         },

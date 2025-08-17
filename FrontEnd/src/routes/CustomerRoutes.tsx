@@ -45,8 +45,8 @@ export const CustomerRoutes: React.FC = () => {
         }
       />
 
-      <Route path="/booking/success" element={<BookingSuccessPage />} />
-      <Route path="/booking/failed" element={<BookingFailedPage />} />
+      <Route path="booking/success" element={<BookingSuccessPage />} />
+      <Route path="booking/failed" element={<BookingFailedPage />} />
       <Route path="booking/history" element={<BookingHistoryPage />} />
 
       {/* Default redirect */}

@@ -74,7 +74,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 //Install ConnectionString
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DeployConnection");
 
 builder.Services.AddDbContext<QlkaraokeHktContext>(options =>
     options.UseSqlServer(connectionString));
@@ -110,16 +110,42 @@ builder.Services.AddAuthentication(options => {
     };
 });
 
-//Cors
+
+//
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("AllowVercelAndBackend", policy =>
+    {
+        policy.WithOrigins(
+            "https://ooad-karaoke-hkt-3kgx.vercel.app",
+            "https://ooad-karaoke-hkt-3kgx-git-main-minhthinh145s-projects.vercel.app",
+            "https://qlquankaraokehktt.runasp.net" // thêm origin này
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+    });
     options.AddPolicy("AllowAllOrigins", policy =>
     {
         policy.AllowAnyOrigin()  // Cho phép tất cả các nguồn
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+               .AllowAnyMethod()
+         .AllowAnyHeader();
+
+    });
+    options.AddPolicy("AllowVercelAndBackend", policy =>
+    {
+        policy.WithOrigins(
+            "https://ooad-karaoke-hkt-3kgx.vercel.app",
+            "https://ooad-karaoke-hkt-3kgx-git-main-minhthinh145s-projects.vercel.app",
+            "https://qlquankaraokehktt.runasp.net" // thêm origin này
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
+
+
 
 // Fix AutoMapper registration - use the actual ApplicationMapper profile
 builder.Services.AddAutoMapper(typeof(ApplicationMapper));
@@ -191,8 +217,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAllOrigins");
-
+//app.UseCors("AllowAllOrigins");
+app.UseCors("AllowAllOrigins"); 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
