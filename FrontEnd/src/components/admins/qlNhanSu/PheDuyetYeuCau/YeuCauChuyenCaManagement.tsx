@@ -4,6 +4,7 @@ import { LichLamViecChuyenCaTable } from "./LichLamViecChuyenCaTable";
 import { XemYeuCauTable } from "./XemYeuCauTable";
 import { Tag, Typography } from "antd";
 import { useQLNhanSu } from "../../../../hooks/useQLNhanSu";
+import RefreshButton from "../../../common/RefreshButton";
 import "dayjs/locale/vi";
 dayjs.locale("vi");
 
@@ -22,7 +23,7 @@ export const YeuCauChuyenCaManagement: React.FC = () => {
   };
 
   // Lấy danh sách yêu cầu chưa phê duyệt ngoài tuần hiện tại
-  const { pheDuyetLists } = useQLNhanSu();
+  const { pheDuyetLists, pheDuyetActions } = useQLNhanSu(); // thêm pheDuyetActions (nếu hook cung cấp)
   const weekStartDay = dayjs(weekStart).startOf("day");
   const weekEndDay = weekStartDay.add(6, "day").endOf("day");
 
@@ -37,27 +38,35 @@ export const YeuCauChuyenCaManagement: React.FC = () => {
       .map((x) => x.ngayLamViecGoc);
   }, [pheDuyetLists.all, weekStart]);
 
+  const handleRefresh = () => {
+    // Gọi lại load tất cả yêu cầu (tùy theo hook thực tế)
+    pheDuyetActions?.loadAll?.();
+  };
+
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-3 font-bold text-xl">
-        <Typography.Title level={3} className="!mb-0">
-          Yêu cầu chuyển ca (tuần)
-        </Typography.Title>
-        {pendingOtherWeeks.length > 0 && (
-          <Tag color="warning" style={{ fontWeight: 500 }}>
-            Còn yêu cầu chờ phê duyệt ở&nbsp;
-            {pendingOtherWeeks
-              .map(
-                (ngay) =>
-                  `${dayjs(ngay)
-                    .format("dddd")
-                    .replace(/^./, (c) => c.toUpperCase())} - ${dayjs(
-                    ngay
-                  ).format("DD/MM/YYYY")}`
-              )
-              .join(", ")}
-          </Tag>
-        )}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 font-bold text-xl">
+          <Typography.Title level={3} className="!mb-0">
+            Yêu cầu chuyển ca (tuần)
+          </Typography.Title>
+          {pendingOtherWeeks.length > 0 && (
+            <Tag color="warning" style={{ fontWeight: 500 }}>
+              Còn yêu cầu chờ phê duyệt ở&nbsp;
+              {pendingOtherWeeks
+                .map(
+                  (ngay) =>
+                    `${dayjs(ngay)
+                      .format("dddd")
+                      .replace(/^./, (c) => c.toUpperCase())} - ${dayjs(
+                      ngay
+                    ).format("DD/MM/YYYY")}`
+                )
+                .join(", ")}
+            </Tag>
+          )}
+        </div>
+        <RefreshButton onClick={handleRefresh} />
       </div>
       <LichLamViecChuyenCaTable
         weekStart={weekStart}

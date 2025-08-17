@@ -11,6 +11,7 @@ import type { LichLamViecDTO } from "../../../../api";
 import { WeekNavigator } from "../../uiForAll/WeekNavigator";
 import { mapLoaiNhanVienToLabel } from "../../../../api/types/admins/QLNhanSutypes";
 import { EditLichLamViecModal } from "./feature/EditLichLamViecModal";
+import RefreshButton from "../../../common/RefreshButton";
 
 const { Title } = Typography;
 
@@ -24,7 +25,6 @@ export const LichLamViecManagement: React.FC = () => {
   const {
     caLamViecList,
     refreshCaLamViec,
-
     nhanVienData,
     lichLamViecData,
     filteredLichLamViec,
@@ -166,15 +166,23 @@ export const LichLamViecManagement: React.FC = () => {
     [lichLamViecActions]
   );
 
+  const handleRefresh = useCallback(() => {
+    refreshCaLamViec();
+    loadByRange(weekRange[0], weekRange[1]); // reload lịch tuần hiện tại
+  }, [refreshCaLamViec, loadByRange, weekRange]);
+
   return (
     <div className="w-full">
-      <div className="mb-4">
-        <Title level={3} className="!mb-0">
-          Thêm ca làm việc
-        </Title>
-        <Typography.Text type="secondary">
-          Quản lý lịch làm việc theo tuần
-        </Typography.Text>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <Title level={3} className="!mb-0">
+            Thêm ca làm việc
+          </Title>
+          <Typography.Text type="secondary">
+            Quản lý lịch làm việc theo tuần
+          </Typography.Text>
+        </div>
+        <RefreshButton onClick={handleRefresh} />
       </div>
 
       <WeekNavigator

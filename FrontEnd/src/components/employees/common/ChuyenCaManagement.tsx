@@ -11,6 +11,7 @@ import type { CaBrief } from "../../admins/uiForAll/LichLamViecTable";
 import { WeekNavigator } from "../../admins/uiForAll/WeekNavigator";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
+import RefreshButton from "../../common/RefreshButton";
 
 dayjs.extend(isBetween);
 import "dayjs/locale/vi";
@@ -249,15 +250,25 @@ export const ChuyenCaManagement: React.FC<ChuyenCaManagementProps> = ({
     [shiftChanges, weekStart]
   );
 
+  const handleRefresh = () => {
+    refreshAll();
+  };
+
   return (
     <div>
-    
-      <div className="mb-4">
-        <Typography.Text type="secondary">
-          Kéo thả ca để tạo yêu cầu chuyển ca – chờ phê duyệt
-        </Typography.Text>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <Typography.Title level={3} className="!mb-0">
+            Quản lý chuyển ca
+          </Typography.Title>
+          <Typography.Text type="secondary">
+            Kéo thả ca để tạo yêu cầu chuyển ca – chờ phê duyệt
+          </Typography.Text>
+        </div>
+        <RefreshButton onClick={handleRefresh} />
       </div>
 
+      {/* (ĐÃ di chuyển block hướng dẫn xuống dưới) */}
       <WeekNavigator
         weekStart={weekStart}
         onChangeWeekStart={(ws) => onChangeWeekStart?.(ws)}
