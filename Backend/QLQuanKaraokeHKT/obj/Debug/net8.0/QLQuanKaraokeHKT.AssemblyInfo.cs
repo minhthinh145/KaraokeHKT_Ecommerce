@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QLQuanKaraokeHKT")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+87dfcc93661909ea97932434cde852e0761afe69")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d98d1ea704c749e423bb073ddaab4e81dfde2f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("QLQuanKaraokeHKT")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QLQuanKaraokeHKT")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

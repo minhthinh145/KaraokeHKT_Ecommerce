@@ -107,12 +107,12 @@ export function SideBarForAdmin<
         <button
           onClick={() => toggleParent(node.id)}
           className={`group w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg transition-colors text-left
-            ${
-              isActiveParent
-                ? `${styles.activeBg} ${styles.ring}`
-                : `bg-white ${styles.hoverParent}`
-            }
-          `}
+              ${
+                isActiveParent
+                  ? `${styles.activeBg} ${styles.ring}`
+                  : `bg-white ${styles.hoverParent}`
+              }
+            `}
         >
           <div className="flex items-center gap-3 overflow-hidden">
             <node.icon className="w-6 h-6 flex-shrink-0" />
@@ -161,12 +161,12 @@ export function SideBarForAdmin<
                     onTabChange(child.id);
                   }}
                   className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors
-                    ${
-                      isActiveChild
-                        ? `${styles.childActive} font-semibold shadow-sm`
-                        : "text-gray-600 hover:bg-neutral-50 hover:text-gray-900"
-                    }
-                  `}
+                      ${
+                        isActiveChild
+                          ? `${styles.childActive} font-semibold shadow-sm`
+                          : "text-gray-600 hover:bg-neutral-50 hover:text-gray-900"
+                      }
+                    `}
                 >
                   <span
                     className={`w-1.5 h-1.5 rounded-full ${
