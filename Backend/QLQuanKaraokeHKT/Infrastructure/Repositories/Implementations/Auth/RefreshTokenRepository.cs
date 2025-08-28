@@ -2,17 +2,18 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
 {
-    public class RefreshTokenRepository : IRefreshTokenRepository
+    public class RefreshTokenRepository : GenericRepository<RefreshToken,int>, IRefreshTokenRepository
     {
-        private readonly QlkaraokeHktContext _context;
 
-        public RefreshTokenRepository(QlkaraokeHktContext context)
+        public RefreshTokenRepository(QlkaraokeHktContext context) : base(context)
         {
-            _context = context;
+
         }
+
 
         public async Task<RefreshToken?> FindByTokenAsync(string token)
         {
@@ -20,56 +21,43 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
                 .FirstOrDefaultAsync(rt => rt.ChuoiRefreshToken == token);
         }
 
-        public async Task RevokeAsync(string token)
+        public async Task<bool> RevokeTokenAsync(string token)
         {
             var refreshToken = await FindByTokenAsync(token);
-            if (refreshToken != null)
+            if (refreshToken == null)
             {
-                refreshToken.Revoked = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+             return false;
             }
+            refreshToken.Revoked = DateTime.UtcNow;
+            return await UpdateAsync(refreshToken);
         }
 
-        public async Task SaveAsync(Guid userId, string token, DateTime created, DateTime expires)
+        public async Task<int> RevokeAllByUserIdAsync(Guid userId)
         {
-            var refreshToken = new RefreshToken
-            {
-                ChuoiRefreshToken = token,
-                ThoiGianTao = created,
-                ThoiGianHetHan = expires,
-                MaTaiKhoan = userId,
-                Revoked = null // Ensure it's not revoked when created
-            };
+            var activeTokens = await GetAllAsync(rt => rt.MaTaiKhoan == userId && rt.Revoked == null);
 
-            _context.RefreshTokens.Add(refreshToken);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task RevokeAllByUserIdAsync(Guid userId)
-        {
-            var activeTokens = await _context.RefreshTokens
-                .Where(rt => rt.MaTaiKhoan == userId && rt.Revoked == null)
-                .ToListAsync();
+            if (!activeTokens.Any())
+                return 0;
 
             foreach (var token in activeTokens)
             {
                 token.Revoked = DateTime.UtcNow;
             }
 
-            if (activeTokens.Any())
+            var count = 0;
+            foreach (var token in activeTokens)
             {
-                await _context.SaveChangesAsync();
+                if (await UpdateAsync(token))
+                    count++;
             }
+            return count;
         }
 
         public async Task<IList<RefreshToken>> GetActiveTokensByUserIdAsync(Guid userId)
         {
-            return await _context.RefreshTokens
-                .Where(rt => rt.MaTaiKhoan == userId &&
-                            rt.Revoked == null &&
-                            rt.ThoiGianHetHan > DateTime.UtcNow)
-                .OrderByDescending(rt => rt.ThoiGianTao)
-                .ToListAsync();
+            return await GetAllAsync(rt => rt.MaTaiKhoan == userId &&
+                                        rt.Revoked == null &&
+                                        rt.ThoiGianHetHan > DateTime.UtcNow);
         }
 
         public async Task<int> CleanupExpiredTokensAsync()
@@ -78,33 +66,20 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
                 .Where(rt => rt.ThoiGianHetHan < DateTime.UtcNow || rt.Revoked != null)
                 .ToListAsync();
 
-            if (expiredTokens.Any())
-            {
-                _context.RefreshTokens.RemoveRange(expiredTokens);
-                await _context.SaveChangesAsync();
-            }
+            if (!expiredTokens.Any())
+                return 0;
+
+            _context.RefreshTokens.RemoveRange(expiredTokens);
+            await SaveChangesAsync(); 
 
             return expiredTokens.Count;
         }
 
         public async Task<bool> IsTokenValidAsync(string token)
         {
-            var refreshToken = await FindByTokenAsync(token);
-
-            if (refreshToken == null)
-                return false;
-
-            // Check if token is not revoked and not expired
-            return refreshToken.Revoked == null &&
-                   refreshToken.ThoiGianHetHan > DateTime.UtcNow;
-        }
-
-        public async Task<int> CountActiveTokensByUserIdAsync(Guid userId)
-        {
-            return await _context.RefreshTokens
-                .CountAsync(rt => rt.MaTaiKhoan == userId &&
-                                 rt.Revoked == null &&
-                                 rt.ThoiGianHetHan > DateTime.UtcNow);
+            return await ExistsAsync(rt => rt.ChuoiRefreshToken == token &&
+                                         rt.Revoked == null &&
+                                         rt.ThoiGianHetHan > DateTime.UtcNow);
         }
     }
 }

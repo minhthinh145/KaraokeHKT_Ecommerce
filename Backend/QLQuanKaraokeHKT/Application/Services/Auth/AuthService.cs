@@ -15,12 +15,17 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
         private readonly IConfiguration _configuration;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(UserManager<TaiKhoan> userManager, IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository)
+        public AuthService(UserManager<TaiKhoan> userManager, IConfiguration configuration, 
+            IRefreshTokenRepository refreshTokenRepository,
+            ILogger<AuthService> logger
+            )
         {
             _userManager = userManager;
             _configuration = configuration;
             _refreshTokenRepository = refreshTokenRepository;
+            _logger = logger;
         }
 
         public async Task<string> GenerateAccessTokenAsync(Guid userId)
@@ -76,7 +81,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
 
             var accessToken = await GenerateAccessTokenForUserAsync(user);
             var refreshToken = GenerateRefreshToken();
-            var expires = DateTime.UtcNow.AddDays(7); // Refresh token có thời gian dài hơn
+            var expires = DateTime.UtcNow.AddDays(7); 
 
             await SaveRefreshTokenAsync(user.Id, refreshToken, expires);
             return (accessToken, refreshToken);
@@ -90,50 +95,28 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             }
 
             var storedToken = await _refreshTokenRepository.FindByTokenAsync(refreshToken);
-
-            // Kiểm tra refresh token có tồn tại không
             if (storedToken == null)
             {
                 throw new SecurityTokenException("Refresh token không hợp lệ hoặc không tồn tại.");
             }
 
-            // Kiểm tra refresh token đã bị revoke chưa
             if (storedToken.Revoked.HasValue)
             {
                 throw new SecurityTokenException("Refresh token đã bị thu hồi. Vui lòng đăng nhập lại.");
             }
 
-            // Kiểm tra refresh token đã hết hạn chưa
             if (storedToken.ThoiGianHetHan < DateTime.UtcNow)
             {
-                // Tự động revoke token hết hạn
-                await _refreshTokenRepository.RevokeAsync(refreshToken);
+                var revokeSuccess = await _refreshTokenRepository.RevokeTokenAsync(refreshToken);
+                if (!revokeSuccess)
+                {
+                   _logger?.LogWarning($"Failed to revoke expired token: {refreshToken}");
+                }
                 throw new SecurityTokenException("Refresh token đã hết hạn. Vui lòng đăng nhập lại.");
             }
 
-            // Kiểm tra user có tồn tại không
-            var user = await _userManager.FindByIdAsync(storedToken.MaTaiKhoan.ToString());
-            if (user == null)
-            {
-                await _refreshTokenRepository.RevokeAsync(refreshToken);
-                throw new SecurityTokenException("Người dùng không tồn tại. Vui lòng đăng nhập lại.");
-            }
+            var user = await ValidateUserForRefreshAsync(storedToken.MaTaiKhoan, refreshToken);
 
-            // Kiểm tra user có bị khóa không
-            if (user.daBiKhoa)
-            {
-                await _refreshTokenRepository.RevokeAsync(refreshToken);
-                throw new SecurityTokenException("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.");
-            }
-
-            // Kiểm tra user có được kích hoạt không
-            if (!user.daKichHoat)
-            {
-                await _refreshTokenRepository.RevokeAsync(refreshToken);
-                throw new SecurityTokenException("Tài khoản chưa được kích hoạt. Vui lòng kích hoạt tài khoản.");
-            }
-
-            // Tạo access token mới
             return await GenerateAccessTokenForUserAsync(user);
         }
 
@@ -141,20 +124,21 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
         {
             if (!string.IsNullOrWhiteSpace(refreshToken))
             {
-                await _refreshTokenRepository.RevokeAsync(refreshToken);
+                await _refreshTokenRepository.RevokeTokenAsync(refreshToken);
             }
         }
 
-        public async Task RevokeAllUserRefreshTokensAsync(Guid userId)
+        public async Task<bool> RevokeAllUserRefreshTokensAsync(Guid userId)
         {
             try
             {
-                await _refreshTokenRepository.RevokeAllByUserIdAsync(userId);
+                var revokedCount = await _refreshTokenRepository.RevokeAllByUserIdAsync(userId);
+                return revokedCount > 0;
             }
             catch (Exception ex)
             {
-                // Log error nhưng không throw để không ảnh hưởng flow chính
-                // Có thể log ở đây nếu có logging service
+                _logger?.LogError(ex, "Failed to revoke all refresh tokens for user {UserId}", userId);
+                return false;
             }
         }
 
@@ -162,7 +146,15 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
         {
             try
             {
-                await _refreshTokenRepository.SaveAsync(userId, refreshToken, DateTime.UtcNow, expires);
+               var newToken = new RefreshToken
+                {
+                    MaTaiKhoan = userId,
+                    ChuoiRefreshToken = refreshToken,
+                    ThoiGianTao = DateTime.UtcNow,
+                    ThoiGianHetHan = expires,
+                    Revoked = null
+                };
+                await _refreshTokenRepository.CreateAsync(newToken);
             }
             catch (Exception ex)
             {
@@ -170,12 +162,40 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             }
         }
 
+        #region private helper
+
         private string GenerateRefreshToken()
         {
             // Tạo refresh token an toàn hơn
             return Convert.ToBase64String(Guid.NewGuid().ToByteArray()) +
                    Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         }
+
+        private async Task<TaiKhoan> ValidateUserForRefreshAsync(Guid userId, string refreshToken)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                await _refreshTokenRepository.RevokeTokenAsync(refreshToken);
+                throw new SecurityTokenException("Người dùng không tồn tại. Vui lòng đăng nhập lại.");
+            }
+
+            if (user.daBiKhoa)
+            {
+                await _refreshTokenRepository.RevokeTokenAsync(refreshToken);
+                throw new SecurityTokenException("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.");
+            }
+
+            if (!user.daKichHoat)
+            {
+                await _refreshTokenRepository.RevokeTokenAsync(refreshToken);
+                throw new SecurityTokenException("Tài khoản chưa được kích hoạt. Vui lòng kích hoạt tài khoản.");
+            }
+
+            return user;
+        }
+
+        #endregion
 
         public async Task<bool> IsRefreshTokenValidAsync(string refreshToken)
         {

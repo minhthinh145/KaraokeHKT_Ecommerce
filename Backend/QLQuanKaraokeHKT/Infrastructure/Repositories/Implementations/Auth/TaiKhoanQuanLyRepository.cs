@@ -8,13 +8,13 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
 {
     public class TaiKhoanQuanLyRepository : ITaiKhoanQuanLyRepository
     {
-        private readonly ITaiKhoanRepository _taiKhoanRepository;
         private readonly UserManager<TaiKhoan> _userManager;
+        private readonly IIdentityRepository _identityRepository;
 
-        public TaiKhoanQuanLyRepository(ITaiKhoanRepository taiKhoanRepository, UserManager<TaiKhoan> userManager)
+        public TaiKhoanQuanLyRepository(IIdentityRepository identityRepository, UserManager<TaiKhoan> userManager)
         {
-            _taiKhoanRepository = taiKhoanRepository ?? throw new ArgumentNullException(nameof(taiKhoanRepository));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _identityRepository = identityRepository ?? throw new ArgumentNullException(nameof(identityRepository)); 
         }
 
         public async Task<List<TaiKhoan>> GettAllAdminAccount()
@@ -24,7 +24,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
             var managerUsers = new List<TaiKhoan>();
             foreach (var user in allUsers)
             {
-                var roles = await _taiKhoanRepository.GetUserRolesAsync(user);
+                var roles = await _identityRepository.GetUserRolesAsync(user);
                 if (roles.Any(role => managerRoles.Contains(role)))
                 {
                     managerUsers.Add(user);

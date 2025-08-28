@@ -48,7 +48,7 @@ namespace QLQuanKaraokeHKT.Core.Interfaces.Services.Auth
         /// </summary>
         /// <param name="userId">User ID</param>
         /// <returns></returns>
-        Task RevokeAllUserRefreshTokensAsync(Guid userId);
+        Task<bool> RevokeAllUserRefreshTokensAsync(Guid userId);
 
         /// <summary>
         /// Check if refresh token is valid

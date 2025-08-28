@@ -1,18 +1,10 @@
 ﻿using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth
 {
-    public interface IRefreshTokenRepository
+    public interface IRefreshTokenRepository : IGenericRepository<RefreshToken, int>
     {
-        /// <summary>
-        /// Lưu refresh token mới vào database
-        /// </summary>
-        /// <param name="userId">ID của user</param>
-        /// <param name="token">Refresh token string</param>
-        /// <param name="created">Thời gian tạo</param>
-        /// <param name="expires">Thời gian hết hạn</param>
-        /// <returns></returns>
-        Task SaveAsync(Guid userId, string token, DateTime created, DateTime expires);
 
         /// <summary>
         /// Tìm refresh token theo token string
@@ -26,14 +18,14 @@ namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth
         /// </summary>
         /// <param name="token">Refresh token string cần thu hồi</param>
         /// <returns></returns>
-        Task RevokeAsync(string token);
+        Task<bool> RevokeTokenAsync(string token);
 
         /// <summary>
         /// Thu hồi tất cả refresh token của một user cụ thể
         /// </summary>
         /// <param name="userId">ID của user</param>
         /// <returns></returns>
-        Task RevokeAllByUserIdAsync(Guid userId);
+        Task<int> RevokeAllByUserIdAsync(Guid userId);
 
         /// <summary>
         /// Lấy tất cả refresh token còn hiệu lực của một user
@@ -55,11 +47,5 @@ namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth
         /// <returns>True nếu token còn hiệu lực, false nếu không</returns>
         Task<bool> IsTokenValidAsync(string token);
 
-        /// <summary>
-        /// Đếm số lượng refresh token còn hiệu lực của một user
-        /// </summary>
-        /// <param name="userId">ID của user</param>
-        /// <returns>Số lượng token còn hiệu lực</returns>
-        Task<int> CountActiveTokensByUserIdAsync(Guid userId);
     }
 }

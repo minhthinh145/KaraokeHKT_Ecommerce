@@ -2,24 +2,19 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
+using System.Runtime.CompilerServices;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
 {
-    public class MaOtpRepository : IMaOtpRepository
+    public class MaOtpRepository : GenericRepository<MaOtp, int>, IMaOtpRepository
     {
-        private readonly QlkaraokeHktContext _context;
 
-        public MaOtpRepository(QlkaraokeHktContext context)
+        public MaOtpRepository(QlkaraokeHktContext context) : base(context)
         {
-            _context = context;
-        }
 
-        public async Task<MaOtp> CreateOTPAsync(MaOtp maOtp)
-        {
-            await _context.MaOtps.AddAsync(maOtp);
-            await _context.SaveChangesAsync();
-            return maOtp;
         }
+        
 
         public async Task<bool> DeleteOtpUsedAsync(Guid userID, string otpCode)
         {

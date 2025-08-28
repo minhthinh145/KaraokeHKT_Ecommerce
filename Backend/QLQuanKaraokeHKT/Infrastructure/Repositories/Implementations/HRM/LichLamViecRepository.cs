@@ -150,7 +150,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.HRM
                 if (hasConflict)
                     return false;
 
-                // Cập nhật thông tin
                 lichLamViec.NgayLamViec = ngayLamViecMoi;
                 lichLamViec.MaCa = maCaMoi;
 

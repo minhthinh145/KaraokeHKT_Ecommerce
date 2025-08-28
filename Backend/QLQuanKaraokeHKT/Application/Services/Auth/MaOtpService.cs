@@ -47,7 +47,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                     ExpirationTime = expirationTime
                 };
                 var userOtp = _mapper.Map<MaOtp>(otpDTO);
-                await _maOtpRepository.CreateOTPAsync(userOtp);
+                await _maOtpRepository.CreateAsync(userOtp);
 
                 await _sendEmailService.SendOtpEmailAsync(user.Email, otpCode);
                 return ServiceResult.Success("OTP đã được gửi thành công");

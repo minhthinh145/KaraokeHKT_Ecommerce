@@ -1,15 +1,10 @@
 ﻿using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth
 {
-    public interface IMaOtpRepository
+    public interface IMaOtpRepository : IGenericRepository<MaOtp, int>
     {
-        /// <summary>
-        /// Create a new OTP (One-Time Password) record in the database.
-        /// </summary>
-        /// <param name="maOtp"></param>
-        /// <returns></returns>
-        Task<MaOtp> CreateOTPAsync(MaOtp maOtp);
         /// <summary>
         /// Get an OTP by its code.
         /// </summary>
