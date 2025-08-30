@@ -4,6 +4,7 @@ using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs;
 using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.HRM;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
@@ -12,27 +13,25 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
 {
     public class NhanVienAccountService : INhanVienAccountService
     {
-        private readonly IAccountBaseService _accountBaseService;
-        private readonly ITaiKhoanRepository _taiKhoanRepository;
-        private readonly INhanVienRepository _nhanVienRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IAccountBaseService _accountBaseService;
 
-        public NhanVienAccountService(IAccountBaseService accountBaseService, 
-            ITaiKhoanRepository taiKhoanRepository, 
-            INhanVienRepository nhanVienRepository, 
+        public NhanVienAccountService(
+            IUnitOfWork unitOfWork,
+            IAccountBaseService accountBaseService,
             IMapper mapper)
         {
-            _accountBaseService = accountBaseService;
-            _taiKhoanRepository = taiKhoanRepository;
-            _nhanVienRepository = nhanVienRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _accountBaseService = accountBaseService ?? throw new ArgumentNullException(nameof(accountBaseService));
         }
 
         public async Task<ServiceResult> GetAllTaiKhoanNhanVienAsync()
         {
             try
             {
-                var nhanViens = await _nhanVienRepository.GetAllNhanVienWithTaiKhoanAsync(); 
+                var nhanViens = await _unitOfWork.NhanVienRepository.GetAllNhanVienWithTaiKhoanAsync(); 
                 if (nhanViens == null || !nhanViens.Any())
                 {
                     return ServiceResult.Failure("Không có nhân viên nào trong hệ thống.");
@@ -56,7 +55,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                     return ServiceResult.Failure("Loại tài khoản không được để trống.");
                 }
 
-                var nhanViens = await _nhanVienRepository.GetAllByLoaiTaiKhoanWithTaiKhoanAsync(loaiTaiKhoan); // Cần implement method này
+                var nhanViens = await _unitOfWork.NhanVienRepository.GetAllByLoaiTaiKhoanWithTaiKhoanAsync(loaiTaiKhoan); 
                 if (nhanViens == null || !nhanViens.Any())
                 {
                     return ServiceResult.Failure($"Không có nhân viên nào với loại tài khoản '{loaiTaiKhoan}'.");
@@ -81,7 +80,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                     return validationResult;
 
                 // 2. Lấy thông tin nhân viên
-                var existingNhanVien = await _nhanVienRepository.GetNhanVienByIdAsync(request.MaNhanVien);
+                var existingNhanVien = await _unitOfWork.NhanVienRepository.GetNhanVienByIdAsync(request.MaNhanVien);
                 if (existingNhanVien == null)
                 {
                     return ServiceResult.Failure("Không tìm thấy nhân viên.");
@@ -93,7 +92,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
 
                 if (existingNhanVien.MaTaiKhoan != Guid.Empty)
                 {
-                    oldAccount = await _taiKhoanRepository.FindByUserIDAsync(existingNhanVien.MaTaiKhoan.ToString());
+                    oldAccount = await _unitOfWork.IdentityRepository.FindByUserIDAsync(existingNhanVien.MaTaiKhoan.ToString());
                     if (oldAccount != null)
                     {
                         // Lấy role từ tài khoản cũ
@@ -118,14 +117,14 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                 if (!linkResult.IsSuccess)
                 {
                     // Nếu link thất bại, xóa tài khoản mới đã tạo
-                    await _taiKhoanRepository.DeleteUserAsync(newAccount);
+                    await _unitOfWork.AccountManagementRepository.DeleteUserAsync(newAccount);
                     return linkResult;
                 }
 
                 // 7. Xóa tài khoản cũ (sau khi link thành công)
                 if (oldAccount != null)
                 {
-                    var deleteOldResult = await _taiKhoanRepository.DeleteUserWithRelatedDataAsync(oldAccount);
+                    var deleteOldResult = await _unitOfWork.AccountManagementRepository.DeleteUserWithRelatedDataAsync(oldAccount);
                     if (!deleteOldResult)
                     {
                         // Log warning nhưng không fail vì tài khoản mới đã tạo thành công
@@ -162,7 +161,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                 daBiKhoa = false
             };
 
-            var createResult = await _taiKhoanRepository.CreateUserAsync(taiKhoan, password);
+            var createResult = await _unitOfWork.IdentityRepository.CreateUserAsync(taiKhoan, password);
             if (!createResult.Succeeded)
             {
                 var errors = createResult.Errors.Select(e => e.Description).ToList();
@@ -170,7 +169,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
             }
 
             // Gán role giống tài khoản cũ
-            await _taiKhoanRepository.AddToRoleAsync(taiKhoan, roleCode);
+            await _unitOfWork.RoleRepository.AddToRoleAsync(taiKhoan, roleCode);
 
             return ServiceResult.Success("Tạo tài khoản thành công.", taiKhoan);
         }
@@ -181,7 +180,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
             taiKhoan.FullName = nhanVien.HoTen;
             taiKhoan.PhoneNumber = nhanVien.SoDienThoai;
 
-            var updateAccountResult = await _taiKhoanRepository.UpdateUserAsync(taiKhoan);
+            var updateAccountResult = await _unitOfWork.IdentityRepository.UpdateUserAsync(taiKhoan);
             if (!updateAccountResult.Succeeded)
             {
                 return ServiceResult.Failure("Cập nhật thông tin tài khoản thất bại.");
@@ -192,7 +191,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
             nhanVien.Email = request.Email; // Chỉ cập nhật email
             // LoaiNhanVien và các field khác giữ nguyên
 
-            var updateEmployeeResult = await _nhanVienRepository.UpdateNhanVienAsync(nhanVien);
+            var updateEmployeeResult = await _unitOfWork.NhanVienRepository.UpdateNhanVienAsync(nhanVien);
             if (!updateEmployeeResult)
             {
                 return ServiceResult.Failure("Cập nhật thông tin nhân viên thất bại.");
@@ -203,9 +202,9 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
 
         public async Task<ServiceResult> GetProfileByUserIdAsync(Guid userId)
         {
-            var taiKhoan = await _taiKhoanRepository.FindByUserIDAsync(userId.ToString());
+            var taiKhoan = await _unitOfWork.IdentityRepository.FindByUserIDAsync(userId.ToString());
             if (taiKhoan == null) return ServiceResult.Failure("Không tìm thấy tài khoản.");
-            var nhanVien = await _nhanVienRepository.GetNhanVienByTaiKhoanIdAsync(taiKhoan.Id);
+            var nhanVien = await _unitOfWork.NhanVienRepository.GetNhanVienByTaiKhoanIdAsync(taiKhoan.Id);
             if (nhanVien == null) return ServiceResult.Failure("Không tìm thấy nhân viên.");
             var dto = _mapper.Map<NhanVienTaiKhoanDTO>(nhanVien);
             return ServiceResult.Success("Lấy profile thành công.", dto);

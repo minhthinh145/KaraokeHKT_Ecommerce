@@ -1,43 +1,28 @@
 ﻿using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Booking
 {
-    public interface IHoaDonRepository
+    public interface IHoaDonRepository : IGenericRepository<HoaDonDichVu, Guid>
     {
         /// <summary>
-        /// Tạo hóa đơn dịch vụ
+        /// Lấy hóa đơn kèm khách hàng + tài khoản navigation 
         /// </summary>
-        Task<HoaDonDichVu> CreateHoaDonAsync(HoaDonDichVu hoaDon);
+        Task<HoaDonDichVu?> GetHoaDonWithKhachHangAsync(Guid maHoaDon);
 
         /// <summary>
-        /// Tạo chi tiết hóa đơn dịch vụ
-        /// </summary>
-        Task<ChiTietHoaDonDichVu> CreateChiTietHoaDonAsync(ChiTietHoaDonDichVu chiTiet);
-
-        /// <summary>
-        /// Lấy hóa đơn theo ID
-        /// </summary>
-        Task<HoaDonDichVu?> GetHoaDonByIdAsync(Guid maHoaDon);
-
- 
-        /// <summary>
-        /// Cập nhật trạng thái hóa đơn
-        /// </summary>
-        Task<bool> UpdateHoaDonStatusAsync(Guid maHoaDon, string trangThai);
-
-        /// <summary>
-        /// Lấy chi tiết hóa đơn theo mã hóa đơn
-        /// </summary>
-        Task<List<ChiTietHoaDonDichVu>> GetChiTietHoaDonAsync(Guid maHoaDon);
-
-        /// <summary>
-        /// Lấy hóa đơn kèm chi tiết theo ID
+        /// Lấy hóa đơn kèm chi tiết + navigation properties (full details)
         /// </summary>
         Task<HoaDonDichVu?> GetHoaDonWithDetailsAsync(Guid maHoaDon);
 
         /// <summary>
-        /// Xóa chi tiết hóa đơn theo mã hóa đơn
+        /// Lấy hóa đơn theo thuê phòng 
         /// </summary>
-        Task<bool> DeleteChiTietHoaDonByMaHoaDonAsync(Guid maHoaDon);
+        Task<HoaDonDichVu?> GetHoaDonByThuePhongAsync(Guid maKhachHang, DateTime thoiGianBatDau, int toleranceMinutes = 5);
+
+        /// <summary>
+        /// Cập nhật trạng thái hóa đơn
+        /// </summary>
+        Task<bool> UpdateHoaDonStatusAsync(Guid maHoaDon, string trangThai);
     }
 }

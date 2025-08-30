@@ -3,6 +3,7 @@ using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs;
 using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Customer;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Customer;
 
@@ -10,12 +11,12 @@ namespace QLQuanKaraokeHKT.Application.Services.Customer
 {
     public class KhachHangService : IKhachHangService
     {
-        private readonly IKhacHangRepository _repo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public KhachHangService(IKhacHangRepository repo, IMapper mapper)
+        public KhachHangService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         public async Task<ServiceResult> CreateKhachHangByDangKyAsync(SignUpDTO signUp)
@@ -27,7 +28,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Customer
             }
             var khachHang = _mapper.Map<KhachHang>(applicationUser);
             khachHang.MaKhachHang = Guid.NewGuid(); // Tạo mã khách hàng duy nhất
-            var isCreated = await _repo.CreateKhacHangAsync(khachHang);
+            var isCreated = await _unitOfWork.KhachHangRepository.CreateKhacHangAsync(khachHang);
             if (isCreated == null)
             {
                 return ServiceResult.Failure("Tạo khách hàng không thành công.");
@@ -39,7 +40,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Customer
 
         public async Task<ServiceResult> GetAllKhacHangAsync()
         {
-           var khachHangs = await _repo.GetAllAsync();
+           var khachHangs = await _unitOfWork.KhachHangRepository.GetAllAsync();
             if (khachHangs == null || !khachHangs.Any())
             {
                 return ServiceResult.Failure("Không tìm thấy khách hàng nào.");
@@ -50,7 +51,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Customer
 
         public async Task<ServiceResult> GetKhachHangByIdAsync(Guid maKhachHang)
         {
-            var khachHang = await _repo.GetByIdAsync(maKhachHang);
+            var khachHang = await _unitOfWork.KhachHangRepository.GetByIdAsync(maKhachHang);
             if (khachHang == null)
             {
                 return ServiceResult.Failure("Không tìm thấy khách hàng với ID đã cho.");
@@ -66,10 +67,10 @@ namespace QLQuanKaraokeHKT.Application.Services.Customer
                 return ServiceResult.Failure("Không tìm thấy khách hàng với ID đã cho.");
             }
             //map tài khoản vs khách hàng
-            var khachHang = await _repo.GetByAccountIdAsync(TaiKhoankhachHang.Id);
+            var khachHang = await _unitOfWork.KhachHangRepository.GetByAccountIdAsync(TaiKhoankhachHang.Id);
             var khachHangMap = _mapper.Map<TaiKhoan, KhachHang>(TaiKhoankhachHang, khachHang);
 
-            var isUpdated = await _repo.UpdateAsync(khachHang);
+            var isUpdated = await _unitOfWork.KhachHangRepository.UpdateAsync(khachHang);
             if (!isUpdated)
             {
                 return ServiceResult.Failure("Cập nhật khách hàng không thành công.");

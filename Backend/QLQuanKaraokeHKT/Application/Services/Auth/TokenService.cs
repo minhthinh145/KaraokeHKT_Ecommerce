@@ -9,17 +9,17 @@ using System.Text;
 
 namespace QLQuanKaraokeHKT.Application.Services.Auth
 {
-    public class AuthService : IAuthService
+    public class TokenService : ITokenService
     {
         private readonly UserManager<TaiKhoan> _userManager;
         private readonly IConfiguration _configuration;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
-        private readonly ILogger<AuthService> _logger;
+        private readonly ILogger<TokenService> _logger;
 
-        public AuthService(UserManager<TaiKhoan> userManager, IConfiguration configuration, 
+        public TokenService(UserManager<TaiKhoan> userManager, IConfiguration configuration, 
             IRefreshTokenRepository refreshTokenRepository,
-            ILogger<AuthService> logger
+            ILogger<TokenService> logger
             )
         {
             _userManager = userManager;
@@ -61,7 +61,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(authClaims),
-                Expires = DateTime.UtcNow.AddMinutes(55), // Access token có thời gian ngắn
+                Expires = DateTime.UtcNow.AddHours(10), 
                 Issuer = _configuration["JWT:ValidIssuer"],
                 Audience = _configuration["JWT:ValidAudience"],
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(authKey), SecurityAlgorithms.HmacSha512Signature)

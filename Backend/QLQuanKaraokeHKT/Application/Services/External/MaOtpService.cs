@@ -2,24 +2,25 @@
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs;
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
 
-namespace QLQuanKaraokeHKT.Application.Services.Auth
+namespace QLQuanKaraokeHKT.Application.Services.External
 {
     public class MaOtpService : IMaOtpService
     {
         private readonly ISendEmailService _sendEmailService;
-        private readonly IMaOtpRepository _maOtpRepository;
-        private readonly ITaiKhoanRepository _taiKhoanRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMaOtpRepository _maOtpRepository; // ✅ Will be assigned via UnitOfWork
         private readonly IMapper _mapper;
-        private readonly int _otpExpirationTime = 15; //15 phút là hết hạn
+        private readonly int _otpExpirationTime = 15;
 
-        public MaOtpService(ISendEmailService sendEmailService, IMaOtpRepository repo, ITaiKhoanRepository authRepo, IMapper mapper)
+        public MaOtpService(ISendEmailService sendEmailService, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _sendEmailService = sendEmailService;
-            _maOtpRepository = repo;
-            _taiKhoanRepository = authRepo;
+            _unitOfWork = unitOfWork;
+            _maOtpRepository = unitOfWork.MaOtpRepository; // ✅ FIX: Assign from UnitOfWork
             _mapper = mapper;
         }
 
@@ -27,7 +28,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
         {
             try
             {
-                var user = await _taiKhoanRepository.FindByEmailAsync(email);
+                var user = await _unitOfWork.IdentityRepository.FindByEmailAsync(email);
                 if (user == null)
                 {
                     return ServiceResult.Failure("Không tìm thấy User với email này.");
@@ -47,7 +48,10 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                     ExpirationTime = expirationTime
                 };
                 var userOtp = _mapper.Map<MaOtp>(otpDTO);
-                await _maOtpRepository.CreateAsync(userOtp);
+                
+                // ✅ Use UnitOfWork pattern
+                await _unitOfWork.MaOtpRepository.CreateAsync(userOtp);
+                await _unitOfWork.SaveChangesAsync();
 
                 await _sendEmailService.SendOtpEmailAsync(user.Email, otpCode);
                 return ServiceResult.Success("OTP đã được gửi thành công");
@@ -62,11 +66,12 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
         {
             try
             {
-                var user = await _taiKhoanRepository.FindByEmailAsync(email);
+                var user = await _unitOfWork.IdentityRepository.FindByEmailAsync(email);
                 if (user == null)
                     return ServiceResult.Failure("Không tìm thấy User với email này.");
 
-                var userOTP = await _maOtpRepository.GetOtpByCodeAsync(otpCode);
+                // ✅ Use UnitOfWork pattern
+                var userOTP = await _unitOfWork.MaOtpRepository.GetOtpByCodeAsync(otpCode);
                 if (userOTP == null)
                     return ServiceResult.Failure("OTP không hợp lệ hoặc đã hết hạn.");
 
@@ -91,11 +96,17 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
         {
             try
             {
-                var user = await _taiKhoanRepository.FindByEmailAsync(email);
+                var user = await _unitOfWork.IdentityRepository.FindByEmailAsync(email);
                 if (user == null)
                     return ServiceResult.Failure("Không tìm thấy User với email này.");
 
-                var result = await _maOtpRepository.MarkOtpAsUsedAsync(user.Id, otpCode);
+                // ✅ Use UnitOfWork pattern
+                var result = await _unitOfWork.MaOtpRepository.MarkOtpAsUsedAsync(user.Id, otpCode);
+                if (result)
+                {
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                
                 return result
                     ? ServiceResult.Success("OTP đã được đánh dấu là đã sử dụng.")
                     : ServiceResult.Failure("Không thể đánh dấu OTP là đã sử dụng hoặc OTP không hợp lệ.");

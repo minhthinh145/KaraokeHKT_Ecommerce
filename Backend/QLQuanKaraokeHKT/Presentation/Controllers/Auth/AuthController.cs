@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using QLQuanKaraokeHKT.Application.Services.Auth;
 using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Auth;
 using QLQuanKaraokeHKT.Presentation.Extensions;
@@ -11,13 +12,22 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly ITaiKhoanService _taiKhoanService;
-        private readonly IAuthService _authService;
+        private readonly IAuthOrchestrator _authOrchestrator; 
+        private readonly ITokenService _tokenService;
+        private readonly IUserProfileService _userProfileService;
+        private readonly IUserAuthenticationService _userAuthenticationService;
 
-        public AuthController(ITaiKhoanService taiKhoanService, IAuthService authService)
+        public AuthController(
+            IAuthOrchestrator authOrchestrator,
+            ITokenService tokenService,
+            IUserProfileService userProfileService,
+            IUserAuthenticationService userAuthenticationService
+            )
         {
-            _taiKhoanService = taiKhoanService;
-            _authService = authService;
+            _authOrchestrator = authOrchestrator ?? throw new ArgumentNullException(nameof(authOrchestrator));
+            _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
+            _userProfileService = userProfileService;
+            _userAuthenticationService = userAuthenticationService;
         }
 
         [HttpPost("signin")]
@@ -27,7 +37,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
             if (modelValidation != null)
                 return modelValidation;
 
-            var result = await _taiKhoanService.SignInAsync(signIn);
+            var result = await _authOrchestrator.ExecuteSignInWorkflowAsync(signIn);
             return result.IsSuccess ? Ok(result) : Unauthorized(result);
         }
 
@@ -38,7 +48,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
             if (modelValidation != null)
                 return modelValidation;
 
-            var result = await _taiKhoanService.SignUpAsync(signUp);
+            var result = await _authOrchestrator.ExecuteSignUpWorkflowAsync(signUp);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
@@ -61,7 +71,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
 
             try
             {
-                var accessToken = await _authService.RefreshAccessTokenAsync(request.RefreshToken);
+                var accessToken = await _tokenService.RefreshAccessTokenAsync(request.RefreshToken);
                 return Ok(new
                 {
                     message = "Token refreshed successfully.",
@@ -99,7 +109,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
             {
                 if (!string.IsNullOrEmpty(request.RefreshToken))
                 {
-                    await _authService.RevokeRefreshTokenAsync(request.RefreshToken);
+                    await _tokenService.RevokeRefreshTokenAsync(request.RefreshToken);
                 }
 
                 return Ok(new { message = "Đăng xuất thành công.", success = true });
@@ -121,7 +131,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
                 if (validationResult != null)
                     return validationResult;
 
-                var result = await _taiKhoanService.GetProfileUserAsync(userId);
+                var result = await _userProfileService.GetUserProfileAsync(userId);
                 return result.IsSuccess ? Ok(result) : NotFound(result);
             }
             catch (Exception ex)
@@ -142,7 +152,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
             if (validationResult != null)
                 return validationResult;
 
-            var result = await _taiKhoanService.UpdateUserById(userId, user);
+            var result = await _userProfileService.UpdateUserProfileAsync(userId, user);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
@@ -163,8 +173,8 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
                 });
             }
 
-            var result = await _taiKhoanService.CheckPasswordAsync(userId, password);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+            var result = await _userAuthenticationService.CheckPasswordAsync(userId, password);
+            return result ? Ok(result) : BadRequest(result);
         }
     }
 }

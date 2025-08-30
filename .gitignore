@@ -5,6 +5,7 @@
 # IDE / Editor
 /.vs/
 **/.vs/
+Backend/.vs/
 .vscode/
 .idea/
 *.suo

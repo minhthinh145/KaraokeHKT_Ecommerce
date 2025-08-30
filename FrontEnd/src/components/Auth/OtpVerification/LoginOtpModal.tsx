@@ -7,6 +7,7 @@ interface LoginOtpModalProps {
   onClose: () => void;
   onVerificationSuccess: () => void;
   userEmail: string;
+  autoSend: boolean;
 }
 
 export const LoginOtpModal: React.FC<LoginOtpModalProps> = ({
@@ -14,6 +15,7 @@ export const LoginOtpModal: React.FC<LoginOtpModalProps> = ({
   onClose,
   onVerificationSuccess,
   userEmail,
+  autoSend = false,
 }) => {
   const {
     otpCode,
@@ -29,7 +31,7 @@ export const LoginOtpModal: React.FC<LoginOtpModalProps> = ({
 
   // Auto send OTP when modal opens
   useEffect(() => {
-    if (isOpen) {
+    if (autoSend && isOpen) {
       handleSendOtp(userEmail);
     }
   }, [isOpen, userEmail, handleSendOtp]);

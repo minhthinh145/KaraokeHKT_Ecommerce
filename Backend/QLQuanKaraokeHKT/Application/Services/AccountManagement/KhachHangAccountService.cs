@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Customer;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
 
@@ -9,15 +9,13 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
 {
     public class KhachHangAccountService : IKhachHangAccountService
     {
-        private readonly IKhacHangRepository _khachHangRepository;
+        private readonly IKhachHangRepository _khachHangRepository;
         private readonly IMapper _mapper;
-        private readonly ITaiKhoanRepository _taiKhoanRepository;
 
-        public KhachHangAccountService(IKhacHangRepository khacHangRepository,IMapper mapper, ITaiKhoanRepository taiKhoanRepository)
+        public KhachHangAccountService(IKhachHangRepository khacHangRepository,IMapper mapper,  IUnitOfWork unitOfWork)
         {
             _khachHangRepository = khacHangRepository;
             _mapper = mapper;
-            _taiKhoanRepository = taiKhoanRepository ?? throw new ArgumentNullException(nameof(taiKhoanRepository));
         }
 
 

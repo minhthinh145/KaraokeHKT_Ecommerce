@@ -13,7 +13,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Base
         protected readonly DbSet<TEntity> _dbSet;
 
         public GenericRepository(QlkaraokeHktContext context)
-        {   
+        {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _dbSet = context.Set<TEntity>();
         }
@@ -64,7 +64,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Base
             try
             {
                 await _dbSet.AddAsync(entity);
-                await _context.SaveChangesAsync();
                 return entity;
             }
             catch (Exception)
@@ -81,8 +80,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Base
             try
             {
                 _dbSet.Update(entity);
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
+                return true;
             }
             catch (Exception)
             {
@@ -99,8 +97,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Base
                     return false;
 
                 _dbSet.Remove(entity);
-                var result = await _context.SaveChangesAsync();
-                return result > 0;
+                return true;
             }
             catch (Exception)
             {

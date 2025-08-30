@@ -3,10 +3,7 @@ using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.BookingDTOs;
 using QLQuanKaraokeHKT.Core.DTOs.VNPayDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Booking;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Customer;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Inventory;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Room;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Booking;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Payment;
 
@@ -14,43 +11,31 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
 {
     public class KhachHangDatPhongService : IKhachHangDatPhongService
     {
-        private readonly IThuePhongRepository _thuePhongRepository;
-        private readonly IPhongHatRepository _phongHatRepository;
-        private readonly IKhacHangRepository _khachHangRepository;
-        private readonly IGiaDichVuRepository _giaDichVuRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IVNPayService _vnPayService;
         private readonly IMapper _mapper;
         private readonly ILogger<KhachHangDatPhongService> _logger;
-        private readonly ILichSuSuDungPhongRepository _lichSuSuDungPhongRepository;
-        private readonly IHoaDonRepository _hoaDonRepository;
+
 
         public KhachHangDatPhongService(
-            IThuePhongRepository thuePhongRepository,
-            IPhongHatRepository phongHatRepository,
-            IKhacHangRepository khachHangRepository,
-            IGiaDichVuRepository giaDichVuRepository,
-            IHoaDonRepository hoaDonRepository,
+         
             IVNPayService vnPayService,
             IMapper mapper,
-            ILichSuSuDungPhongRepository lichSuSuDungPhongRepository,
+            IUnitOfWork unitOfWork,
             ILogger<KhachHangDatPhongService> logger)
         {
-            _thuePhongRepository = thuePhongRepository;
-            _phongHatRepository = phongHatRepository;
-            _khachHangRepository = khachHangRepository;
-            _giaDichVuRepository = giaDichVuRepository;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _vnPayService = vnPayService;
             _mapper = mapper;
             _logger = logger;
-            _lichSuSuDungPhongRepository = lichSuSuDungPhongRepository ?? throw new ArgumentNullException(nameof(lichSuSuDungPhongRepository));
-            _hoaDonRepository = hoaDonRepository ?? throw new ArgumentNullException(nameof(hoaDonRepository));
+      
         }
 
         public async Task<ServiceResult> GetPhongHatAvailableAsync()
         {
             try
             {
-                var phongHats = await _phongHatRepository.GetAllPhongHatWithDetailsAsync();
+                var phongHats = await _unitOfWork.PhongHatRepository.GetAllPhongHatWithDetailsAsync();
                 var availablePhongs = phongHats.Where(p => !p.DangSuDung && !p.NgungHoatDong).ToList();
 
                 if (!availablePhongs.Any())
@@ -78,7 +63,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
         {
             try
             {
-                var phongHats = await _phongHatRepository.GetPhongHatByLoaiPhongAsync(maLoaiPhong);
+                var phongHats = await _unitOfWork.PhongHatRepository.GetPhongHatByLoaiPhongAsync(maLoaiPhong);
                 var availablePhongs = phongHats.Where(p => !p.DangSuDung && !p.NgungHoatDong).ToList();
 
                 if (!availablePhongs.Any())
@@ -106,7 +91,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
         {
             try
             {
-                var khachHang = await _khachHangRepository.GetByAccountIdAsync(userId);
+                var khachHang = await _unitOfWork.KhachHangRepository.GetByAccountIdAsync(userId);
                 if (khachHang == null)
                     return ServiceResult.Failure("Không tìm thấy thông tin khách hàng.");
 
@@ -123,7 +108,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 if (!validationResult.IsSuccess)
                     return validationResult;
 
-                var phong = await _phongHatRepository.GetPhongHatWithDetailsByIdAsync(datPhongDto.MaPhong);
+                var phong = await _unitOfWork.PhongHatRepository.GetPhongHatWithDetailsByIdAsync(datPhongDto.MaPhong);
                 if (phong?.MaSanPhamNavigation == null)
                     return ServiceResult.Failure("Thông tin phòng không hợp lệ.");
 
@@ -131,7 +116,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 var tongTien = giaPhong * datPhongDto.SoGioSuDung;
                 var thoiGianKetThucDuKien = thoiGianBatDauVietnam.AddHours(datPhongDto.SoGioSuDung);
 
-                await _phongHatRepository.UpdateDangSuDungAsync(datPhongDto.MaPhong, true);
+                await _unitOfWork.PhongHatRepository.UpdateDangSuDungAsync(datPhongDto.MaPhong, true);
 
                 var hoaDon = new HoaDonDichVu
                 {
@@ -144,14 +129,14 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                     TrangThai = "ChuaThanhToan"
                 };
 
-                var createdHoaDon = await _hoaDonRepository.CreateHoaDonAsync(hoaDon);
+                var createdHoaDon = await _unitOfWork.HoaDonRepository.CreateAsync(hoaDon);
 
                 var thuePhong = _mapper.Map<ThuePhong>(datPhongDto);
                 thuePhong.ThoiGianKetThuc = thoiGianKetThucDuKien;
                 thuePhong.TrangThai = "Pending";
                 thuePhong.MaHoaDon = createdHoaDon.MaHoaDon; 
 
-                var createdThuePhong = await _thuePhongRepository.CreateThuePhongAsync(thuePhong);
+                var createdThuePhong = await _unitOfWork.ThuePhongRepository.CreateThuePhongAsync(thuePhong);
 
                 var chiTietHoaDon = new ChiTietHoaDonDichVu
                 {
@@ -160,7 +145,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                     SoLuong = datPhongDto.SoGioSuDung
                 };
 
-                await _hoaDonRepository.CreateChiTietHoaDonAsync(chiTietHoaDon);
+                await _unitOfWork.ChiTietHoaDonDichVuRepository.CreateAsync(chiTietHoaDon);
 
                 var response = new TaoHoaDonPhongResponseDTO
                 {
@@ -210,7 +195,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
             try
             {
                 // ✅ LẤY HÓA ĐƠN QUA REPOSITORY
-                var hoaDon = await _hoaDonRepository.GetHoaDonByIdAsync(xacNhanDto.MaHoaDon);
+                var hoaDon = await _unitOfWork.HoaDonRepository.GetByIdAsync(xacNhanDto.MaHoaDon);
 
                 if (hoaDon == null)
                     return ServiceResult.Failure("Không tìm thấy hóa đơn.");
@@ -218,7 +203,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 if (hoaDon.TrangThai != "ChuaThanhToan")
                     return ServiceResult.Failure("Hóa đơn đã được xử lý hoặc đã hủy.");
 
-                var thuePhong = await _thuePhongRepository.GetThuePhongByIdAsync(xacNhanDto.MaThuePhong);
+                var thuePhong = await _unitOfWork.ThuePhongRepository.GetThuePhongByIdAsync(xacNhanDto.MaThuePhong);
                 if (thuePhong == null || thuePhong.TrangThai != "Pending")
                     return ServiceResult.Failure("Thông tin thuê phòng không hợp lệ.");
 
@@ -268,12 +253,12 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 var vnpayResponse = (VNPayResponseDTO)vnpayResult.Data;
 
                 // 2. ✅ LẤY HÓA ĐƠN QUA REPOSITORY
-                var hoaDon = await _hoaDonRepository.GetHoaDonByIdAsync(vnpayResponse.OrderId);
+                var hoaDon = await _unitOfWork.HoaDonRepository.GetByIdAsync(vnpayResponse.OrderId);
                 if (hoaDon == null)
                     return ServiceResult.Failure("Không tìm thấy hóa đơn.");
 
                 // ✅ TÌM THUEPHONG BẰNG MaHoaDon THAY VÌ MaKhachHang
-                var thuePhongs = await _thuePhongRepository.GetThuePhongByKhachHangWithDetailsAsync(hoaDon.MaKhachHang);
+                var thuePhongs = await _unitOfWork.ThuePhongRepository.GetThuePhongByKhachHangWithDetailsAsync(hoaDon.MaKhachHang);
                 var thuePhong = thuePhongs.FirstOrDefault(t => t.MaHoaDon == hoaDon.MaHoaDon && t.TrangThai == "Pending");
 
                 if (thuePhong == null)
@@ -283,8 +268,8 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 {
                     // ✅ THANH TOÁN THÀNH CÔNG
                     // 3. Cập nhật trạng thái qua repository
-                    await _hoaDonRepository.UpdateHoaDonStatusAsync(hoaDon.MaHoaDon, "DaThanhToan");
-                    await _thuePhongRepository.UpdateTrangThaiAsync(thuePhong.MaThuePhong, "DangSuDung");
+                    await _unitOfWork.HoaDonRepository.UpdateHoaDonStatusAsync(hoaDon.MaHoaDon, "DaThanhToan");
+                    await _unitOfWork.ThuePhongRepository.UpdateTrangThaiAsync(thuePhong.MaThuePhong, "DangSuDung");
 
                     // 4. ✅ TẠO LỊCH SỬ SỬ DỤNG QUA REPOSITORY
                     var lichSuSuDung = new LichSuSuDungPhong
@@ -297,7 +282,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                         MaThuePhong = thuePhong.MaThuePhong
                     };
 
-                    await _thuePhongRepository.CreateLichSuSuDungPhongAsync(lichSuSuDung);
+                    await _unitOfWork.LichSuSuDungPhongRepository.CreateLichSuAsync(lichSuSuDung);
 
                     return ServiceResult.Success("Thanh toán thành công. Phòng đã sẵn sàng sử dụng.", new
                     {
@@ -312,11 +297,11 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 else
                 {
                     // Thanh toán thất bại
-                    await _hoaDonRepository.UpdateHoaDonStatusAsync(hoaDon.MaHoaDon, "DaHuy");
-                    await _thuePhongRepository.UpdateTrangThaiAsync(thuePhong.MaThuePhong, "DaHuy");
+                    await _unitOfWork.HoaDonRepository.UpdateHoaDonStatusAsync(hoaDon.MaHoaDon, "DaHuy");
+                    await _unitOfWork.ThuePhongRepository.UpdateTrangThaiAsync(thuePhong.MaThuePhong, "DaHuy");
 
                     // Trả lại phòng
-                    await _phongHatRepository.UpdateDangSuDungAsync(thuePhong.MaPhong, false);
+                    await _unitOfWork.PhongHatRepository.UpdateDangSuDungAsync(thuePhong.MaPhong, false);
 
                     return ServiceResult.Failure($"Thanh toán thất bại: {vnpayResponse.ErrorMessage}");
                 }
@@ -332,7 +317,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
         {
             try
             {
-                var khachHang = await _khachHangRepository.GetByAccountIdAsync(userId);
+                var khachHang = await _unitOfWork.KhachHangRepository.GetByAccountIdAsync(userId);
                 if (khachHang == null)
                     return ServiceResult.Failure("Không tìm thấy thông tin khách hàng.");
 
@@ -353,7 +338,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
             try
             {
                 // ✅ LẤY TẤT CẢ THUEPHONG CỦA KHÁCH HÀNG
-                var thuePhongs = await _thuePhongRepository.GetThuePhongByKhachHangWithDetailsAsync(maKhachHang);
+                var thuePhongs = await _unitOfWork.ThuePhongRepository.GetThuePhongByKhachHangWithDetailsAsync(maKhachHang);
 
                 if (!thuePhongs.Any())
                     return ServiceResult.Failure("Khách hàng chưa có lịch sử đặt phòng.");
@@ -366,7 +351,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                     HoaDonDichVu? hoaDon = null;
                     if (thuePhong.MaHoaDon.HasValue)
                     {
-                        hoaDon = await _hoaDonRepository.GetHoaDonByIdAsync(thuePhong.MaHoaDon.Value);
+                        hoaDon = await _unitOfWork.HoaDonRepository.GetByIdAsync(thuePhong.MaHoaDon.Value);
                     }
 
                     // ✅ MAPPING DỮ LIỆU HOÀN CHỈNH
@@ -422,7 +407,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
         {
             try
             {
-                var thuePhong = await _thuePhongRepository.GetThuePhongByIdAsync(maThuePhong);
+                var thuePhong = await _unitOfWork.ThuePhongRepository.GetThuePhongByIdAsync(maThuePhong);
 
                 if (thuePhong == null)
                     return ServiceResult.Failure("Không tìm thấy thông tin đặt phòng.");
@@ -437,7 +422,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 HoaDonDichVu? hoaDon = null;
                 if (thuePhong.MaHoaDon.HasValue)
                 {
-                    hoaDon = await _hoaDonRepository.GetHoaDonByIdAsync(thuePhong.MaHoaDon.Value);
+                    hoaDon = await _unitOfWork.HoaDonRepository.GetByIdAsync(thuePhong.MaHoaDon.Value);
                     
                     // Kiểm tra trạng thái hóa đơn
                     if (hoaDon != null && hoaDon.TrangThai == "DaThanhToan")
@@ -449,14 +434,14 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 // ✅ HỦY HÓA ĐƠN THÔNG QUA MaHoaDon TRONG THUEPHONG
                 if (thuePhong.MaHoaDon.HasValue)
                 {
-                    await _hoaDonRepository.UpdateHoaDonStatusAsync(thuePhong.MaHoaDon.Value, "DaHuy");
+                    await _unitOfWork.HoaDonRepository.UpdateHoaDonStatusAsync(thuePhong.MaHoaDon.Value, "DaHuy");
                 }
 
                 // ✅ CẬP NHẬT TRẠNG THÁI THUEPHONG
-                await _thuePhongRepository.UpdateTrangThaiAsync(maThuePhong, "DaHuy");
+                await _unitOfWork.ThuePhongRepository.UpdateTrangThaiAsync(maThuePhong, "DaHuy");
 
                 // ✅ TRẢ LẠI PHÒNG
-                await _phongHatRepository.UpdateDangSuDungAsync(thuePhong.MaPhong, false);
+                await _unitOfWork.PhongHatRepository.UpdateDangSuDungAsync(thuePhong.MaPhong, false);
 
                 var responseMessage = hoaDon != null ? 
                     $"Hủy đặt phòng thành công. Hóa đơn {hoaDon.TenHoaDon} đã được hủy." :
@@ -481,7 +466,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
         {
             try
             {
-                var khachHang = await _khachHangRepository.GetByAccountIdAsync(userId);
+                var khachHang = await _unitOfWork.KhachHangRepository.GetByAccountIdAsync(userId);
                 if (khachHang == null)
                     return ServiceResult.Failure("Không tìm thấy thông tin khách hàng.");
 
@@ -501,7 +486,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
         {
             try
             {
-                var khachHang = await _khachHangRepository.GetByAccountIdAsync(userId);
+                var khachHang = await _unitOfWork.KhachHangRepository.GetByAccountIdAsync(userId);
                 if (khachHang == null)
                     return ServiceResult.Failure("Không tìm thấy thông tin khách hàng.");
 
@@ -522,7 +507,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
             try
             {
                 // ✅ LẤY TẤT CẢ THUEPHONG CỦA KHÁCH HÀNG CÓ TRẠNG THÁI PENDING
-                var thuePhongs = await _thuePhongRepository.GetThuePhongByKhachHangWithDetailsAsync(maKhachHang);
+                var thuePhongs = await _unitOfWork.ThuePhongRepository.GetThuePhongByKhachHangWithDetailsAsync(maKhachHang);
                 var thuePhongsPending = thuePhongs.Where(t => t.TrangThai == "Pending" && t.MaHoaDon.HasValue).ToList();
 
                 if (!thuePhongsPending.Any())
@@ -533,7 +518,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 foreach (var thuePhong in thuePhongsPending)
                 {
                     // ✅ LẤY HÓA ĐƠN THÔNG QUA MaHoaDon TRONG THUEPHONG
-                    var hoaDon = await _hoaDonRepository.GetHoaDonByIdAsync(thuePhong.MaHoaDon.Value);
+                    var hoaDon = await _unitOfWork.HoaDonRepository.GetByIdAsync(thuePhong.MaHoaDon.Value);
                     
                     if (hoaDon == null || hoaDon.TrangThai != "ChuaThanhToan")
                         continue; // Bỏ qua nếu không có hóa đơn hoặc hóa đơn không phải chưa thanh toán
@@ -599,11 +584,11 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
         {
             try
             {
-                var khachHang = await _khachHangRepository.GetByAccountIdAsync(userId);
+                var khachHang = await _unitOfWork.KhachHangRepository.GetByAccountIdAsync(userId);
                 if (khachHang == null)
                     return ServiceResult.Failure("Không tìm thấy thông tin khách hàng.");
 
-                var thuePhong = await _thuePhongRepository.GetThuePhongByIdAsync(maThuePhong);
+                var thuePhong = await _unitOfWork.ThuePhongRepository.GetThuePhongByIdAsync(maThuePhong);
                 if (thuePhong == null || thuePhong.MaKhachHang != khachHang.MaKhachHang)
                     return ServiceResult.Failure("Không tìm thấy thông tin đặt phòng.");
 
@@ -611,7 +596,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 if (!thuePhong.MaHoaDon.HasValue)
                     return ServiceResult.Failure("Không tìm thấy hóa đơn liên quan.");
 
-                var hoaDon = await _hoaDonRepository.GetHoaDonWithDetailsAsync(thuePhong.MaHoaDon.Value);
+                var hoaDon = await _unitOfWork.HoaDonRepository.GetHoaDonWithDetailsAsync(thuePhong.MaHoaDon.Value);
                 if (hoaDon == null)
                     return ServiceResult.Failure("Không tìm thấy hóa đơn.");
 
@@ -635,14 +620,14 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                 };
 
                 // Hủy hóa đơn cũ và tạo mới
-                await _hoaDonRepository.UpdateHoaDonStatusAsync(hoaDon.MaHoaDon, "DaHuy");
-                var createdHoaDon = await _hoaDonRepository.CreateHoaDonAsync(hoaDonMoi);
+                await _unitOfWork.HoaDonRepository.UpdateHoaDonStatusAsync(hoaDon.MaHoaDon, "DaHuy");
+                var createdHoaDon = await _unitOfWork.HoaDonRepository.CreateAsync(hoaDonMoi);
 
                 // ✅ CẬP NHẬT MaHoaDon MỚI CHO THUEPHONG
-                await _thuePhongRepository.UpdateMaHoaDonAsync(thuePhong.MaThuePhong, createdHoaDon.MaHoaDon);
+                await _unitOfWork.ThuePhongRepository.UpdateMaHoaDonAsync(thuePhong.MaThuePhong, createdHoaDon.MaHoaDon);
 
                 // Copy chi tiết hóa đơn
-                var chiTietCu = await _hoaDonRepository.GetChiTietHoaDonAsync(hoaDon.MaHoaDon);
+                var chiTietCu = await _unitOfWork.ChiTietHoaDonDichVuRepository.GetChiTietByHoaDonAsync(hoaDon.MaHoaDon);
                 foreach (var chiTiet in chiTietCu)
                 {
                     var chiTietMoi = new ChiTietHoaDonDichVu
@@ -651,7 +636,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
                         MaSanPham = chiTiet.MaSanPham,
                         SoLuong = chiTiet.SoLuong
                     };
-                    await _hoaDonRepository.CreateChiTietHoaDonAsync(chiTietMoi);
+                    await _unitOfWork.ChiTietHoaDonDichVuRepository.CreateAsync(chiTietMoi);
                 }
 
                 return ServiceResult.Success("Tạo thanh toán lại thành công.", new
@@ -682,7 +667,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
             if (thoiGianBatDauVietnam < currentVietnamTime.AddMinutes(-5))
                 return ServiceResult.Failure($"Thời gian bắt đầu phải lớn hơn thời gian hiện tại. Hiện tại: {currentVietnamTime:dd/MM/yyyy HH:mm}, Đã chọn: {thoiGianBatDauVietnam:dd/MM/yyyy HH:mm}");
 
-            var phong = await _phongHatRepository.GetPhongHatWithDetailsByIdAsync(datPhongDto.MaPhong);
+            var phong = await _unitOfWork.PhongHatRepository.GetPhongHatWithDetailsByIdAsync(datPhongDto.MaPhong);
             if (phong == null)
                 return ServiceResult.Failure("Phòng hát không tồn tại.");
 
@@ -692,11 +677,11 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
             if (phong.NgungHoatDong)
                 return ServiceResult.Failure("Phòng hát đã ngừng hoạt động.");
 
-            var khachHang = await _khachHangRepository.GetByIdAsync(datPhongDto.MaKhachHang);
+            var khachHang = await _unitOfWork.KhachHangRepository.GetByIdAsync(datPhongDto.MaKhachHang);
             if (khachHang == null)
                 return ServiceResult.Failure("Khách hàng không tồn tại.");
 
-            var isAvailable = await _thuePhongRepository.CheckPhongAvailableAsync(
+            var isAvailable = await _unitOfWork.ThuePhongRepository.CheckPhongAvailableAsync(
                 datPhongDto.MaPhong,
                 thoiGianBatDauVietnam,
                 datPhongDto.SoGioSuDung);
@@ -712,7 +697,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
             var currentTime = TimeOnly.FromDateTime(DateTime.Now);
 
             // ✅ LẤY CA HIỆN TẠI QUA REPOSITORY
-            var caHienTai = await _thuePhongRepository.GetCurrentCaLamViecAsync();
+            var caHienTai = await _unitOfWork.ThuePhongRepository.GetCurrentCaLamViecAsync();
 
             // ✅ ƯU TIÊN LẤY GIÁ THEO CA HIỆN TẠI, NẾU KHÔNG CÓ THÌ LẤY GIÁ CHUNG
             GiaDichVu giaDichVu = null;
@@ -720,13 +705,13 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
             // Thử lấy giá theo ca hiện tại trước
             if (caHienTai != null)
             {
-                giaDichVu = await _giaDichVuRepository.GetGiaDichVuHienTaiAsync(maSanPham, currentDate, caHienTai.MaCa);
+                giaDichVu = await _unitOfWork.GiaDichVuRepository.GetGiaDichVuHienTaiAsync(maSanPham, currentDate, caHienTai.MaCa);
             }
 
             // Nếu không có giá theo ca, lấy giá chung (MaCa = null)
             if (giaDichVu == null)
             {
-                giaDichVu = await _giaDichVuRepository.GetGiaDichVuHienTaiAsync(maSanPham, currentDate, null);
+                giaDichVu = await _unitOfWork.GiaDichVuRepository.GetGiaDichVuHienTaiAsync(maSanPham, currentDate, null);
             }
 
             return giaDichVu?.DonGia ?? 0;

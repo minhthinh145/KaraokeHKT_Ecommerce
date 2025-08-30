@@ -1,20 +1,22 @@
 ﻿using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
+using QLQuanKaraokeHKT.Infrastructure;
 
 namespace QLQuanKaraokeHKT.Application.Services.Auth
 {
     public class VerifyAuthService : IVerifyAuthService
     {
         private readonly IMaOtpService _maOtpService;
-        private readonly ITaiKhoanRepository _taiKhoanRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public VerifyAuthService(IMaOtpService maOtpService, ITaiKhoanRepository taiKhoanRepository)
+        public VerifyAuthService(IMaOtpService maOtpService, IUnitOfWork unitOfWork )
         {
             _maOtpService = maOtpService ?? throw new ArgumentNullException(nameof(maOtpService));
-            _taiKhoanRepository = taiKhoanRepository ?? throw new ArgumentNullException(nameof(taiKhoanRepository));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
         public async Task<ServiceResult> VerifyAccountByEmail(VerifyAccountDTO verifyAccountDto)
@@ -31,7 +33,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                 if (!otpVerificationResult.IsSuccess)
                     return ServiceResult.Failure(otpVerificationResult.Message);
 
-                var user = await _taiKhoanRepository.FindByEmailAsync(verifyAccountDto.Email);
+                var user = await _unitOfWork.IdentityRepository.FindByEmailAsync(verifyAccountDto.Email);
                 if (user == null)
                     return ServiceResult.Failure("Không tìm thấy tài khoản người dùng.");
 
@@ -41,7 +43,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                 user.daKichHoat = true;
                 user.EmailConfirmed = true;
 
-                var updateResult = await _taiKhoanRepository.UpdateUserAsync(user);
+                var updateResult = await _unitOfWork.IdentityRepository.UpdateUserAsync(user);
                 if (!updateResult.Succeeded)
                     return ServiceResult.Failure("Không thể cập nhật trạng thái tài khoản.");
 

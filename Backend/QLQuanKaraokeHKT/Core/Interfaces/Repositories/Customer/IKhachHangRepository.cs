@@ -2,7 +2,7 @@
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Customer
 {
-    public interface IKhacHangRepository
+    public interface IKhachHangRepository
     {
         /// <summary>
         /// Lấy danh sách tất cả khách hàng

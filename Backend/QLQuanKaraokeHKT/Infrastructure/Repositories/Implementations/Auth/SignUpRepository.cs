@@ -107,47 +107,36 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
             string password,
             KhachHang khachHang)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var existingUser = await FindByEmailSignUpAsync(user.Email);
                 if (existingUser != null)
                 {
-                    await transaction.RollbackAsync();
                     return (IdentityResult.Failed(new IdentityError { Description = "Email đã được sử dụng." }), null);
                 }
 
                 var createResult = await _userManager.CreateAsync(user, password);
                 if (!createResult.Succeeded)
                 {
-                    await transaction.RollbackAsync();
                     return (createResult, null);
                 }
 
-                // 2. ✅ Flush để đảm bảo user được tạo trong database
-                await _context.SaveChangesAsync();
 
                 // 3. Assign role KhachHang
                 var roleResult = await _userManager.AddToRoleAsync(user, "KhachHang");
                 if (!roleResult.Succeeded)
                 {
-                    await transaction.RollbackAsync();
                     return (roleResult, null);
                 }
 
-                // 4. ✅ Set foreign key và tạo KhachHang record
                 khachHang.MaTaiKhoan = user.Id;
                 _context.KhachHangs.Add(khachHang);
 
-                // 5. Final save
-                await _context.SaveChangesAsync();
 
-                await transaction.CommitAsync();
                 return (IdentityResult.Success, user);
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
                 return (IdentityResult.Failed(new IdentityError { Description = $"Lỗi hệ thống: {ex.Message}" }), null);
             }
         }

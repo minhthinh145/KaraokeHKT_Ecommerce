@@ -2,7 +2,7 @@
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Services.Auth
 {
-    public interface IAuthService
+    public interface ITokenService
     {
         /// <summary>
         /// Generate an access token for a user by their ID.

@@ -3,6 +3,7 @@ using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs;
 using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.HRM;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
@@ -12,15 +13,13 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 {
     public class QLNhanSuService : IQLNhanSuService
     {
-        private readonly INhanVienRepository _nhanVienRepository;
-        private readonly ITaiKhoanRepository _taiKhoanRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ISendEmailService _emailService;
 
-        public QLNhanSuService(INhanVienRepository nhanVienRepository, ITaiKhoanRepository taiKhoanRepository, IMapper mapper, ISendEmailService emailService)
+        public QLNhanSuService(IUnitOfWork unitOfWork,IMapper mapper, ISendEmailService emailService)
         {
-            _nhanVienRepository = nhanVienRepository ?? throw new ArgumentNullException(nameof(nhanVienRepository));
-            _taiKhoanRepository = taiKhoanRepository ?? throw new ArgumentNullException(nameof(taiKhoanRepository));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         }
@@ -29,7 +28,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var nhanViens = await _nhanVienRepository.GetAllNhanVienAsync();
+                var nhanViens = await _unitOfWork.NhanVienRepository.GetAllNhanVienAsync();
                 if (nhanViens == null || !nhanViens.Any())
                 {
                     return ServiceResult.Failure("Không có nhân viên nào trong hệ thống.");
@@ -135,22 +134,22 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var existingNhanVien = await _nhanVienRepository.GetNhanVienByIdAsync(maNhanVien);
+                var existingNhanVien = await _unitOfWork.NhanVienRepository.GetNhanVienByIdAsync(maNhanVien);
                 if (existingNhanVien == null)
                     return ServiceResult.Failure("Không tìm thấy nhân viên.");
 
-                var updateResult = await _nhanVienRepository.UpdateNhanVienDaNghiViecAsync(maNhanVien, daNghiViec);
+                var updateResult = await _unitOfWork.NhanVienRepository.UpdateNhanVienDaNghiViecAsync(maNhanVien, daNghiViec);
                 if (!updateResult)
                     return ServiceResult.Failure("Cập nhật trạng thái nhân viên thất bại.");
 
                 if (daNghiViec)
                 {
-                    await _taiKhoanRepository.LockAccountAsync(existingNhanVien.MaTaiKhoan);
+                    await _unitOfWork.AccountManagementRepository.LockAccountAsync(existingNhanVien.MaTaiKhoan);
                     return ServiceResult.Success("Nhân viên đã được đánh dấu là đã nghỉ việc và tài khoản đã bị khóa.");
                 }
                 else
                 {
-                    await _taiKhoanRepository.UnlockAccountAsync(existingNhanVien.MaTaiKhoan);
+                    await _unitOfWork.AccountManagementRepository.UnlockAccountAsync(existingNhanVien.MaTaiKhoan);
                     return ServiceResult.Success("Nhân viên đã được đánh dấu là đang làm việc và tài khoản đã được mở khóa.");
                 }
             } catch(Exception ex)
@@ -195,7 +194,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 
         private async Task<ServiceResult> CheckEmailExistsAsync(string email)
         {
-            var existingUser = await _taiKhoanRepository.FindByEmailAsync(email);
+            var existingUser = await _unitOfWork.IdentityRepository.FindByEmailAsync(email);
             if (existingUser != null)
             {
                 return ServiceResult.Failure("Email đã được sử dụng bởi tài khoản khác.");
@@ -210,27 +209,27 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             taiKhoan.EmailConfirmed = true;
             taiKhoan.daBiKhoa = false;
 
-            var createUserResult = await _taiKhoanRepository.CreateUserAsync(taiKhoan, password);
+            var createUserResult = await _unitOfWork.IdentityRepository.CreateUserAsync(taiKhoan, password);
             if (!createUserResult.Succeeded)
             {
                 var errors = createUserResult.Errors.Select(e => e.Description).ToList();
                 return ServiceResult.Failure("Tạo tài khoản thất bại.", errors);
             }
 
-            await _taiKhoanRepository.AddToRoleAsync(taiKhoan, addNhanVienDto.LoaiTaiKhoan);
+            await _unitOfWork.RoleRepository.AddToRoleAsync(taiKhoan, addNhanVienDto.LoaiTaiKhoan);
             return ServiceResult.Success("Tạo tài khoản thành công.", taiKhoan);
         }
 
         private async Task<ServiceResult> CreateNhanVienAsync(AddNhanVienDTO addNhanVienDto, TaiKhoan taiKhoan)
         {
-            var roleDescription = await _taiKhoanRepository.GetRoleDescriptionAsync(addNhanVienDto.LoaiTaiKhoan);
+            var roleDescription = await _unitOfWork.RoleRepository.GetRoleDescriptionAsync(addNhanVienDto.LoaiTaiKhoan);
 
             var nhanVien = _mapper.Map<NhanVien>(addNhanVienDto);
             nhanVien.MaNv = Guid.NewGuid();
             nhanVien.MaTaiKhoan = taiKhoan.Id;
             nhanVien.LoaiNhanVien = roleDescription;
 
-            var createNhanVienResult = await _nhanVienRepository.CreateNhanVienAsync(nhanVien);
+            var createNhanVienResult = await _unitOfWork.NhanVienRepository.CreateNhanVienAsync(nhanVien);
             if (createNhanVienResult == null)
             {
                 return ServiceResult.Failure("Tạo nhân viên thất bại.");
@@ -252,13 +251,13 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 
         private async Task<ServiceResult> GetExistingNhanVienAndTaiKhoanAsync(Guid maNhanVien)
         {
-            var existingNhanVien = await _nhanVienRepository.GetNhanVienByIdAsync(maNhanVien);
+            var existingNhanVien = await _unitOfWork.NhanVienRepository.GetNhanVienByIdAsync(maNhanVien);
             if (existingNhanVien == null)
             {
                 return ServiceResult.Failure("Không tìm thấy nhân viên.");
             }
 
-            var taiKhoan = await _taiKhoanRepository.FindByUserIDAsync(existingNhanVien.MaTaiKhoan.ToString());
+            var taiKhoan = await _unitOfWork.IdentityRepository.FindByUserIDAsync(existingNhanVien.MaTaiKhoan.ToString());
             if (taiKhoan == null)
             {
                 return ServiceResult.Failure("Không tìm thấy tài khoản liên kết.");
@@ -271,7 +270,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             if (newEmail != currentEmail)
             {
-                var existingEmailUser = await _taiKhoanRepository.FindByEmailAsync(newEmail);
+                var existingEmailUser = await _unitOfWork.IdentityRepository.FindByEmailAsync(newEmail);
                 if (existingEmailUser != null && existingEmailUser.Id != currentTaiKhoanId)
                 {
                     return ServiceResult.Failure("Email đã được sử dụng bởi tài khoản khác.");
@@ -298,14 +297,14 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             taiKhoan.PhoneNumber = nhanVienDto.SoDienThoai;
             taiKhoan.loaiTaiKhoan = newRoleCode;
 
-            var updateUserResult = await _taiKhoanRepository.UpdateUserAsync(taiKhoan);
+            var updateUserResult = await _unitOfWork.IdentityRepository.UpdateUserAsync(taiKhoan);
             if (!updateUserResult.Succeeded)
             {
                 var errors = updateUserResult.Errors.Select(e => e.Description).ToArray();
                 return ServiceResult.Failure($"Cập nhật tài khoản thất bại: {string.Join(", ", errors)}");
             }
 
-            var updateRoleResult = await _taiKhoanRepository.UpdateUserRoleAsync(taiKhoan, newRoleCode);
+            var updateRoleResult = await _unitOfWork.RoleRepository.UpdateUserRoleAsync(taiKhoan, newRoleCode);
             if (!updateRoleResult)
             {
                 return ServiceResult.Failure("Cập nhật vai trò thất bại.");
@@ -322,7 +321,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             existingNhanVien.SoDienThoai = nhanVienDto.SoDienThoai;
             existingNhanVien.LoaiNhanVien = nhanVienDto.LoaiNhanVien;
 
-            var updateNhanVienResult = await _nhanVienRepository.UpdateNhanVienAsync(existingNhanVien);
+            var updateNhanVienResult = await _unitOfWork.NhanVienRepository.UpdateNhanVienAsync(existingNhanVien);
             if (!updateNhanVienResult)
             {
                 return ServiceResult.Failure("Cập nhật nhân viên thất bại.");

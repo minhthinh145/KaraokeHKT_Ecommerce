@@ -6,15 +6,15 @@ using QLQuanKaraokeHKT.Infrastructure.Data;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Customer
 {
-    public class KhacHangRepository : IKhacHangRepository
+    public class KhachHangRepository : IKhachHangRepository
     {
         private readonly QlkaraokeHktContext _context;
-        private readonly ITaiKhoanRepository _taiKhoanRepo;
+        private readonly IIdentityRepository _identityRepository;
 
-        public KhacHangRepository(QlkaraokeHktContext context, ITaiKhoanRepository taiKhoanRepository)
+        public KhachHangRepository(QlkaraokeHktContext context, IIdentityRepository identityRepository  )
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _taiKhoanRepo = taiKhoanRepository ?? throw new ArgumentNullException(nameof(taiKhoanRepository));
+            _identityRepository = identityRepository ?? throw new ArgumentNullException(nameof(identityRepository));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Customer
                     throw new ArgumentNullException(nameof(khachHang));
 
                 // Kiểm tra tài khoản có tồn tại không
-                var checkTaiKhoan = await _taiKhoanRepo.FindByUserIDAsync(maTaiKhoan.ToString());
+                var checkTaiKhoan = await _identityRepository.FindByUserIDAsync(maTaiKhoan.ToString());
 
                 if (checkTaiKhoan == null)
                     throw new InvalidOperationException($"Tài khoản với ID {maTaiKhoan} không tồn tại.");

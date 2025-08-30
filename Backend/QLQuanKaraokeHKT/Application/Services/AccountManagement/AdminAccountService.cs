@@ -3,6 +3,7 @@ using QLQuanKaraokeHKT.Application.Helpers;
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
 
@@ -10,15 +11,13 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
 {
     public class AdminAccountService : IAdminAccountService
     {
-        private readonly ITaiKhoanRepository _taiKhoanRepository;
-        private readonly ITaiKhoanQuanLyRepository _taiKhoanQuanLyRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IAccountBaseService _accountBaseService;
 
-        public AdminAccountService(ITaiKhoanRepository taiKhoanRepository, IMapper mapper, ITaiKhoanQuanLyRepository taiKhoanQuanLyRepository, IAccountBaseService accountBaseService)
+        public AdminAccountService( IMapper mapper,IAccountBaseService accountBaseService,IUnitOfWork unitOfWork)
         {
-            _taiKhoanRepository = taiKhoanRepository;
-            _taiKhoanQuanLyRepository = taiKhoanQuanLyRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _accountBaseService = accountBaseService;
         }
@@ -26,7 +25,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
         public async Task<ServiceResult> GetAllAdminAccountAsync()
         {
             {
-                var taiKhoanQuanLyList = await _taiKhoanQuanLyRepository.GettAllAdminAccount();
+                var taiKhoanQuanLyList = await _unitOfWork.TaiKhoanQuanLyRepository.GettAllAdminAccount();
                 if (taiKhoanQuanLyList == null || !taiKhoanQuanLyList.Any())
                 {
                     return ServiceResult.Failure("Không có tài khoản quản lý nào trong hệ thống.");
@@ -50,7 +49,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
             TaiKhoanQuanLy.daBiKhoa = false;
             string password = PasswordHelper.GenerateAdminPassword(TaiKhoanQuanLy.loaiTaiKhoan);
 
-            var result = await _taiKhoanRepository.CreateUserAsync(TaiKhoanQuanLy, password);
+            var result = await _unitOfWork.IdentityRepository.CreateUserAsync(TaiKhoanQuanLy, password);
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description).ToList();
@@ -58,7 +57,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
             }
 
             // Gắn role cho tài khoản quản lý
-            await _taiKhoanRepository.AddToRoleAsync(TaiKhoanQuanLy, TaiKhoanQuanLy.loaiTaiKhoan);
+            await _unitOfWork.RoleRepository.AddToRoleAsync(TaiKhoanQuanLy, TaiKhoanQuanLy.loaiTaiKhoan);
 
             return ServiceResult.Success("Tạo tài khoản quản lý thành công.");
         }

@@ -8,19 +8,19 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
 {
     public class AccountBaseService : IAccountBaseService
     {
-        public readonly ITaiKhoanRepository _taiKhoanRepository;
+        private readonly IIdentityRepository _identityRepository;
         public readonly ISendEmailService _emailService;
         private readonly IMapper _mapper;
 
-        public AccountBaseService(ITaiKhoanRepository taiKhoanRepository, ISendEmailService emailService, IMapper mapper)
+        public AccountBaseService(IIdentityRepository identityRepository, ISendEmailService emailService, IMapper mapper)
         {
-            _taiKhoanRepository = taiKhoanRepository;
+            _identityRepository = identityRepository;
             _emailService = emailService;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         public async Task<ServiceResult> CheckEmailExistsAsync(string email)
         {
-            var existingUser = await _taiKhoanRepository.FindByEmailAsync(email);
+            var existingUser = await _identityRepository.FindByEmailAsync(email);
             if (existingUser != null)
             {
                 return ServiceResult.Failure("Email đã được sử dụng bởi tài khoản khác.");
