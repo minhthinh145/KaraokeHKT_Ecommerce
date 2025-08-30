@@ -184,3 +184,20 @@ Backend/pnpm-lock.yaml
 Backend/QLQuanKaraokeHKT/appsettings*.json
 Backend/QLQuanKaraokeHKT/bin/
 Backend/QLQuanKaraokeHKT/obj/
+
+# ======================
+# LOCAL HISTORY (Editors / Extensions)
+# ======================
+.history/
+**/.history/
+FrontEnd/.history/
+Backend/.history/
+.vscode/.history/
+
+# ======================
+# GITHUB COPILOT (artifacts if any)
+# ======================
+.copilot/
+**/*.copilot.json
+**/*.copilot.ts
+**/*.copilot.js
