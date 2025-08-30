@@ -201,3 +201,24 @@ Backend/.history/
 **/*.copilot.json
 **/*.copilot.ts
 **/*.copilot.js
+
+# ======================
+# EXTRA .NET USER / MACHINE SPECIFIC
+# ======================
+# User-specific project files
+*.csproj.user
+*.vbproj.user
+*.sln.docstates
+
+# Local launch settings (uncomment if you DON'T want to share)
+# Backend/QLQuanKaraokeHKT/Properties/launchSettings.json
+
+# NuGet / restore transient artifacts
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
+project.assets.json
+
+# Global catch-all (already covered above but ensure nested ones) – keep last
+**/bin/
+**/obj/
