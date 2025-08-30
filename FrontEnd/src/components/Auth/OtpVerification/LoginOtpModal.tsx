@@ -7,7 +7,7 @@ interface LoginOtpModalProps {
   onClose: () => void;
   onVerificationSuccess: () => void;
   userEmail: string;
-  autoSend: boolean;
+  autoSend?: boolean;
 }
 
 export const LoginOtpModal: React.FC<LoginOtpModalProps> = ({

@@ -7,10 +7,6 @@ using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
 
 namespace QLQuanKaraokeHKT.Application.Services.Auth
 {
-    /// <summary>
-    /// AUTH ORCHESTRATOR - Nhạc trưởng điều phối tất cả workflow phức tạp
-    /// Tập hợp logic từ tất cả service cũ thành các method sạch cho controller
-    /// </summary>
     public class AuthOrchestrator : IAuthOrchestrator
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -18,6 +14,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
         private readonly IUserRegistrationService _registrationService;
         private readonly IPasswordManagementService _passwordService;
         private readonly ITokenService _tokenService;
+        private readonly IVerifyAuthService _verifyService;
         private readonly IMaOtpService _otpService;
         private readonly IMapper _mapper;
         private readonly ILogger<AuthOrchestrator> _logger;
@@ -27,6 +24,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             IUserAuthenticationService authenticationService,
             IUserRegistrationService registrationService,
             IPasswordManagementService passwordService,
+            IVerifyAuthService verifyService,
             ITokenService tokenService,
             IMaOtpService otpService,
             IMapper mapper,
@@ -37,12 +35,12 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             _registrationService = registrationService ?? throw new ArgumentNullException(nameof(registrationService));
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
+            _verifyService = verifyService ?? throw new ArgumentNullException(nameof(verifyService));
             _otpService = otpService ?? throw new ArgumentNullException(nameof(otpService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        // 🎼 ORCHESTRATE: Complete SignIn workflow from TaiKhoanService.SignInAsync()
         public async Task<ServiceResult> ExecuteSignInWorkflowAsync(SignInDTO signInDto)
         {
             try
@@ -77,7 +75,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             }
         }
 
-        // 🎼 ORCHESTRATE: Complete SignUp workflow from TaiKhoanService.SignUpAsync()
         public async Task<ServiceResult> ExecuteSignUpWorkflowAsync(SignUpDTO signUpDto)
         {
             return await _unitOfWork.ExecuteTransactionAsync(async () =>
@@ -121,48 +118,27 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             });
         }
 
-        // 🎼 ORCHESTRATE: Account verification workflow from VerifyAuthService
         public async Task<ServiceResult> ExecuteAccountVerificationWorkflowAsync(VerifyAccountDTO verifyDto)
         {
             return await _unitOfWork.ExecuteTransactionAsync(async () =>
             {
                 try
                 {
-                    _logger.LogInformation("🎼 Starting account verification workflow for email: {Email}", verifyDto.Email);
+                    _logger.LogInformation("🎼 Starting account verification workflow for email: {Email}", verifyDto?.Email);
 
-                    // Input validation
-                    if (verifyDto == null)
-                        return ServiceResult.Failure("Dữ liệu xác thực không hợp lệ.");
+                    var result = await _verifyService.VerifyAccountByEmail(verifyDto);
 
-                    if (string.IsNullOrWhiteSpace(verifyDto.Email) || string.IsNullOrWhiteSpace(verifyDto.OtpCode))
-                        return ServiceResult.Failure("Email và mã OTP không được để trống.");
+                    if (result.IsSuccess)
+                    {
+                        _logger.LogInformation("✅ Account verification successful for email: {Email}", verifyDto.Email);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("❌ Account verification failed for email: {Email}. Reason: {Reason}",
+                            verifyDto?.Email, result.Message);
+                    }
 
-                    // Step 1: Verify OTP (from VerifyAuthService)
-                    var otpResult = await _otpService.VerifyOtpAsync(verifyDto.Email, verifyDto.OtpCode);
-                    if (!otpResult.IsSuccess)
-                        return ServiceResult.Failure(otpResult.Message);
-
-                    // Step 2: Find and validate user (from VerifyAuthService)
-                    var user = await _unitOfWork.IdentityRepository.FindByEmailAsync(verifyDto.Email);
-                    if (user == null)
-                        return ServiceResult.Failure("Không tìm thấy tài khoản người dùng.");
-
-                    if (user.daKichHoat)
-                        return ServiceResult.Failure("Tài khoản đã được kích hoạt trước đó.");
-
-                    // Step 3: Activate account (from VerifyAuthService)
-                    user.daKichHoat = true;
-                    user.EmailConfirmed = true;
-
-                    var updateResult = await _unitOfWork.IdentityRepository.UpdateUserAsync(user);
-                    if (!updateResult.Succeeded)
-                        return ServiceResult.Failure("Không thể cập nhật trạng thái tài khoản.");
-
-                    // Step 4: Mark OTP as used (from VerifyAuthService)
-                    await _otpService.MarkOtpAsUsedAsync(verifyDto.Email, verifyDto.OtpCode);
-
-                    _logger.LogInformation("✅ Account verification successful for user: {UserId}", user.Id);
-                    return ServiceResult.Success("Tài khoản đã được kích hoạt thành công.");
+                    return result;
                 }
                 catch (Exception ex)
                 {
@@ -209,7 +185,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             }
         }
 
-        // 🎼 ORCHESTRATE: Password change confirmation from ChangePasswordService.ConfirmChangePasswordAsync()
         public async Task<ServiceResult> ExecutePasswordChangeConfirmationWorkflowAsync(Guid userId, ConfirmChangePasswordDTO confirmDto)
         {
             return await _unitOfWork.ExecuteTransactionAsync(async () =>
@@ -263,14 +238,12 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             });
         }
 
-        // 🎼 ORCHESTRATE: Sign out workflow
         public async Task<ServiceResult> ExecuteSignOutWorkflowAsync(Guid userId, string refreshToken)
         {
             try
             {
                 _logger.LogInformation("🎼 Starting sign-out workflow for user: {UserId}", userId);
 
-                // Step 1: Revoke refresh token if provided
                 if (!string.IsNullOrEmpty(refreshToken))
                 {
                     await _tokenService.RevokeRefreshTokenAsync(refreshToken);

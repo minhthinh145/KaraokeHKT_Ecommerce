@@ -104,7 +104,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                 if (string.IsNullOrWhiteSpace(user.Email))
                     return ServiceResult.Failure("User email is not available.");
 
-                // Generate and send verification OTP
                 var otpResult = await _otpService.GenerateAndSendOtpAsync(user.Email);
                 if (!otpResult.IsSuccess)
                 {

@@ -11,11 +11,11 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
     [Authorize] // Yêu cầu authentication cho tất cả endpoints
     public class ChangePasswordController : ControllerBase
     {
-        private readonly IChangePasswordService _changePasswordService;
+        private readonly IAuthOrchestrator _authOrchestrator ;
 
-        public ChangePasswordController(IChangePasswordService changePasswordService)
+        public ChangePasswordController(IAuthOrchestrator authOrchestrator )
         {
-            _changePasswordService = changePasswordService ?? throw new ArgumentNullException(nameof(changePasswordService));
+            _authOrchestrator = authOrchestrator ?? throw new ArgumentNullException(nameof(authOrchestrator));
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
                     return authValidation;
 
                 // Call service để request change password
-                var result = await _changePasswordService.RequestChangePasswordAsync(changePasswordDto, userId.ToString());
+                var result = await _authOrchestrator.ExecutePasswordChangeWorkflowAsync(userId, changePasswordDto);
 
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
@@ -94,7 +94,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
                 }
 
                 // Call service để confirm change password
-                var result = await _changePasswordService.ConfirmChangePasswordAsync(userId.ToString(), confirmChangePasswordDto);
+                var result = await _authOrchestrator.ExecutePasswordChangeConfirmationWorkflowAsync(userId, confirmChangePasswordDto);
 
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
