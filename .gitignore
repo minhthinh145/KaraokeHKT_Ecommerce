@@ -1,224 +1,117 @@
-# ======================
-# GITIGNORE TỔNG HỢP CHO OOAD PROJECT
-# ======================
+###############################################
+# Simplified .gitignore for OOAD Karaoke HKT  #
+###############################################
 
-# ======================
-# FRONTEND (React/Node.js/Vite)
-# ======================
-
-# Dependencies
-FrontEnd/node_modules/
-FrontEnd/.npm
-FrontEnd/.yarn/
-FrontEnd/yarn-error.log
-FrontEnd/package-lock.json
-FrontEnd/yarn.lock
-
-# Build outputs
-FrontEnd/dist/
-FrontEnd/build/
-FrontEnd/.next/
-FrontEnd/out/
-
-# Environment variables
-FrontEnd/.env
-FrontEnd/.env.local
-FrontEnd/.env.development.local
-FrontEnd/.env.test.local
-FrontEnd/.env.production.local
-
-# Vite
-FrontEnd/.vite/
-FrontEnd/vite.config.js.timestamp-*
-FrontEnd/vite.config.ts.timestamp-*
-
-# IDE/Editor
-FrontEnd/.vscode/
-FrontEnd/.idea/
-FrontEnd/*.swp
-FrontEnd/*.swo
-
-# OS
-FrontEnd/.DS_Store
-FrontEnd/Thumbs.db
-
-# Logs
-FrontEnd/logs/
-FrontEnd/*.log
-FrontEnd/npm-debug.log*
-FrontEnd/yarn-debug.log*
-FrontEnd/yarn-error.log*
-
-# ======================
-# BACKEND 
-# ======================
-
-# Dependencies (adjust based on your backend tech)
-Backend/node_modules/
-Backend/.npm
-Backend/package-lock.json
-Backend/yarn.lock
-
-# Python (if using Python)
-Backend/__pycache__/
-Backend/*.py[cod]
-Backend/*$py.class
-Backend/.Python
-Backend/venv/
-Backend/env/
-Backend/.env
-Backend/.venv/
-
-# Java (if using Java/Spring)
-Backend/target/
-Backend/*.jar
-Backend/*.war
-Backend/*.ear
-Backend/.gradle/
-Backend/build/
-
-# .NET (if using .NET)
-Backend/bin/
-Backend/obj/
-Backend/*.dll
-Backend/*.exe
-
-# Environment variables
-Backend/.env
-Backend/.env.local
-Backend/.env.development
-Backend/.env.production
-
-# Database
-Backend/*.db
-Backend/*.sqlite
-Backend/*.sqlite3
-
-# IDE/Editor
-Backend/.vscode/
-Backend/.idea/
-Backend/*.swp
-Backend/*.swo
-
-# Logs
-Backend/logs/
-Backend/*.log
-
-# OS
-Backend/.DS_Store
-Backend/Thumbs.db
-
-# Configuration files
-Backend/appsettings.json
-Backend/appsettings.*.json
-
-# ======================
-# ROOT LEVEL
-# ======================
-
-# IDE/Editor settings at root
+# IDE / Editor
+/.vs/
+**/.vs/
 .vscode/
 .idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-# OS files
-.DS_Store
+# OS junk
+*.DS_Store
 Thumbs.db
 
-# Temporary files
-*.tmp
-*.temp
+# Local history & AI artifacts
+.history/
+**/.history/
+.copilot/
+**/*.copilot.json
 
-# Archive files
-*.zip
-*.rar
-*.tar
-*.gz
-
-# Secret files
+# Secrets / keys (add example files instead)
 *.key
 *.pem
 *.p12
 *.pfx
 secrets.json
 
-# ======================
-# ADDITIONAL (CLEANUP & TOOLS)
-# ======================
+# Temp / archives
+*.tmp
+*.temp
+*.log
+*.zip
+*.rar
+*.tar
+*.gz
 
-# Visual Studio / Rider
-/.vs/
-Backend/.vs/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-*.vsidx
-
-# Test & coverage outputs
-Backend/TestResults/
-Backend/coverage/
-FrontEnd/coverage/
-FrontEnd/.nyc_output/
-
-# Frontend build caches / tooling
-FrontEnd/.eslintcache
-FrontEnd/.stylelintcache
+###############################################
+# FRONTEND (Vite / React)
+###############################################
+FrontEnd/node_modules/
+FrontEnd/dist/
+FrontEnd/build/
+FrontEnd/.next/
+FrontEnd/out/
+FrontEnd/.vite/
 FrontEnd/.turbo/
 FrontEnd/.cache/
 FrontEnd/.swc/
-FrontEnd/storybook-static/
+FrontEnd/coverage/
+FrontEnd/.nyc_output/
+FrontEnd/.eslintcache
+FrontEnd/.stylelintcache
+FrontEnd/logs/
+FrontEnd/*.log
+FrontEnd/*.tsbuildinfo
 
-# Package manager caches (pnpm/yarn/npm)
-FrontEnd/.pnpm-debug.log*
-FrontEnd/.pnpm-store/
+# Frontend env files
+FrontEnd/.env*
 
-# Optional lockfiles (if switching managers)
+# Package manager lockfiles (keep only one if you decide to use) – ignore all for now
+FrontEnd/package-lock.json
+FrontEnd/yarn.lock
 FrontEnd/pnpm-lock.yaml
-Backend/pnpm-lock.yaml
+FrontEnd/.pnpm-store/
+FrontEnd/.pnpm-debug.log*
+FrontEnd/.yarn/
 
-# Misc local tooling
-.env.local
-*.local
+# Vite timestamp artifacts
+FrontEnd/vite.config.*.timestamp-*
 
-# Duplicate cleanup (kept single explicit rule if needed for nested project)
-Backend/QLQuanKaraokeHKT/appsettings*.json
-Backend/QLQuanKaraokeHKT/bin/
-Backend/QLQuanKaraokeHKT/obj/
+###############################################
+# BACKEND (.NET)
+###############################################
+Backend/bin/
+Backend/obj/
+**/bin/
+**/obj/
+Backend/TestResults/
+Backend/coverage/
 
-# ======================
-# LOCAL HISTORY (Editors / Extensions)
-# ======================
-.history/
-**/.history/
-FrontEnd/.history/
-Backend/.history/
-.vscode/.history/
+# App settings & env (share only example)
+Backend/appsettings.json
+Backend/appsettings.*.json
+!Backend/appsettings.example.json
+Backend/.env*
 
-# ======================
-# GITHUB COPILOT (artifacts if any)
-# ======================
-.copilot/
-**/*.copilot.json
-**/*.copilot.ts
-**/*.copilot.js
+# DB / data files
+Backend/*.db
+Backend/*.sqlite*
 
-# ======================
-# EXTRA .NET USER / MACHINE SPECIFIC
-# ======================
-# User-specific project files
-*.csproj.user
-*.vbproj.user
-*.sln.docstates
-
-# Local launch settings (uncomment if you DON'T want to share)
-# Backend/QLQuanKaraokeHKT/Properties/launchSettings.json
-
-# NuGet / restore transient artifacts
+# NuGet transient
 *.nuget.dgspec.json
 *.nuget.g.props
 *.nuget.g.targets
 project.assets.json
 
-# Global catch-all (already covered above but ensure nested ones) – keep last
-**/bin/
-**/obj/
+# User-specific project files
+*.csproj.user
+*.vbproj.user
+
+###############################################
+# Nested project (if any) retain ignore
+###############################################
+Backend/QLQuanKaraokeHKT/appsettings*.json
+Backend/QLQuanKaraokeHKT/bin/
+Backend/QLQuanKaraokeHKT/obj/
+
+# Optional: Uncomment if you don't want to commit launch settings
+# Backend/QLQuanKaraokeHKT/Properties/launchSettings.json
+
+###############################################
+# End
+###############################################
