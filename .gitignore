@@ -141,12 +141,46 @@ Thumbs.db
 *.pfx
 secrets.json
 
-# Bỏ appsettings (các biến môi trường) và build output
+# ======================
+# ADDITIONAL (CLEANUP & TOOLS)
+# ======================
+
+# Visual Studio / Rider
+/.vs/
+Backend/.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vsidx
+
+# Test & coverage outputs
+Backend/TestResults/
+Backend/coverage/
+FrontEnd/coverage/
+FrontEnd/.nyc_output/
+
+# Frontend build caches / tooling
+FrontEnd/.eslintcache
+FrontEnd/.stylelintcache
+FrontEnd/.turbo/
+FrontEnd/.cache/
+FrontEnd/.swc/
+FrontEnd/storybook-static/
+
+# Package manager caches (pnpm/yarn/npm)
+FrontEnd/.pnpm-debug.log*
+FrontEnd/.pnpm-store/
+
+# Optional lockfiles (if switching managers)
+FrontEnd/pnpm-lock.yaml
+Backend/pnpm-lock.yaml
+
+# Misc local tooling
+.env.local
+*.local
+
+# Duplicate cleanup (kept single explicit rule if needed for nested project)
 Backend/QLQuanKaraokeHKT/appsettings*.json
 Backend/QLQuanKaraokeHKT/bin/
 Backend/QLQuanKaraokeHKT/obj/
-Backend/QLQuanKaraokeHKT/appsettings*.json
-Backend/QLQuanKaraokeHKT/bin/
-Backend/QLQuanKaraokeHKT/obj/
-*.vsidx
-*.vsidx
