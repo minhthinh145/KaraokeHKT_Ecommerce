@@ -36,7 +36,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Background
         {
             using var scope = _serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<QlkaraokeHktContext>();
-            var phongHatRepository = scope.ServiceProvider.GetRequiredService<IPhongHatRepository>();
+            var phongHatRepository = scope.ServiceProvider.GetRequiredService<IPhongHatKaraokeRepository>();
 
             try
             {
@@ -55,7 +55,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Background
                     booking.TrangThai = "DaHuy";
 
                     // Trả lại phòng
-                    await phongHatRepository.UpdateDangSuDungAsync(booking.MaPhong, false);
+                   // await phongHatRepository.UpdateDangSuDungAsync(booking.MaPhong, false);
 
                     // Hủy hóa đơn tương ứng
                     var minTime = booking.ThoiGianBatDau.AddMinutes(-10);
@@ -94,7 +94,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Background
         {
             using var scope = _serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<QlkaraokeHktContext>();
-            var phongHatRepository = scope.ServiceProvider.GetRequiredService<IPhongHatRepository>();
+            var phongHatRepository = scope.ServiceProvider.GetRequiredService<IPhongHatKaraokeRepository>();
 
             try
             {
@@ -126,7 +126,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Background
             }
         }
 
-        private async Task AutoCheckoutRoom(QlkaraokeHktContext context, IPhongHatRepository phongHatRepository, ThuePhong thuePhong)
+        private async Task AutoCheckoutRoom(QlkaraokeHktContext context, IPhongHatKaraokeRepository phongHatRepository, ThuePhong thuePhong)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Background
                 thuePhong.ThoiGianKetThuc = currentTime;
 
                 // 2. ✅ TRẢ PHÒNG (DangSuDung = false)
-                await phongHatRepository.UpdateDangSuDungAsync(thuePhong.MaPhong, false);
+                // await phongHatRepository.UpdateDangSuDungAsync(thuePhong.MaPhong, false);
 
                 // 3. ✅ CẬP NHẬT LỊCH SỬ SỬ DỤNG PHÒNG - BỔ SUNG MaThuePhong
                 var lichSuSuDung = await context.LichSuSuDungPhongs

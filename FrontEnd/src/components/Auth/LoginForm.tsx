@@ -15,16 +15,14 @@ export const LoginForm: React.FC = () => {
     pendingEmail,
     handleActivationConfirm,
     handleActivationCancel,
-  } = useSignInForm(); // 🔥 SỬA: Dùng useSignInForm
+  } = useSignInForm();
   const { userRole, navigateToDefaultRoute } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showOtpModal, setShowOtpModal] = useState(false);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (loading) return;
 
     const result = await login({
@@ -42,7 +40,7 @@ export const LoginForm: React.FC = () => {
       navigateToDefaultRoute();
     }
   }, [userRole, navigateToDefaultRoute]);
-  // 🔥 Handle activation confirmation
+
   const handleActivationConfirmAction = () => {
     const emailForOtp = handleActivationConfirm();
     setShowOtpModal(true);

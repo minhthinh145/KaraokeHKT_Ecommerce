@@ -52,18 +52,18 @@ export const PhongHatTable: React.FC<Props> = ({
     () => [
       {
         key: "img",
-        title: "Ảnh",
-        width: 90,
+        title: "Ảnh phòng",
+        width: 100,
         render: (_: any, row: PhongHatDetailDTO) => (
-          <div className="w-16 h-16 flex items-center justify-center overflow-hidden rounded-lg bg-slate-100">
+          <div className="w-32 h-32 flex items-center justify-center overflow-hidden rounded-lg bg-slate-100">
             {(row as any).hinhAnhPhong || row.hinhAnhSanPham ? (
               <img
                 src={(row as any).hinhAnhPhong || row.hinhAnhSanPham!}
                 alt={row.tenSanPham || ""}
-                className="object-cover w-full h-full"
+                className="object-cover object-center w-full h-full"
               />
             ) : (
-              <span className="text-slate-400 text-[10px] text-center px-1">
+              <span className="text-slate-400  text-center px-1">
                 Không ảnh
               </span>
             )}
@@ -107,14 +107,6 @@ export const PhongHatTable: React.FC<Props> = ({
             </div>
           );
         },
-      },
-      {
-        key: "gia",
-        title: "Giá thuê hiện tại",
-        dataIndex: "giaThueHienTai",
-        width: 140,
-        render: (v: number) =>
-          v != null ? v.toLocaleString("vi-VN") + " ₫" : "-",
       },
       {
         key: "status",

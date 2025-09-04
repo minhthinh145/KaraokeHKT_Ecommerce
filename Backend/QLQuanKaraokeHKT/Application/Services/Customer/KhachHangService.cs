@@ -27,8 +27,8 @@ namespace QLQuanKaraokeHKT.Application.Services.Customer
                 return ServiceResult.Failure("Không thể tạo khách hàng từ thông tin đăng ký.");
             }
             var khachHang = _mapper.Map<KhachHang>(applicationUser);
-            khachHang.MaKhachHang = Guid.NewGuid(); // Tạo mã khách hàng duy nhất
-            var isCreated = await _unitOfWork.KhachHangRepository.CreateKhacHangAsync(khachHang);
+            khachHang.MaKhachHang = Guid.NewGuid();
+            var isCreated = await _unitOfWork.KhachHangRepository.CreateAsync(khachHang);
             if (isCreated == null)
             {
                 return ServiceResult.Failure("Tạo khách hàng không thành công.");

@@ -41,7 +41,7 @@ namespace QLQuanKaraokeHKT.Infrastructure
         public ILichSuSuDungPhongRepository LichSuSuDungPhongRepository { get; private set; } = null!;
         public IChiTietHoaDonDichVuRepository ChiTietHoaDonDichVuRepository { get; private set; } = null!;
 
-        public IPhongHatRepository PhongHatRepository { get; private set; } = null!;
+        public IPhongHatKaraokeRepository PhongHatRepository { get; private set; } = null!;
         public ILoaiPhongRepository LoaiPhongRepository { get; private set; } = null!;
         public IPhongHatKaraokeRepository PhongHatKaraokeRepository { get; private set; } = null!;
 
@@ -81,7 +81,7 @@ namespace QLQuanKaraokeHKT.Infrastructure
             #region Room Management - Phase 1
             LoaiPhongRepository = new LoaiPhongRepository(_context);
             PhongHatKaraokeRepository = new PhongHatKaraokeRepository(_context);
-            PhongHatRepository = new PhongHatRepository(_context);
+            PhongHatRepository = new PhongHatKaraokeRepository(_context);
             #endregion
 
             #region Inventory & Pricing - Phase 1

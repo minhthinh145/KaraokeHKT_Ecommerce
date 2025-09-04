@@ -1,4 +1,10 @@
 using QLQuanKaraokeHKT.Application.Mappings;
+using QLQuanKaraokeHKT.Application.Mappings.Auth;
+using QLQuanKaraokeHKT.Application.Mappings.Booking;
+using QLQuanKaraokeHKT.Application.Mappings.Customer;
+using QLQuanKaraokeHKT.Application.Mappings.HRM;
+using QLQuanKaraokeHKT.Application.Mappings.Inventory;
+using QLQuanKaraokeHKT.Application.Mappings.Room;
 using QLQuanKaraokeHKT.Application.Services.AccountManagement;
 using QLQuanKaraokeHKT.Application.Services.Auth;
 using QLQuanKaraokeHKT.Application.Services.Background;
@@ -29,8 +35,26 @@ namespace QLQuanKaraokeHKT.Web.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // AutoMapper
-            services.AddAutoMapper(typeof(ApplicationMapper));
+            services.AddAutoMapper(
+                cfg =>
+                {
+                    cfg.AddProfile<AuthMappingProfile>();
+
+                    cfg.AddProfile<CustomerMappingProfile>();
+
+                    cfg.AddProfile<RoomMappingProfile>();
+                    cfg.AddProfile<RoomQueryMappingProfile>();
+
+                    cfg.AddProfile<InventoryMappingProfile>();
+                    cfg.AddProfile<InventoryQueryMappingProfile>();
+
+                    cfg.AddProfile<HRMMappingProfile>();
+
+                    cfg.AddProfile<BookingMappingProfile>();
+
+                    
+                });
+
 
             // VNPay Configuration
             services.Configure<VNPayConfig>(configuration.GetSection("VNPay"));
@@ -91,9 +115,10 @@ namespace QLQuanKaraokeHKT.Web.Extensions
             //services.AddScoped<IQLVatLieuService, QLVatLieuService>();
 
             // Room Services
-            //services.AddScoped<IQLLoaiPhongService, QLLoaiPhongService>();
+            services.AddScoped<IQLLoaiPhongService, QLLoaiPhongService>();
             //services.AddScoped<IQLPhongHatService, QLPhongHatService>();
-
+            services.AddScoped<IRoomOrchestrator, RoomOrchestrator>();
+            services.AddScoped<IRoomPricingService, RoomPricingService>();
             // Payment Services
             services.AddScoped<IVNPayService, VNPayService>();
 

@@ -11,7 +11,6 @@ namespace QLQuanKaraokeHKT.Web.Extensions
     {
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            // Configure Identity
             services.AddIdentity<TaiKhoan, VaiTro>(options =>
             {
                 options.Password.RequireDigit = true;
@@ -24,7 +23,6 @@ namespace QLQuanKaraokeHKT.Web.Extensions
             .AddEntityFrameworkStores<QlkaraokeHktContext>()
             .AddDefaultTokenProviders();
 
-            // Configure JWT Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

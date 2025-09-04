@@ -34,12 +34,10 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
 
                 if (otp == null)
                 {
-                    return false; // OTP không tồn tại hoặc chưa được sử dụng
+                    return false; 
                 }
 
-                // Remove the OTP record
                 _context.MaOtps.Remove(otp);
-                await _context.SaveChangesAsync();
 
                 return true;
             }
@@ -55,7 +53,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
             {
                 return null;
             }
-            Console.WriteLine($"UTCNOW:{DateTime.UtcNow}");
             return await _context.MaOtps
                 .FirstOrDefaultAsync(otp => otp.maOTP == otpCode 
                                          && !otp.DaSuDung 
@@ -77,9 +74,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
                 return false; 
             }
 
-            // Mark OTP as used
             otp.DaSuDung = true;
-            await _context.SaveChangesAsync();
             return true;
         }
     }

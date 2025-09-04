@@ -21,9 +21,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.Booking
             _configuration = configuration;
         }
 
-        /// <summary>
-        /// Lấy danh sách phòng hát có thể đặt
-        /// </summary>
+
         [HttpGet("available-rooms")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAvailableRoomsAsync()

@@ -67,11 +67,9 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                 if (signUpDto == null)
                     return (false, null, new[] { "Registration data is required." });
 
-                // Map DTOs to entities - exactly like original
                 var applicationUser = _mapper.Map<TaiKhoan>(signUpDto);
                 var khachHang = _mapper.Map<KhachHang>(signUpDto);
 
-                // Create user account using the same transaction-safe method
                 var (result, createdUser) = await _unitOfWork.SignUpRepository.CreateCustomerAccountForSignUpAsync(
                     applicationUser,
                     signUpDto.Password,

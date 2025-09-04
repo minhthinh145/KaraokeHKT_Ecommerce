@@ -8,7 +8,7 @@ export const ComingSoonFeatureCard: React.FC<{
   desc = "Chúng tôi đang phát triển thêm chức năng nâng cao cho nhân viên. Vui lòng quay lại sau.",
 }) => (
   <div className="border rounded p-6 bg-gradient-to-r from-slate-50 to-white">
-    <h3 className="text-base font-semibold mb-2">{title}</h3>
+    <h3 className="text-basefont-semibold mb-2">{title}</h3>
     <p className="text-sm text-slate-600">{desc}</p>
   </div>
 );

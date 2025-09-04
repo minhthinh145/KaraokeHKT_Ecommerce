@@ -1,28 +1,28 @@
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { AppDispatch } from "../../redux/store";
+import type { AppDispatch } from "../../redux";
 import type { UseAuthReturn, UserRole } from "../../types/auth";
 import {
   signInThunk,
   logoutThunk,
   fetchProfileThunk,
   clearError,
-} from "../../redux/auth";
+} from "../../redux";
 import {
   selectAuth,
   selectUser,
   selectUserRole,
   selectIsAuthenticated,
   selectUserDefaultRoute,
-} from "../../redux/auth/selectors";
+} from "../../redux";
 import {
   getDefaultRoute,
   canUserAccessRoute,
   isUserInRoleGroup,
   ROLE_GROUPS,
 } from "../../constants/auth";
-import { ApplicationRole } from "../../api/types/admins/QLHeThongtypes";
+import { ApplicationRole } from "../../api";
 import type { SignInDTO } from "../../api";
 
 export const useAuth = (): UseAuthReturn => {
@@ -60,7 +60,7 @@ export const useAuth = (): UseAuthReturn => {
     },
     [dispatch]
   );
-
+  
   const logout = useCallback(() => {
     dispatch(logoutThunk());
     navigate("/login");

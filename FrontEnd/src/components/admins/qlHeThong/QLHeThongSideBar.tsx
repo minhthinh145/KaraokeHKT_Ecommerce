@@ -26,7 +26,7 @@ export const QLHeThongSidebar: React.FC<QLHeThongSidebarProps> = ({
         onClick={() => onTabChange(id)}
         className={`w-full min-h-[44px] px-4 py-2 rounded-lg flex items-center gap-4 transition-colors ${
           isActive
-            ? "bg-neutral-100 text-black"
+            ? "bg-neutral-100 text-black "
             : "bg-white text-black hover:bg-gray-50"
         }`}
       >

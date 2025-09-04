@@ -1,11 +1,10 @@
 ﻿using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Inventory
 {
-    public interface ISanPhamDichVuRepository
+    public interface ISanPhamDichVuRepository : IGenericRepository<SanPhamDichVu, int>
     {
-        Task<SanPhamDichVu> CreateSanPhamDichVuAsync(SanPhamDichVu sanPham);
-        Task<SanPhamDichVu?> GetSanPhamDichVuByIdAsync(int maSanPham);
-        Task<bool> UpdateSanPhamDichVuAsync(SanPhamDichVu sanPham);
+ 
     }
 }

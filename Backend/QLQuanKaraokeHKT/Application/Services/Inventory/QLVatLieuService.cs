@@ -48,7 +48,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Inventory
 
                 // 1. Tạo SanPhamDichVu
                 var sanPham = _mapper.Map<SanPhamDichVu>(addVatLieuDto);
-                var createdSanPham = await _sanPhamRepository.CreateSanPhamDichVuAsync(sanPham);
+                var createdSanPham = await _sanPhamRepository.CreateAsync(sanPham);
 
                 // 2. Tạo VatLieu
                 var vatLieu = _mapper.Map<VatLieu>(addVatLieuDto);
@@ -180,7 +180,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Inventory
                 if (existingVatLieu.MonAn?.MaSanPhamNavigation != null)
                 {
                     _mapper.Map(updateVatLieuDto, existingVatLieu.MonAn.MaSanPhamNavigation);
-                    await _sanPhamRepository.UpdateSanPhamDichVuAsync(existingVatLieu.MonAn.MaSanPhamNavigation);
+                    await _sanPhamRepository.UpdateAsync(existingVatLieu.MonAn.MaSanPhamNavigation);
                 }
 
                 // 4. Cập nhật giá nhập
@@ -229,7 +229,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Inventory
                         NgayApDung = dto.NgayApDungGiaBan,
                         TrangThai = dto.TrangThaiGiaBan
                     };
-                    await _giaDichVuRepository.CreateGiaDichVuAsync(giaDichVu);
+                    await _giaDichVuRepository.CreateAsync(giaDichVu);
                 }
             }
             else
@@ -246,12 +246,12 @@ namespace QLQuanKaraokeHKT.Application.Services.Inventory
                         var giaDichVu = new GiaDichVu
                         {
                             MaSanPham = maSanPham,
-                            MaCa = ca.MaCa, // ✅ DÙNG MÃ CA THẬT TỪ DATABASE
+                            MaCa = ca.MaCa, 
                             DonGia = gia.Value,
                             NgayApDung = dto.NgayApDungGiaBan,
                             TrangThai = dto.TrangThaiGiaBan
                         };
-                        await _giaDichVuRepository.CreateGiaDichVuAsync(giaDichVu);
+                        await _giaDichVuRepository.CreateAsync(giaDichVu);
                     }
                 }
             }
@@ -261,8 +261,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Inventory
         {
             if (dto.DongGiaAllCa == true)
             {
-                // ✅ VÔ HIỆU HÓA TẤT CẢ GIÁ CŨ (cả đồng giá và riêng biệt)
-                await _giaDichVuRepository.UpdateGiaDichVuStatusByMaSanPhamAsync(maSanPham, "HetHieuLuc", null);
+                await _giaDichVuRepository.BulkUpdateStatusByProductAsync(maSanPham, "HetHieuLuc");
 
                 // Tạo giá chung mới
                 if (dto.GiaBanChung.HasValue)
@@ -275,12 +274,12 @@ namespace QLQuanKaraokeHKT.Application.Services.Inventory
                         NgayApDung = dto.NgayApDungGiaBan ?? DateOnly.FromDateTime(DateTime.Now),
                         TrangThai = dto.TrangThaiGiaBan ?? "HieuLuc"
                     };
-                    await _giaDichVuRepository.CreateGiaDichVuAsync(giaDichVu);
+                    await _giaDichVuRepository.CreateAsync(giaDichVu);
                 }
             }
             else
             {
-                await _giaDichVuRepository.UpdateGiaDichVuStatusByMaSanPhamAsync(maSanPham, "HetHieuLuc", null);
+                await _giaDichVuRepository.BulkUpdateStatusByProductAsync(maSanPham, "HetHieuLuc", null);
 
                 var tenCaList = new List<string> { "Ca 1", "Ca 2", "Ca 3" };
                 var caLamViecList = await _caLamViecRepository.GetCaLamViecByTenCaAsync(tenCaList);
@@ -299,7 +298,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Inventory
                             NgayApDung = dto.NgayApDungGiaBan ?? DateOnly.FromDateTime(DateTime.Now),
                             TrangThai = dto.TrangThaiGiaBan ?? "HieuLuc"
                         };
-                        await _giaDichVuRepository.CreateGiaDichVuAsync(giaDichVu);
+                        await _giaDichVuRepository.CreateAsync(giaDichVu);
                     }
                 }
             }

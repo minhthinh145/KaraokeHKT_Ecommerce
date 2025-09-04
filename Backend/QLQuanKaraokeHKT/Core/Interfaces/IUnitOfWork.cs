@@ -32,7 +32,7 @@ namespace QLQuanKaraokeHKT.Core.Interfaces
         #endregion
 
         #region Room Management
-        IPhongHatRepository PhongHatRepository { get; }
+        IPhongHatKaraokeRepository PhongHatRepository { get; }
         ILoaiPhongRepository LoaiPhongRepository { get; }
         IPhongHatKaraokeRepository PhongHatKaraokeRepository { get; }
 

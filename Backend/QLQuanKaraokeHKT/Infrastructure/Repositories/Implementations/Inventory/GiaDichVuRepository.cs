@@ -2,146 +2,116 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Inventory;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Inventory
 {
-    public class GiaDichVuRepository : IGiaDichVuRepository
+
+    public class GiaDichVuRepository : GenericRepository<GiaDichVu, int>, IGiaDichVuRepository
     {
-        private readonly QlkaraokeHktContext _context;
-
-        public GiaDichVuRepository(QlkaraokeHktContext context)
+        public GiaDichVuRepository(QlkaraokeHktContext context) : base(context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<GiaDichVu> CreateGiaDichVuAsync(GiaDichVu giaDichVu)
-        {
-            _context.GiaDichVus.Add(giaDichVu);
-            await _context.SaveChangesAsync();
-            return giaDichVu;
-        }
+        #region Override Generic Methods (Enhanced with Navigation Properties)
 
-        public async Task<GiaDichVu?> GetGiaHienTaiByMaSanPhamAsync(int maSanPham)
-        {
-            return await _context.GiaDichVus
-                .Where(g => g.MaSanPham == maSanPham && g.TrangThai == "HieuLuc")
-                .OrderByDescending(g => g.NgayApDung)
-                .FirstOrDefaultAsync();
-        }
 
-        public async Task<List<GiaDichVu>> GetGiaDichVuByMaSanPhamAsync(int maSanPham)
+        public override async Task<List<GiaDichVu>> GetAllAsync()
         {
-            return await _context.GiaDichVus
-                .Where(g => g.MaSanPham == maSanPham)
-                .OrderByDescending(g => g.NgayApDung)
-                .ToListAsync();
-        }
-
-        public async Task<bool> UpdateGiaDichVuStatusAsync(int maGiaDichVu, string trangThai)
-        {
-            var gia = await _context.GiaDichVus.FindAsync(maGiaDichVu);
-            if (gia == null) return false;
-            gia.TrangThai = trangThai;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        // ✅ IMPLEMENT METHODS MỚI
-        public async Task<GiaDichVu?> GetGiaHienTaiByMaSanPhamAndCaAsync(int maSanPham, int? maCa = null, DateOnly? ngayApDung = null)
-        {
-            var ngayTimKiem = ngayApDung ?? DateOnly.FromDateTime(DateTime.Now);
-
-            // Ưu tiên tìm giá theo ca cụ thể
-            if (maCa.HasValue)
+            try
             {
-                var giaTheoCa = await _context.GiaDichVus
+                return await _dbSet
+                    .OrderByDescending(g => g.NgayApDung)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                return new List<GiaDichVu>();
+            }
+        }
+
+        public override async Task<GiaDichVu?> GetByIdAsync(int id)
+        {
+            try
+            {
+                return await _dbSet
+                    .FirstOrDefaultAsync(g => g.MaGiaDichVu == id);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        #endregion
+
+        #region Specialized Pricing Methods
+
+
+        public async Task<GiaDichVu?> GetCurrentPriceAsync(int maSanPham, int? maCa = null, DateOnly? ngayApDung = null)
+        {
+            try
+            {
+                var ngayTimKiem = ngayApDung ?? DateOnly.FromDateTime(DateTime.Now);
+
+                IQueryable<GiaDichVu> query = _dbSet
                     .Where(g => g.MaSanPham == maSanPham
-                               && g.MaCa == maCa
                                && g.TrangThai == "HieuLuc"
-                               && g.NgayApDung <= ngayTimKiem)
+                               && g.NgayApDung <= ngayTimKiem);
+
+                if (maCa.HasValue)
+                {
+                    var giaTheoCa = await query
+                        .Where(g => g.MaCa == maCa)
+                        .OrderByDescending(g => g.NgayApDung)
+                        .FirstOrDefaultAsync();
+
+                    if (giaTheoCa != null) return giaTheoCa;
+                }
+
+                // Fallback về giá chung (MaCa = null)
+                return await query
+                    .Where(g => g.MaCa == null)
                     .OrderByDescending(g => g.NgayApDung)
                     .FirstOrDefaultAsync();
-
-                if (giaTheoCa != null) return giaTheoCa;
             }
-
-            // Fallback về giá chung (MaCa = null)
-            return await _context.GiaDichVus
-                .Where(g => g.MaSanPham == maSanPham
-                           && g.MaCa == null
-                           && g.TrangThai == "HieuLuc"
-                           && g.NgayApDung <= ngayTimKiem)
-                .OrderByDescending(g => g.NgayApDung)
-                .FirstOrDefaultAsync();
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        public async Task<List<GiaDichVu>> GetGiaDichVuByMaSanPhamAndCaAsync(int maSanPham, int? maCa = null)
+        public async Task<List<GiaDichVu>> GetPricesByProductAsync(int maSanPham)
         {
-            var query = _context.GiaDichVus.Where(g => g.MaSanPham == maSanPham);
-
-            if (maCa.HasValue)
+            try
             {
-                query = query.Where(g => g.MaCa == maCa);
+                return await _dbSet
+                  .Where(g => g.MaSanPham == maSanPham)
+                  .OrderByDescending(g => g.NgayApDung)
+                  .ThenBy(g => g.MaCa ?? 0)
+                  .ToListAsync();
             }
-
-            return await query
-                .OrderByDescending(g => g.NgayApDung)
-                .ToListAsync();
+            catch (Exception)
+            {
+                return new List<GiaDichVu>();
+            }
         }
 
-        public async Task<bool> UpdateGiaDichVuStatusByMaSanPhamAsync(int maSanPham, string trangThai, int? maCa = null)
+
+        public async Task<int> BulkUpdateStatusByProductAsync(int maSanPham, string newStatus, string currentStatus = "HieuLuc")
         {
-            IQueryable<GiaDichVu> query = _context.GiaDichVus
-                .Where(g => g.MaSanPham == maSanPham && g.TrangThai == "HieuLuc");
-
-            // ✅ FIX: Khi maCa = null, chỉ update giá chung. Khi có maCa, chỉ update ca đó
-            if (maCa.HasValue)
+            try
             {
-                query = query.Where(g => g.MaCa == maCa.Value);
+                return await _dbSet
+                    .Where(g => g.MaSanPham == maSanPham && g.TrangThai == currentStatus)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(g => g.TrangThai, newStatus));
             }
-            else
+            catch (Exception)
             {
-                // Khi muốn update tất cả (truyền maCa = null), không filter thêm
-                // Hoặc khi muốn update chỉ giá chung, filter MaCa == null
-                // Tùy logic business, ở đây tôi giả sử muốn update TẤT CẢ khi maCa = null
+                return 0;
             }
-
-            var giaList = await query.ToListAsync();
-            if (!giaList.Any()) return false;
-
-            foreach (var gia in giaList)
-            {
-                gia.TrangThai = trangThai;
-            }
-
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        public async Task<GiaDichVu?> GetGiaDichVuHienTaiAsync(int maSanPham, DateOnly ngayApDung, int? maCa = null)
-        {
-            // Ưu tiên tìm giá theo ca cụ thể nếu có
-            if (maCa.HasValue)
-            {
-                var giaTheoCa = await _context.GiaDichVus
-                    .Where(g => g.MaSanPham == maSanPham
-                               && g.MaCa == maCa
-                               && g.TrangThai == "HieuLuc"
-                               && g.NgayApDung <= ngayApDung)
-                    .OrderByDescending(g => g.NgayApDung)
-                    .FirstOrDefaultAsync();
-
-                if (giaTheoCa != null) return giaTheoCa;
-            }
-
-            // Fallback về giá chung (MaCa = null)
-            return await _context.GiaDichVus
-                .Where(g => g.MaSanPham == maSanPham
-                           && g.MaCa == null
-                           && g.TrangThai == "HieuLuc"
-                           && g.NgayApDung <= ngayApDung)
-                .OrderByDescending(g => g.NgayApDung)
-                .FirstOrDefaultAsync();
         }
 
+        #endregion
     }
 }

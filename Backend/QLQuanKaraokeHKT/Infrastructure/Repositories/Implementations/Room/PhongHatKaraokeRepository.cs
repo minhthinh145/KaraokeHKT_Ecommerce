@@ -2,53 +2,175 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Room;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Room
 {
-    public class PhongHatKaraokeRepository : IPhongHatKaraokeRepository
+    public class PhongHatKaraokeRepository : GenericRepository<PhongHatKaraoke, int>, IPhongHatKaraokeRepository
     {
-        private readonly QlkaraokeHktContext _context;
-
-        public PhongHatKaraokeRepository(QlkaraokeHktContext context)
+        public PhongHatKaraokeRepository(QlkaraokeHktContext context) : base(context)
         {
-            _context = context;
         }
 
-        public async Task<bool> DeletePhongHatKaraokeAsync(string KaraokeRoom_ID)
+        #region Private Query Builder
+        private IQueryable<PhongHatKaraoke> BuildBaseQuery(bool includePricing)
         {
-           return await _context.PhongHatKaraokes
-                .Where(x => x.MaPhong.ToString() == KaraokeRoom_ID)
-                .ExecuteDeleteAsync() > 0;
-        }
-
-        public async Task<PhongHatKaraoke> FindPhongHatKaraokeByIdAsync(string KaraokeRoom_ID)
-        {
-            var result = await _context.PhongHatKaraokes.FirstOrDefaultAsync(x => x.MaPhong.ToString() == KaraokeRoom_ID);
-            if (result == null)
+            var query = _dbSet
+                .Include(p => p.MaLoaiPhongNavigation)
+                .Include(p => p.MaSanPhamNavigation)
+                .AsQueryable();
+            if (includePricing)
             {
-                throw new KeyNotFoundException($"Karaoke Room with ID {KaraokeRoom_ID} not found.");
+                query = query
+                    .Include(p => p.MaSanPhamNavigation)
+                        .ThenInclude(sp => sp.GiaDichVus
+                            .Where(g => g.TrangThai == "HieuLuc"))
+                                .ThenInclude(g => g.MaCaNavigation);
             }
-            return result;
-        }
 
-        public async Task<List<PhongHatKaraoke>> GetAllPhongHatKarokeAsync()
-        {
-            return await _context.PhongHatKaraokes
-                .Where(x => x.DangSuDung == false)
-                .ToListAsync();
+            return query;
         }
+        #endregion
 
-        public async Task<bool> UpdatePhongHatKaraokeAsync(PhongHatKaraoke phongHatKaraoke)
+        #region Read-Only Queries (NoTracking)
+        public override async Task<List<PhongHatKaraoke>> GetAllAsync()
         {
-            var result =  _context.PhongHatKaraokes.Update(phongHatKaraoke);
-            if (result.State == EntityState.Modified)
+            try
             {
-                return await _context.SaveChangesAsync() > 0;
+                return await _dbSet
+                    .AsNoTracking()
+                    .OrderBy(p => p.MaPhong)
+                    .ToListAsync();
             }
-            else
+            catch
             {
-                throw new InvalidOperationException("Cập nhật phòng thất bại");
+                return new List<PhongHatKaraoke>();
             }
         }
+
+        public override async Task<PhongHatKaraoke?> GetByIdAsync(int id)
+        {
+            try
+            {
+                return await _dbSet
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(p => p.MaPhong == id);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<PhongHatKaraoke>> GetAllWithDetailsAsync(bool includePricing = false)
+        {
+            try
+            {
+                return await BuildBaseQuery(includePricing)
+                    .AsNoTracking()
+                    .OrderBy(p => p.MaPhong)
+                    .ToListAsync();
+            }
+            catch
+            {
+                return new List<PhongHatKaraoke>();
+            }
+        }
+
+        public async Task<PhongHatKaraoke?> GetByIdWithDetailsAsync(int maPhong, bool includePricing = false)
+        {
+            try
+            {
+                return await BuildBaseQuery(includePricing)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(p => p.MaPhong == maPhong);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<PhongHatKaraoke>> GetByLoaiPhongAsync(int maLoaiPhong, bool includePricing = false)
+        {
+            try
+            {
+                return await BuildBaseQuery(includePricing)
+                    .AsNoTracking()
+                    .Where(p => p.MaLoaiPhong == maLoaiPhong)
+                    .OrderBy(p => p.MaPhong)
+                    .ToListAsync();
+            }
+            catch
+            {
+                return new List<PhongHatKaraoke>();
+            }
+        }
+
+        public async Task<List<PhongHatKaraoke>> GetAvailableAsync()
+        {
+            try
+            {
+                return await _dbSet
+                    .Where(p => !p.NgungHoatDong && !p.DangSuDung)
+                    .AsNoTracking()
+                    .OrderBy(p => p.MaPhong)
+                    .ToListAsync();
+            }
+            catch
+            {
+                return new List<PhongHatKaraoke>();
+            }
+        }
+
+        public async Task<List<PhongHatKaraoke>> GetOccupiedAsync()
+        {
+            try
+            {
+                return await _dbSet
+                    .Where(p => !p.NgungHoatDong && p.DangSuDung)
+                    .AsNoTracking()
+                    .OrderBy(p => p.MaPhong)
+                    .ToListAsync();
+            }
+            catch
+            {
+                return new List<PhongHatKaraoke>();
+            }
+        }
+
+        public async Task<List<PhongHatKaraoke>> GetOutOfServiceAsync()
+        {
+            try
+            {
+                return await _dbSet
+                    .Where(p => p.NgungHoatDong)
+                    .AsNoTracking()
+                    .OrderBy(p => p.MaPhong)
+                    .ToListAsync();
+            }
+            catch
+            {
+                return new List<PhongHatKaraoke>();
+            }
+        }
+        #endregion
+
+        #region Tracked Queries (For Updates)
+        public async Task<PhongHatKaraoke?> GetByIdForUpdateAsync(int maPhong)
+        {
+            try
+            {
+                return await _dbSet
+                    .Include(p => p.MaLoaiPhongNavigation)
+                    .Include(p => p.MaSanPhamNavigation)
+                    .FirstOrDefaultAsync(p => p.MaPhong == maPhong);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        #endregion
     }
 }

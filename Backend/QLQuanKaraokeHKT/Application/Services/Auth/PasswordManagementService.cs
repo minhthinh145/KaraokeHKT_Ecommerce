@@ -70,7 +70,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             }
         }
 
-        // 🔄 MIGRATED FROM: ChangePasswordService.ConfirmChangePasswordAsync() - validation part
         public async Task<ServiceResult> ValidatePasswordStrengthAsync(TaiKhoan user, string newPassword)
         {
             try
@@ -81,7 +80,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                 if (string.IsNullOrWhiteSpace(newPassword))
                     return ServiceResult.Failure("New password cannot be empty.");
 
-                // Use Identity password validator - exactly like original
                 var validateResult = await _passwordValidator.ValidateAsync(_userManager, user, newPassword);
                 if (!validateResult.Succeeded)
                 {
@@ -98,7 +96,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             }
         }
 
-        // 🔄 MIGRATED FROM: ChangePasswordService.ConfirmChangePasswordAsync() - update part
         public async Task<ServiceResult> UpdatePasswordAsync(TaiKhoan user, string newPassword)
         {
             try
@@ -109,7 +106,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                 if (string.IsNullOrWhiteSpace(newPassword))
                     return ServiceResult.Failure("New password cannot be empty.");
 
-                // Update password using Identity repository - exactly like original
                 var (success, errors) = await _unitOfWork.IdentityRepository.UpdatePasswordAsync(user, newPassword);
                 
                 if (success)

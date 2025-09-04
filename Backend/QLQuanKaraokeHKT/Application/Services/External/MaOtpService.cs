@@ -12,7 +12,6 @@ namespace QLQuanKaraokeHKT.Application.Services.External
     {
         private readonly ISendEmailService _sendEmailService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMaOtpRepository _maOtpRepository; // ✅ Will be assigned via UnitOfWork
         private readonly IMapper _mapper;
         private readonly int _otpExpirationTime = 15;
 
@@ -20,7 +19,6 @@ namespace QLQuanKaraokeHKT.Application.Services.External
         {
             _sendEmailService = sendEmailService;
             _unitOfWork = unitOfWork;
-            _maOtpRepository = unitOfWork.MaOtpRepository; // ✅ FIX: Assign from UnitOfWork
             _mapper = mapper;
         }
 
@@ -48,12 +46,15 @@ namespace QLQuanKaraokeHKT.Application.Services.External
                     ExpirationTime = expirationTime
                 };
                 var userOtp = _mapper.Map<MaOtp>(otpDTO);
-                
-                // ✅ Use UnitOfWork pattern
-                await _unitOfWork.MaOtpRepository.CreateAsync(userOtp);
-                await _unitOfWork.SaveChangesAsync();
 
-                await _sendEmailService.SendOtpEmailAsync(user.Email, otpCode);
+
+                await _unitOfWork.ExecuteTransactionAsync(async () =>
+                {
+                    await _unitOfWork.MaOtpRepository.CreateAsync(userOtp);
+                    await _sendEmailService.SendOtpEmailAsync(user.Email, otpCode);
+
+                });
+
                 return ServiceResult.Success("OTP đã được gửi thành công");
             }
             catch (Exception ex)
@@ -70,7 +71,6 @@ namespace QLQuanKaraokeHKT.Application.Services.External
                 if (user == null)
                     return ServiceResult.Failure("Không tìm thấy User với email này.");
 
-                // ✅ Use UnitOfWork pattern
                 var userOTP = await _unitOfWork.MaOtpRepository.GetOtpByCodeAsync(otpCode);
                 if (userOTP == null)
                     return ServiceResult.Failure("OTP không hợp lệ hoặc đã hết hạn.");
@@ -100,13 +100,12 @@ namespace QLQuanKaraokeHKT.Application.Services.External
                 if (user == null)
                     return ServiceResult.Failure("Không tìm thấy User với email này.");
 
-                // ✅ Use UnitOfWork pattern
-                var result = await _unitOfWork.MaOtpRepository.MarkOtpAsUsedAsync(user.Id, otpCode);
-                if (result)
+
+               var result = await _unitOfWork.ExecuteTransactionAsync(async () =>
                 {
-                    await _unitOfWork.SaveChangesAsync();
-                }
-                
+                    return await _unitOfWork.MaOtpRepository.MarkOtpAsUsedAsync(user.Id, otpCode);
+                });
+
                 return result
                     ? ServiceResult.Success("OTP đã được đánh dấu là đã sử dụng.")
                     : ServiceResult.Failure("Không thể đánh dấu OTP là đã sử dụng hoặc OTP không hợp lệ.");

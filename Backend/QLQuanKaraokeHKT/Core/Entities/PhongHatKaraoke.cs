@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QLQuanKaraokeHKT.Core.Entities;
 
@@ -22,4 +23,16 @@ public partial class PhongHatKaraoke
     public virtual SanPhamDichVu MaSanPhamNavigation { get; set; } = null!;
 
     public virtual ICollection<ThuePhong> ThuePhongs { get; set; } = new List<ThuePhong>();
+
+
+    #region Computed Properties
+    [NotMapped]
+    public bool IsAvailableForBooking => !NgungHoatDong && !DangSuDung;
+    [NotMapped]
+    public bool IsActive => !NgungHoatDong;
+    [NotMapped]
+    public bool IsOutOfService => NgungHoatDong;
+    [NotMapped]
+    public bool IsOccupied => !NgungHoatDong && DangSuDung;
+    #endregion
 }

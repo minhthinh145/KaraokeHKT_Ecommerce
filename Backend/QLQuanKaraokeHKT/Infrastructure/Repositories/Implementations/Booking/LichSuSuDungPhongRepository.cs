@@ -2,16 +2,16 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Booking;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
 {
-    public class LichSuSuDungPhongRepository : ILichSuSuDungPhongRepository
+    public class LichSuSuDungPhongRepository : GenericRepository<LichSuSuDungPhong, int>,ILichSuSuDungPhongRepository
     {
-        private readonly QlkaraokeHktContext _context;
 
-        public LichSuSuDungPhongRepository(QlkaraokeHktContext context)
+        public LichSuSuDungPhongRepository(QlkaraokeHktContext context) : base(context)
         {
-            _context = context;
+
         }
 
         public async Task<List<LichSuSuDungPhong>> GetLichSuByKhachHangAsync(Guid maKhachHang)
