@@ -74,8 +74,10 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
 
                     _mapper.Map(userProfileDto, userApp);
 
-                    // Update user account
-                    var result = await _unitOfWork.IdentityRepository.UpdateUserAsync(userApp);
+                    var result = await _unitOfWork.ExecuteTransactionAsync(async () =>
+                    {
+                        return await _unitOfWork.IdentityRepository.UpdateUserAsync(userApp);
+                    });
                     if (!result.Succeeded)
                     {
                         var errors = result.Errors.Select(e => e.Description).ToArray();
