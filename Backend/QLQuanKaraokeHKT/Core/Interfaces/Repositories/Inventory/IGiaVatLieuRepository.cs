@@ -1,12 +1,12 @@
 ﻿using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Inventory
 {
-    public interface IGiaVatLieuRepository
+    public interface IGiaVatLieuRepository : IGenericRepository<GiaVatLieu,int>
     {
-        Task<GiaVatLieu> CreateGiaVatLieuAsync(GiaVatLieu giaVatLieu);
         Task<GiaVatLieu?> GetGiaHienTaiByMaVatLieuAsync(int maVatLieu);
         Task<List<GiaVatLieu>> GetGiaVatLieuByMaVatLieuAsync(int maVatLieu);
-        Task<bool> UpdateGiaVatLieuStatusAsync(int maGiaVatLieu, string trangThai);
+        Task DisableCurrentPricesAsync(int maVatLieu, string newTrangThai);
     }
 }

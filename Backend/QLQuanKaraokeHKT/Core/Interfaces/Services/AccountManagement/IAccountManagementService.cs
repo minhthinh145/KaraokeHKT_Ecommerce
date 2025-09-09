@@ -11,6 +11,5 @@ namespace QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement
         Task<ServiceResult> DeleteAccountAsync(Guid maTaiKhoan);
         Task<ServiceResult> UpdateAccountAsync(UpdateAccountDTO updateAccountDTO);
 
-
     }
 }

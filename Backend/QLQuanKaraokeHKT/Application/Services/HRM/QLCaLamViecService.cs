@@ -2,40 +2,52 @@
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.HRM;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
 
 namespace QLQuanKaraokeHKT.Application.Services.HRM
 {
     public class QLCaLamViecService : IQLCaLamViecService
     {
-        private readonly ICaLamViecRepository _repo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public QLCaLamViecService(ICaLamViecRepository repo, IMapper mapper)
+        public QLCaLamViecService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repo = repo;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<ServiceResult> CreateCaLamViecAsync(AddCaLamViecDTO addCaLamViecDto)
         {
-            if (addCaLamViecDto == null) 
+            try
             {
-                return ServiceResult.Failure("Không thể thêm ca làm việc vì dữ liệu không hợp lệ.");
-            }
-            var caLamVec = _mapper.Map<CaLamViec>(addCaLamViecDto);
-            var resultCreate = await _repo.CreateCaLamViecAsync(caLamVec);
-            if (resultCreate == null)
+                if (addCaLamViecDto == null)
+                {
+                    return ServiceResult.Failure("Không thể thêm ca làm việc vì dữ liệu không hợp lệ.");
+                }
+                var caLamVec = _mapper.Map<CaLamViec>(addCaLamViecDto);
+
+                var resultCreate = await _unitOfWork.ExecuteTransactionAsync(async () =>
+                {
+                    var createdCaLamViec = await _unitOfWork.CaLamViecRepository.CreateAsync(caLamVec);
+                    return createdCaLamViec;
+                });
+
+                if (resultCreate == null)
+                {
+                    return ServiceResult.Failure("Không thể thêm ca làm việc do lỗi hệ thống.");
+                }
+                return ServiceResult.Success("Thêm ca làm việc thành công.", _mapper.Map<CaLamViecDTO>(resultCreate));
+            } catch(Exception ex)
             {
-                return ServiceResult.Failure("Không thể thêm ca làm việc do lỗi hệ thống.");
+                return ServiceResult.Failure($"Không thể thêm ca làm việc: {ex.Message}");
             }
-            return ServiceResult.Success("Thêm ca làm việc thành công.", _mapper.Map<CaLamViecDTO>(resultCreate));
         }
 
 
         public Task<ServiceResult> GetAllCaLamViecsAsync()
         {
-            var listCaLamViec = _repo.GetAllCaLamViecsAsync();
+            var listCaLamViec = _unitOfWork.CaLamViecRepository.GetAllAsync();
             if (listCaLamViec == null || !listCaLamViec.Result.Any())
             {
                 return Task.FromResult(ServiceResult.Failure("Không có ca làm việc nào được tìm thấy."));
@@ -47,7 +59,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 
         public Task<ServiceResult> GetCaLamViecByIdAsync(int maCa)
         {
-            var caLamViec = _repo.GetCaLamViecByIdAsync(maCa);
+            var caLamViec = _unitOfWork.CaLamViecRepository.GetByIdAsync(maCa);
             if (caLamViec == null)
             {
                 return Task.FromResult(ServiceResult.Failure($"Không tìm thấy ca làm việc với mã {maCa}."));

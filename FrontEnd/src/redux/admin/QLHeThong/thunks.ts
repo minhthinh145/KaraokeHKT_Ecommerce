@@ -39,7 +39,6 @@ export const fetchAllNhanVien = createAsyncThunk(
   }
 );
 
-// 🔥 Fetch All Tài khoản Khách hàng
 export const fetchAllKhachHang = createAsyncThunk(
   "qlHeThong/fetchAllKhachHang",
   async (_, { rejectWithValue }) => {
@@ -79,7 +78,6 @@ export const fetchLoaiTaiKhoan = createAsyncThunk(
   }
 );
 
-// 🔥 Fetch Nhân viên chưa có tài khoản - Gọi endpoint nhanvienAll
 export const fetchNhanVienChuaCoTaiKhoan = createAsyncThunk(
   "qlHeThong/fetchNhanVienChuaCoTaiKhoan",
   async (_, { rejectWithValue }) => {
@@ -101,7 +99,6 @@ export const fetchNhanVienChuaCoTaiKhoan = createAsyncThunk(
   }
 );
 
-// 🔥 Create Tài khoản cho Nhân viên - Gọi endpoint gan-tai-khoan
 export const createNhanVienAccount = createAsyncThunk(
   "qlHeThong/createNhanVien",
   async (data: AddTaiKhoanForNhanVienDTO, { rejectWithValue }) => {
@@ -119,7 +116,6 @@ export const createNhanVienAccount = createAsyncThunk(
   }
 );
 
-//Quản lý
 export const fetchAllAdminAccount = createAsyncThunk(
   "qlHeThong/fetchAllAdminAccount",
   async (_, { rejectWithValue }) => {
@@ -156,7 +152,6 @@ export const createAdminAccount = createAsyncThunk(
   }
 );
 
-//lock account
 export const lockAccountThunk = createAsyncThunk(
   "qlHeThong/lockAccount",
   async (maTaiKhoan: string, { rejectWithValue }) => {

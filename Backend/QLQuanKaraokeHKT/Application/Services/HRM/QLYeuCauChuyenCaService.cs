@@ -2,7 +2,7 @@
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.HRM;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
 
@@ -10,21 +10,18 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 {
     public class QLYeuCauChuyenCaService : IQLYeuCauChuyenCaService
     {
-        private readonly IYeuCauChuyenCaRepository _yeuCauChuyenCaRepository;
-        private readonly ILichLamViecRepository _lichLamViecRepository;
         private readonly IMapper _mapper;
         private readonly ISendEmailService _sendEmailService;
+        private readonly IUnitOfWork _unitOfWork;
 
         public QLYeuCauChuyenCaService(
-            IYeuCauChuyenCaRepository yeuCauChuyenCaRepository,
-            ILichLamViecRepository lichLamViecRepository,
+            IUnitOfWork unitOfWork,
             ISendEmailService sendEmailService,
             IMapper mapper)
         {
-            _yeuCauChuyenCaRepository = yeuCauChuyenCaRepository ?? throw new ArgumentNullException(nameof(yeuCauChuyenCaRepository));
-            _lichLamViecRepository = lichLamViecRepository ?? throw new ArgumentNullException(nameof(lichLamViecRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _sendEmailService = sendEmailService ?? throw new ArgumentNullException(nameof(sendEmailService));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
         public async Task<ServiceResult> CreateYeuCauChuyenCaAsync(AddYeuCauChuyenCaDTO addYeuCauChuyenCaDto)
@@ -34,23 +31,20 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                 if (addYeuCauChuyenCaDto == null)
                     return ServiceResult.Failure("Thông tin yêu cầu chuyển ca không hợp lệ.");
 
-                // Kiểm tra lịch làm việc gốc có tồn tại
-                var lichLamViecGoc = await _lichLamViecRepository.GetLichLamViecByIdAsync(addYeuCauChuyenCaDto.MaLichLamViecGoc);
+                var lichLamViecGoc = await _unitOfWork.YeuCauChuyenCaRepository.GetByIdAsync(addYeuCauChuyenCaDto.MaLichLamViecGoc);
                 if (lichLamViecGoc == null)
                     return ServiceResult.Failure("Không tìm thấy lịch làm việc gốc.");
 
-                // Kiểm tra xem có xung đột lịch làm việc không
-                var hasConflict = await _yeuCauChuyenCaRepository.CheckConflictLichLamViecAsync(
-                    lichLamViecGoc.MaNhanVien,
+                var hasConflict = await _unitOfWork.YeuCauChuyenCaRepository.CheckConflictLichLamViecAsync(
+                    lichLamViecGoc.LichLamViecGoc.MaNhanVien,
                     addYeuCauChuyenCaDto.NgayLamViecMoi,
                     addYeuCauChuyenCaDto.MaCaMoi);
 
                 if (hasConflict)
                     return ServiceResult.Failure("Nhân viên đã có lịch làm việc trong ngày và ca này.");
 
-                // Tạo yêu cầu chuyển ca
                 var yeuCauChuyenCa = _mapper.Map<YeuCauChuyenCa>(addYeuCauChuyenCaDto);
-                var createdYeuCau = await _yeuCauChuyenCaRepository.CreateYeuCauChuyenCaAsync(yeuCauChuyenCa);
+                var createdYeuCau = await _unitOfWork.YeuCauChuyenCaRepository.CreateAsync(yeuCauChuyenCa);
 
                 var result = _mapper.Map<YeuCauChuyenCaDTO>(createdYeuCau);
                 return ServiceResult.Success("Tạo yêu cầu chuyển ca thành công.", result);
@@ -65,7 +59,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var yeuCauList = await _yeuCauChuyenCaRepository.GetAllYeuCauChuyenCaAsync();
+                var yeuCauList = await _unitOfWork.YeuCauChuyenCaRepository.GetAllAsync();
                 if (yeuCauList == null || !yeuCauList.Any())
                     return ServiceResult.Failure("Không có yêu cầu chuyển ca nào trong hệ thống.");
 
@@ -82,7 +76,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var yeuCauList = await _yeuCauChuyenCaRepository.GetYeuCauChuyenCaByNhanVienAsync(maNhanVien);
+                var yeuCauList = await _unitOfWork.YeuCauChuyenCaRepository.GetYeuCauChuyenCaByNhanVienAsync(maNhanVien);
                 if (yeuCauList == null || !yeuCauList.Any())
                     return ServiceResult.Failure("Nhân viên chưa có yêu cầu chuyển ca nào.");
 
@@ -99,7 +93,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var yeuCauList = await _yeuCauChuyenCaRepository.GetYeuCauChuyenCaChuaPheDuyetAsync();
+                var yeuCauList = await _unitOfWork.YeuCauChuyenCaRepository.GetYeuCauChuyenCaChuaPheDuyetAsync();
                 if (yeuCauList == null || !yeuCauList.Any())
                     return ServiceResult.Failure("Không có yêu cầu chuyển ca nào cần phê duyệt.");
 
@@ -116,7 +110,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var yeuCauList = await _yeuCauChuyenCaRepository.GetYeuCauChuyenCaDaPheDuyetAsync();
+                var yeuCauList = await _unitOfWork.YeuCauChuyenCaRepository.GetYeuCauChuyenCaDaPheDuyetAsync();
                 if (yeuCauList == null || !yeuCauList.Any())
                     return ServiceResult.Failure("Không có yêu cầu chuyển ca nào đã phê duyệt.");
 
@@ -133,7 +127,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var yeuCau = await _yeuCauChuyenCaRepository.GetYeuCauChuyenCaByIdAsync(maYeuCau);
+                var yeuCau = await _unitOfWork.YeuCauChuyenCaRepository.GetByIdAsync(maYeuCau);
                 if (yeuCau == null)
                     return ServiceResult.Failure("Không tìm thấy yêu cầu chuyển ca.");
 
@@ -150,61 +144,60 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                if (pheDuyetDto == null)
-                    return ServiceResult.Failure("Thông tin phê duyệt không hợp lệ.");
-
-                // 1. Lấy thông tin yêu cầu chuyển ca TRƯỚC KHI duyệt
-                var yeuCau = await _yeuCauChuyenCaRepository.GetYeuCauChuyenCaByIdAsync(pheDuyetDto.MaYeuCau);
-                if (yeuCau == null)
-                    return ServiceResult.Failure("Không tìm thấy yêu cầu chuyển ca.");
-
-                if (yeuCau.DaPheDuyet)
-                    return ServiceResult.Failure("Yêu cầu chuyển ca đã được phê duyệt.");
-
-                // 2. Phê duyệt yêu cầu (chỉ update trạng thái)
-                var result = await _yeuCauChuyenCaRepository.PheDuyetYeuCauChuyenCaAsync(
-                    pheDuyetDto.MaYeuCau,
-                    pheDuyetDto.KetQuaPheDuyet,
-                    pheDuyetDto.GhiChuPheDuyet);
-
-                if (!result)
-                    return ServiceResult.Failure("Phê duyệt yêu cầu chuyển ca thất bại.");
-
-                // 3. NẾU DUYỆT -> CẬP NHẬT LỊCH LÀM VIỆC bằng method mới
-                if (pheDuyetDto.KetQuaPheDuyet)
+                var result = await _unitOfWork.ExecuteTransactionAsync(async () =>
                 {
-                    var updateResult = await _lichLamViecRepository.UpdateLichLamViecForYeuCauChuyenCaAsync(
-                        yeuCau.MaLichLamViecGoc,
+
+                    var yeuCau = await _unitOfWork.YeuCauChuyenCaRepository.GetByIdAsync(pheDuyetDto.MaYeuCau);
+                    if (yeuCau == null)
+                        throw new InvalidOperationException("Không tìm thấy yêu cầu chuyển ca.");
+
+                    var pheDuyetResult = await _unitOfWork.YeuCauChuyenCaRepository.PheDuyetYeuCauChuyenCaAsync(
+                        pheDuyetDto.MaYeuCau,
+                        pheDuyetDto.KetQuaPheDuyet,
+                        pheDuyetDto.GhiChuPheDuyet);
+
+                    if (!pheDuyetResult)
+                        throw new InvalidOperationException("Phê duyệt yêu cầu chuyển ca thất bại.");
+
+                    // NẾU DUYỆT -> CẬP NHẬT LỊCH LÀM VIỆC
+                    if (pheDuyetDto.KetQuaPheDuyet)
+                    {
+                        var updateResult = await _unitOfWork.LichLamViecRepository.UpdateLichLamViecForYeuCauChuyenCaAsync(
+                            yeuCau.MaLichLamViecGoc,
+                            yeuCau.NgayLamViecMoi,
+                            yeuCau.MaCaMoi);
+
+                        if (!updateResult)
+                            throw new InvalidOperationException("Cập nhật lịch làm việc thất bại. Có thể bị xung đột lịch làm việc.");
+                    }
+
+                    // Gửi email thông báo
+                    await _sendEmailService.SendShiftChangeApprovalEmailAsync(
+                                                yeuCau.LichLamViecGoc.NhanVien.Email,
+                        yeuCau.LichLamViecGoc.NhanVien.HoTen,
+                        pheDuyetDto.KetQuaPheDuyet,
+                        yeuCau.LichLamViecGoc.CaLamViec?.TenCa ?? "N/A",
+                        yeuCau.CaMoi?.TenCa ?? "N/A",
+                        yeuCau.LichLamViecGoc.NgayLamViec,
                         yeuCau.NgayLamViecMoi,
-                        yeuCau.MaCaMoi);
+                        pheDuyetDto.GhiChuPheDuyet
+                    );
 
-                    if (!updateResult)
-                        return ServiceResult.Failure("Cập nhật lịch làm việc thất bại. Có thể bị xung đột lịch làm việc.");
-                }
-
-                // 4. Gửi email thông báo
-                var emailBody = $"Yêu cầu chuyển ca của bạn từ {yeuCau.LichLamViecGoc.CaLamViec?.TenCa} - {yeuCau.LichLamViecGoc.NgayLamViec:dd/MM/yyyy} " +
-                                $"đến {yeuCau.CaMoi?.TenCa} - {yeuCau.NgayLamViecMoi:dd/MM/yyyy} " +
-                                $"đã {(pheDuyetDto.KetQuaPheDuyet ? "được chấp nhận" : "bị từ chối")}. " +
-                                $"Ghi chú: {pheDuyetDto.GhiChuPheDuyet ?? "(không có)"}";
-
-                await _sendEmailService.SendEmailByContentAsync(
-                    yeuCau.LichLamViecGoc.NhanVien.Email,
-                    "Thông báo phê duyệt yêu cầu chuyển ca",
-                    emailBody);
-
-                var message = pheDuyetDto.KetQuaPheDuyet
-                    ? "Chấp nhận yêu cầu chuyển ca thành công."
-                    : "Từ chối yêu cầu chuyển ca thành công.";
-
-                // 5. TRẢ VỀ DTO THAY VÌ ENTITY ĐỂ TRÁNH CYCLE
-                return ServiceResult.Success(message, new
-                {
-                    pheDuyetDto.MaYeuCau,
-                    pheDuyetDto.KetQuaPheDuyet,
-                    pheDuyetDto.GhiChuPheDuyet,
-                    NgayPheDuyet = DateTime.Now
+                    // Return data for success response
+                    return new
+                    {
+                        pheDuyetDto.MaYeuCau,
+                        pheDuyetDto.KetQuaPheDuyet,
+                        pheDuyetDto.GhiChuPheDuyet,
+                        NgayPheDuyet = DateTime.Now
+                    };
                 });
+
+                return ServiceResult.Success("Phê duyệt yêu cầu chuyển ca thành công.", result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ServiceResult.Failure(ex.Message);
             }
             catch (Exception ex)
             {
@@ -216,14 +209,14 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var yeuCau = await _yeuCauChuyenCaRepository.GetYeuCauChuyenCaByIdAsync(maYeuCau);
+                var yeuCau = await _unitOfWork.YeuCauChuyenCaRepository.GetByIdAsync(maYeuCau);
                 if (yeuCau == null)
                     return ServiceResult.Failure("Không tìm thấy yêu cầu chuyển ca.");
 
                 if (yeuCau.DaPheDuyet)
                     return ServiceResult.Failure("Không thể xóa yêu cầu đã được phê duyệt.");
 
-                var result = await _yeuCauChuyenCaRepository.DeleteYeuCauChuyenCaAsync(maYeuCau);
+                var result = await _unitOfWork.YeuCauChuyenCaRepository.DeleteAsync(maYeuCau);
                 if (!result)
                     return ServiceResult.Failure("Xóa yêu cầu chuyển ca thất bại.");
 

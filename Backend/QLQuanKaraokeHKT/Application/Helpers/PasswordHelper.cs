@@ -17,6 +17,12 @@ namespace QLQuanKaraokeHKT.Application.Helpers
             return $"{prefix}@Admin123";
         }
 
+        public static string GenerateEmployeePassword(string loaiTaiKhoan, string phoneNumber)
+        {
+            return $"{loaiTaiKhoan}@{phoneNumber}";
+        }
+
+
         public static string FormatPassword(string password)
         {
             if (string.IsNullOrWhiteSpace(password))

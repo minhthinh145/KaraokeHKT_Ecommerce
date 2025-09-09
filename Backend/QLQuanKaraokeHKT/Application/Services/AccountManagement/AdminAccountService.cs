@@ -4,7 +4,6 @@ using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
 
 namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
@@ -13,13 +12,11 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IAccountBaseService _accountBaseService;
 
-        public AdminAccountService( IMapper mapper,IAccountBaseService accountBaseService,IUnitOfWork unitOfWork)
+        public AdminAccountService( IMapper mapper,IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _accountBaseService = accountBaseService;
         }
 
         public async Task<ServiceResult> GetAllAdminAccountAsync()
@@ -43,7 +40,6 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                 return ServiceResult.Failure("Thông tin tài khoản quản lý không hợp lệ.");
             }
             var TaiKhoanQuanLy = _mapper.Map<TaiKhoan>(adminDTO);
-            // Activate account
             TaiKhoanQuanLy.daKichHoat = true;
             TaiKhoanQuanLy.EmailConfirmed = true;
             TaiKhoanQuanLy.daBiKhoa = false;
@@ -56,7 +52,6 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                 return ServiceResult.Failure("Tạo tài khoản quản lý thất bại.", errors);
             }
 
-            // Gắn role cho tài khoản quản lý
             await _unitOfWork.RoleRepository.AddToRoleAsync(TaiKhoanQuanLy, TaiKhoanQuanLy.loaiTaiKhoan);
 
             return ServiceResult.Success("Tạo tài khoản quản lý thành công.");

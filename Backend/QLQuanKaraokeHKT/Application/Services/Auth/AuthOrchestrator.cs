@@ -83,14 +83,12 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                 {
                     _logger.LogInformation("🎼 Starting sign-up workflow for email: {Email}", signUpDto.Email);
 
-                    // Step 1: Validate registration data (extracted from TaiKhoanService)
                     var validationResult = await _registrationService.ValidateRegistrationDataAsync(signUpDto);
                     if (!validationResult.IsSuccess)
                     {
                         return validationResult;
                     }
 
-                    // Step 2: Create user account (from TaiKhoanService.SignUpAsync)
                     var (success, user, errors) = await _registrationService.CreateUserAccountAsync(signUpDto);
                     if (!success || user == null)
                     {
@@ -99,7 +97,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                         return ServiceResult.Failure("Đăng ký thất bại.", errors);
                     }
 
-                    // Step 3: Send verification email (enhanced feature)
                     var emailResult = await _registrationService.SendAccountVerificationEmailAsync(user);
                     if (!emailResult.IsSuccess)
                     {

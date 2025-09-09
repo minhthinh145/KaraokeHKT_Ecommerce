@@ -3,9 +3,6 @@ using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Services.Auth
 {
-    /// <summary>
-    /// Authentication Orchestra Conductor - Coordinates complex authentication workflows
-    /// </summary>
     public interface IAuthOrchestrator
     {
 

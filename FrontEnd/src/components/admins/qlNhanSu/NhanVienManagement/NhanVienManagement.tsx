@@ -38,7 +38,7 @@ export const NhanVienManagement: React.FC = () => {
   const handleNghiViec = (nhanVien: NhanVienDTO, value: boolean) => {
     nhanVienHandlers.updateDaNghiViec(nhanVien.maNv, value);
   };
-  // ✨ Stats cards data với helper functions
+
   const statsCards = [
     StatsCardHelpers.totalNhanVienCard(nhanVienStats.total),
     StatsCardHelpers.nhanVienKhoCard(nhanVienStats.byType.NhanVienKho || 0),
@@ -50,7 +50,6 @@ export const NhanVienManagement: React.FC = () => {
     ),
   ];
 
-  // Tách 2 danh sách
   const nhanVienDangLam = React.useMemo(
     () => data.filter((x) => !x.daNghiViec),
     [data]

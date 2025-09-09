@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using QLQuanKaraokeHKT.Application.Helpers;
+using QLQuanKaraokeHKT.Application.Services.Auth;
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs;
 using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.HRM;
+
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
+using QLQuanKaraokeHKT.Core.Interfaces.Services.Auth;
+using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
 
 namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
 {
@@ -15,16 +17,16 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IAccountBaseService _accountBaseService;
+        private readonly ISendEmailService _sendEmailService ;
 
         public NhanVienAccountService(
             IUnitOfWork unitOfWork,
-            IAccountBaseService accountBaseService,
+            ISendEmailService sendEmailService,
             IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _accountBaseService = accountBaseService ?? throw new ArgumentNullException(nameof(accountBaseService));
+            _sendEmailService = sendEmailService;
         }
 
         public async Task<ServiceResult> GetAllTaiKhoanNhanVienAsync()
@@ -70,144 +72,97 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
             }
         }
 
-        public async Task<ServiceResult> AddTaiKhoanForNhanVienAsync(AddTaiKhoanForNhanVienDTO request)
+        public async Task<ServiceResult> ChangeTaiKhoanForNhanVienAsync(AddTaiKhoanForNhanVienDTO request)
         {
+
             try
             {
-                // 1. Validate input
                 var validationResult = ValidationHelper.ValidateAddTaiKhoanForNhanVien(request);
                 if (!validationResult.IsSuccess)
                     return validationResult;
 
-                // 2. Lấy thông tin nhân viên
-                var existingNhanVien = await _unitOfWork.NhanVienRepository.GetNhanVienByIdAsync(request.MaNhanVien);
-                if (existingNhanVien == null)
+                var nhanVien = await _unitOfWork.NhanVienRepository.GetByIdWithTaiKhoanAsync(request.MaNhanVien);
+                if (nhanVien?.MaTaiKhoan == Guid.Empty)
                 {
-                    return ServiceResult.Failure("Không tìm thấy nhân viên.");
+                    return ServiceResult.Failure("Nhân viên không có tài khoản hoặc không tồn tại.");
                 }
 
-                // 3. Lấy tài khoản cũ và role của nó
-                TaiKhoan? oldAccount = null;
-                string roleCode = ApplicationRole.NhanVienPhucVu; // Default role
-
-                if (existingNhanVien.MaTaiKhoan != Guid.Empty)
+                var taiKhoan = await _unitOfWork.IdentityRepository.FindByUserIDAsync(nhanVien.MaTaiKhoan.ToString());
+                if (taiKhoan == null)
                 {
-                    oldAccount = await _unitOfWork.IdentityRepository.FindByUserIDAsync(existingNhanVien.MaTaiKhoan.ToString());
-                    if (oldAccount != null)
-                    {
-                        // Lấy role từ tài khoản cũ
-                        roleCode = oldAccount.loaiTaiKhoan ?? ApplicationRole.NhanVienPhucVu;
-                    }
+                    return ServiceResult.Failure("Không tìm thấy tài khoản liên kết.");
                 }
 
-                // 4. Kiểm tra email mới không trùng
-                var emailCheckResult = await _accountBaseService.CheckEmailExistsAsync(request.Email);
-                if (!emailCheckResult.IsSuccess)
-                    return emailCheckResult;
+                await UpdateAccountInfoAsync(taiKhoan, request);
 
-                // 5. Tạo tài khoản mới với role từ tài khoản cũ
-                var newAccountResult = await CreateTaiKhoanForExistingNhanVienAsync(request, roleCode);
-                if (!newAccountResult.IsSuccess)
-                    return newAccountResult;
+                await UpdateEmployeeEmailAsync(nhanVien, request.Email);
 
-                var newAccount = (TaiKhoan)newAccountResult.Data;
-
-                // 6. Link tài khoản mới với nhân viên
-                var linkResult = await LinkTaiKhoanToNhanVienAsync(existingNhanVien, newAccount, request);
-                if (!linkResult.IsSuccess)
+                if (!string.IsNullOrWhiteSpace(request.Password))
                 {
-                    // Nếu link thất bại, xóa tài khoản mới đã tạo
-                    await _unitOfWork.AccountManagementRepository.DeleteUserAsync(newAccount);
-                    return linkResult;
+                    var formattedPassword = PasswordHelper.FormatPassword(request.Password);
+                    await _sendEmailService.SendPasswordResetEmailAsync(request.Email, nhanVien.HoTen, formattedPassword);
                 }
 
-                // 7. Xóa tài khoản cũ (sau khi link thành công)
-                if (oldAccount != null)
-                {
-                    var deleteOldResult = await _unitOfWork.AccountManagementRepository.DeleteUserWithRelatedDataAsync(oldAccount);
-                    if (!deleteOldResult)
-                    {
-                        // Log warning nhưng không fail vì tài khoản mới đã tạo thành công
-                    }
-                }
-
-                // 8. Gửi email thông báo
-                var formattedPassword = PasswordHelper.FormatPassword(request.Password);
-                var updatedNhanVienDTO = _mapper.Map<NhanVienDTO>(existingNhanVien);
-                await _accountBaseService.SendWelcomeEmailAsync(request.Email, updatedNhanVienDTO.HoTen, formattedPassword);
-
-                // 9. Trả về kết quả
-                return ServiceResult.Success("Di dời email tài khoản cho nhân viên thành công.", updatedNhanVienDTO);
+                var result = _mapper.Map<NhanVienDTO>(nhanVien);
+                return ServiceResult.Success("Cập nhật email tài khoản thành công.", result);
             }
             catch (Exception ex)
             {
-                return ServiceResult.Failure($"Lỗi hệ thống khi di dời email tài khoản: {ex.Message}");
+                return ServiceResult.Failure($"Lỗi hệ thống: {ex.Message}");
             }
-        }
-
-        private async Task<ServiceResult> CreateTaiKhoanForExistingNhanVienAsync(AddTaiKhoanForNhanVienDTO request, string roleCode)
-        {
-            var password = PasswordHelper.FormatPassword(request.Password);
-
-            var taiKhoan = new TaiKhoan
-            {
-                UserName = request.Email,
-                Email = request.Email,
-                FullName = "", // Sẽ cập nhật từ nhân viên
-                PhoneNumber = "", // Sẽ cập nhật từ nhân viên
-                loaiTaiKhoan = roleCode, // Sử dụng roleCode từ tài khoản cũ
-                daKichHoat = true,
-                EmailConfirmed = true,
-                daBiKhoa = false
-            };
-
-            var createResult = await _unitOfWork.IdentityRepository.CreateUserAsync(taiKhoan, password);
-            if (!createResult.Succeeded)
-            {
-                var errors = createResult.Errors.Select(e => e.Description).ToList();
-                return ServiceResult.Failure("Tạo tài khoản thất bại.", errors);
-            }
-
-            // Gán role giống tài khoản cũ
-            await _unitOfWork.RoleRepository.AddToRoleAsync(taiKhoan, roleCode);
-
-            return ServiceResult.Success("Tạo tài khoản thành công.", taiKhoan);
-        }
-
-        private async Task<ServiceResult> LinkTaiKhoanToNhanVienAsync(NhanVien nhanVien, TaiKhoan taiKhoan, AddTaiKhoanForNhanVienDTO request)
-        {
-            // Cập nhật thông tin tài khoản từ nhân viên
-            taiKhoan.FullName = nhanVien.HoTen;
-            taiKhoan.PhoneNumber = nhanVien.SoDienThoai;
-
-            var updateAccountResult = await _unitOfWork.IdentityRepository.UpdateUserAsync(taiKhoan);
-            if (!updateAccountResult.Succeeded)
-            {
-                return ServiceResult.Failure("Cập nhật thông tin tài khoản thất bại.");
-            }
-
-            // Cập nhật nhân viên với tài khoản mới
-            nhanVien.MaTaiKhoan = taiKhoan.Id;
-            nhanVien.Email = request.Email; // Chỉ cập nhật email
-            // LoaiNhanVien và các field khác giữ nguyên
-
-            var updateEmployeeResult = await _unitOfWork.NhanVienRepository.UpdateNhanVienAsync(nhanVien);
-            if (!updateEmployeeResult)
-            {
-                return ServiceResult.Failure("Cập nhật thông tin nhân viên thất bại.");
-            }
-
-            return ServiceResult.Success("Liên kết tài khoản thành công.");
         }
 
         public async Task<ServiceResult> GetProfileByUserIdAsync(Guid userId)
         {
             var taiKhoan = await _unitOfWork.IdentityRepository.FindByUserIDAsync(userId.ToString());
+
             if (taiKhoan == null) return ServiceResult.Failure("Không tìm thấy tài khoản.");
+
             var nhanVien = await _unitOfWork.NhanVienRepository.GetNhanVienByTaiKhoanIdAsync(taiKhoan.Id);
+
             if (nhanVien == null) return ServiceResult.Failure("Không tìm thấy nhân viên.");
+
             var dto = _mapper.Map<NhanVienTaiKhoanDTO>(nhanVien);
             return ServiceResult.Success("Lấy profile thành công.", dto);
         }
+
+        #region helper Method
+        private async Task UpdateAccountInfoAsync(TaiKhoan taiKhoan, AddTaiKhoanForNhanVienDTO request)
+        {
+            taiKhoan.Email = request.Email;
+            taiKhoan.UserName = request.Email;
+            taiKhoan.NormalizedEmail = request.Email.ToUpper();
+            taiKhoan.NormalizedUserName = request.Email.ToUpper();
+
+            if (!string.IsNullOrWhiteSpace(request.Password))
+            {
+                var passwordResult = await _unitOfWork.IdentityRepository.UpdatePasswordAsync(taiKhoan, PasswordHelper.FormatPassword(request.Password));
+                if (!passwordResult.Success)
+                {
+                    throw new InvalidOperationException($"Cập nhật mật khẩu thất bại: {string.Join(", ", passwordResult.Errors)}");
+                }
+            }
+
+            var updateResult = await _unitOfWork.IdentityRepository.UpdateUserAsync(taiKhoan);
+            if (!updateResult.Succeeded)
+            {
+                var errors = string.Join(", ", updateResult.Errors.Select(e => e.Description));
+                throw new InvalidOperationException($"Cập nhật tài khoản thất bại: {errors}");
+            }
+        }
+
+        private async Task UpdateEmployeeEmailAsync(NhanVien nhanVien, string newEmail)
+        {
+            if (nhanVien.Email != newEmail)
+            {
+                nhanVien.Email = newEmail;
+                var updateResult = await _unitOfWork.NhanVienRepository.UpdateAsync(nhanVien);
+                if (!updateResult)
+                {
+                    throw new InvalidOperationException("Cập nhật email nhân viên thất bại.");
+                }
+            }
+        }
+        #endregion
     }
 }

@@ -1,4 +1,4 @@
-using QLQuanKaraokeHKT.Application.Mappings;
+using QLQuanKaraokeHKT.Application.Mappings.Account;
 using QLQuanKaraokeHKT.Application.Mappings.Auth;
 using QLQuanKaraokeHKT.Application.Mappings.Booking;
 using QLQuanKaraokeHKT.Application.Mappings.Customer;
@@ -7,8 +7,8 @@ using QLQuanKaraokeHKT.Application.Mappings.Inventory;
 using QLQuanKaraokeHKT.Application.Mappings.Room;
 using QLQuanKaraokeHKT.Application.Services.AccountManagement;
 using QLQuanKaraokeHKT.Application.Services.Auth;
-using QLQuanKaraokeHKT.Application.Services.Background;
-using QLQuanKaraokeHKT.Application.Services.Booking;
+using QLQuanKaraokeHKT.Application.Services.Common;
+using QLQuanKaraokeHKT.Application.Services.Core;
 using QLQuanKaraokeHKT.Application.Services.Customer;
 using QLQuanKaraokeHKT.Application.Services.External;
 using QLQuanKaraokeHKT.Application.Services.HRM;
@@ -20,7 +20,8 @@ using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Customer;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Auth;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Booking;
+using QLQuanKaraokeHKT.Core.Interfaces.Services.Common;
+using QLQuanKaraokeHKT.Core.Interfaces.Services.Core;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Customer;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
@@ -40,7 +41,7 @@ namespace QLQuanKaraokeHKT.Web.Extensions
                 {
                     cfg.AddProfile<AuthMappingProfile>();
 
-                    cfg.AddProfile<CustomerMappingProfile>();
+                    cfg.AddProfile<ActorMappingProfile>();
 
                     cfg.AddProfile<RoomMappingProfile>();
                     cfg.AddProfile<RoomQueryMappingProfile>();
@@ -51,7 +52,7 @@ namespace QLQuanKaraokeHKT.Web.Extensions
                     cfg.AddProfile<HRMMappingProfile>();
 
                     cfg.AddProfile<BookingMappingProfile>();
-
+                    cfg.AddProfile<AccountMappingProfile>();
                     
                 });
 
@@ -62,6 +63,8 @@ namespace QLQuanKaraokeHKT.Web.Extensions
             // UnitOfWork
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddScoped<IPricingService, PricingService>();
+            services.AddScoped<ICoreAccountService, CoreAccountService>();
 
             services.AddScoped<ITokenService, TokenService>();
 
@@ -85,8 +88,6 @@ namespace QLQuanKaraokeHKT.Web.Extensions
 
             // Authentication Services
             services.AddScoped<IVerifyAuthService, VerifyAuthService>();
-           // services.AddScoped<IChangePasswordService, ChangePasswordService>();
-           // services.AddScoped<ITaiKhoanService, TaiKhoanService>();
             services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
             services.AddScoped<IUserRegistrationService, UserRegistrationService>();
             services.AddScoped<IPasswordManagementService, PasswordManagementService>();
@@ -94,7 +95,6 @@ namespace QLQuanKaraokeHKT.Web.Extensions
             services.AddScoped<IAuthOrchestrator, AuthOrchestrator>();
 
             // Account Management Services
-            services.AddScoped<IAccountBaseService, AccountBaseService>();
             services.AddScoped<IAdminAccountService, AdminAccountService>();
             services.AddScoped<INhanVienAccountService, NhanVienAccountService>();
             services.AddScoped<IKhachHangAccountService, KhachHangAccountService>();
@@ -105,20 +105,18 @@ namespace QLQuanKaraokeHKT.Web.Extensions
             //services.AddScoped<IKhachHangDatPhongService, KhachHangDatPhongService>();
 
             // HRM Services
-            //services.AddScoped<IQLNhanSuService, QLNhanSuService>();
-            //services.AddScoped<IQLCaLamViecService, QLCaLamViecService>();
-            //services.AddScoped<IQuanLyTienLuongService, QuanLyTienLuongService>();
-            //services.AddScoped<IQLLichLamViecService, QLLichLamViecService>();
-            //services.AddScoped<IQLYeuCauChuyenCaService, QLYeuCauChuyenCaService>();
+            services.AddScoped<IHRMOrchestrator, HRMOrchestrator>();
+            services.AddScoped<IQLCaLamViecService, QLCaLamViecService>();
+            services.AddScoped<IQuanLyTienLuongService, QuanLyTienLuongService>();
+            services.AddScoped<IQLLichLamViecService, QLLichLamViecService>();
+            services.AddScoped<IQLYeuCauChuyenCaService, QLYeuCauChuyenCaService>();
 
             // Inventory Services
-            //services.AddScoped<IQLVatLieuService, QLVatLieuService>();
+            services.AddScoped<IQLVatLieuService, QLVatLieuService>();
 
             // Room Services
             services.AddScoped<IQLLoaiPhongService, QLLoaiPhongService>();
-            //services.AddScoped<IQLPhongHatService, QLPhongHatService>();
             services.AddScoped<IRoomOrchestrator, RoomOrchestrator>();
-            services.AddScoped<IRoomPricingService, RoomPricingService>();
             // Payment Services
             services.AddScoped<IVNPayService, VNPayService>();
 

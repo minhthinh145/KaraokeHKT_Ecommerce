@@ -6,9 +6,6 @@ namespace QLQuanKaraokeHKT.Core.Interfaces.Services.Customer
 {
     public interface IKhachHangService
     {
-        Task<ServiceResult> GetAllKhacHangAsync();
-        Task<ServiceResult> GetKhachHangByIdAsync(Guid maKhachHang);
-        Task<ServiceResult> CreateKhachHangByDangKyAsync(SignUpDTO signUp);
         Task<ServiceResult> UpdateKhachHangByTaiKhoanAsync(TaiKhoan taiKhoan);
 
     }

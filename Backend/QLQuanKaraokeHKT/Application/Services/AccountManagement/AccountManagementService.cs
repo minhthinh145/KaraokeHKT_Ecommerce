@@ -71,26 +71,22 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
         {
             try
             {
-                // 1. Validate input
                 if (updateAccountDTO == null || string.IsNullOrWhiteSpace(updateAccountDTO.newUserName))
                 {
                     return ServiceResult.Failure("Thông tin cập nhật không hợp lệ.");
                 }
 
-                // 2. Tìm tài khoản theo ID
+
                 var existingUser = await _unitOfWork.IdentityRepository.FindByUserIDAsync(updateAccountDTO.maTaiKhoan.ToString());
                 if (existingUser == null)
                 {
                     return ServiceResult.Failure("Không tìm thấy tài khoản.");
                 }
 
-                // 3. Lưu role cũ để so sánh
                 string oldRole = existingUser.loaiTaiKhoan;
 
-                // 4. Map thông tin mới vào user (AutoMapper sẽ chỉ map các field có giá trị)
                 _mapper.Map(updateAccountDTO, existingUser);
 
-                // 5. Cập nhật thông tin tài khoản
                 var updateResult = await _unitOfWork.IdentityRepository.UpdateUserAsync(existingUser);
                 if (!updateResult.Succeeded)
                 {
@@ -98,7 +94,6 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                     return ServiceResult.Failure("Cập nhật thông tin tài khoản thất bại.", errors);
                 }
 
-                // 6. Cập nhật mật khẩu nếu có
                 if (!string.IsNullOrWhiteSpace(updateAccountDTO.newPassword))
                 {
                     var passwordResult = await _unitOfWork.IdentityRepository.UpdatePasswordAsync(existingUser, updateAccountDTO.newPassword);
@@ -108,7 +103,6 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                     }
                 }
 
-                // 7. Cập nhật role nếu có thay đổi
                 if (!string.IsNullOrWhiteSpace(updateAccountDTO.newLoaiTaiKhoan) &&
                     oldRole != updateAccountDTO.newLoaiTaiKhoan)
                 {
@@ -118,6 +112,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
                         return ServiceResult.Failure("Cập nhật vai trò thất bại.");
                     }
                 }
+
 
                 return ServiceResult.Success("Cập nhật tài khoản thành công.");
             }

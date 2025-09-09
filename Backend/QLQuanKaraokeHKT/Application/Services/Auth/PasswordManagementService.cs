@@ -8,10 +8,7 @@ using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
 
 namespace QLQuanKaraokeHKT.Application.Services.Auth
 {
-    /// <summary>
-    /// Password Management Service - Migrated from ChangePasswordService
-    /// Handles ONLY password-related operations
-    /// </summary>
+
     public class PasswordManagementService : IPasswordManagementService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -34,7 +31,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        // 🔄 MIGRATED FROM: ChangePasswordService.RequestChangePasswordAsync() - validation part
         public async Task<ServiceResult> ValidatePasswordChangeRequestAsync(TaiKhoan user, ChangePasswordDTO changePasswordDto)
         {
             try
@@ -54,7 +50,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
                     return ServiceResult.Failure("New password and confirm password do not match.");
                 }
 
-                // Validate old password - exactly like original
                 var checkOldPasswordResult = await _unitOfWork.IdentityRepository.CheckPasswordAsync(user, changePasswordDto.OldPassword);
                 if (!checkOldPasswordResult)
                 {

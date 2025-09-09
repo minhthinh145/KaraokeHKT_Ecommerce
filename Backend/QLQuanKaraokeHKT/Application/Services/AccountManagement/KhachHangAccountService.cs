@@ -9,12 +9,12 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
 {
     public class KhachHangAccountService : IKhachHangAccountService
     {
-        private readonly IKhachHangRepository _khachHangRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public KhachHangAccountService(IKhachHangRepository khacHangRepository,IMapper mapper,  IUnitOfWork unitOfWork)
+        public KhachHangAccountService(IMapper mapper,  IUnitOfWork unitOfWork)
         {
-            _khachHangRepository = khacHangRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -23,7 +23,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
         {
             try
             {   
-                var khachHangs = await _khachHangRepository.GetAllWithTaiKhoanAsync();
+                var khachHangs = await _unitOfWork.KhachHangRepository.GetAllWithTaiKhoanAsync();
                 if (khachHangs == null || !khachHangs.Any())
                 {
                     return ServiceResult.Failure("Không có khách hàng nào trong hệ thống.");

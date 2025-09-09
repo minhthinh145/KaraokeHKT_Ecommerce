@@ -1,53 +1,52 @@
 ﻿using AutoMapper;
+using QLQuanKaraokeHKT.Application.Helpers;
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.HRM;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
 
 namespace QLQuanKaraokeHKT.Application.Services.HRM
 {
-    /// <summary>
-    /// Service implementation for managing LichLamViec (work schedule) operations.
-    /// </summary>
+
     public class QLLichLamViecService : IQLLichLamViecService
     {
-        private readonly ILichLamViecRepository _lichLamViecRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ISendEmailService _sendEmailService;
+        private readonly ILogger<QLLichLamViecService> _logger;
 
-        public QLLichLamViecService(ILichLamViecRepository lichLamViecRepository, IMapper mapper, ISendEmailService sendEmailService)
+        public QLLichLamViecService(IUnitOfWork unitOfWork, IMapper mapper, ISendEmailService sendEmailService, ILogger<QLLichLamViecService> logger)
         {
-            _lichLamViecRepository = lichLamViecRepository ?? throw new ArgumentNullException(nameof(lichLamViecRepository));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _sendEmailService = sendEmailService;
+            _logger = logger;
         }
 
-        /// <summary>
-        /// Creates a new work schedule for an employee.
-        /// </summary>
+
         public async Task<ServiceResult> CreateLichLamViecAsync(AddLichLamViecDTO addLichLamViecDto)
         {
             try
             {
                 if (addLichLamViecDto == null)
-                {
+                {   
                     return ServiceResult.Failure("Thông tin lịch làm việc không hợp lệ.");
                 }
 
-                // Map DTO to entity
                 var lichLamViec = _mapper.Map<LichLamViec>(addLichLamViecDto);
 
-                // Create work schedule
-                var createdLichLamViec = await _lichLamViecRepository.CreateLichLamViecWithNhanVienAsync(lichLamViec);
+                var createdLichLamViec = await _unitOfWork.ExecuteTransactionAsync(async () => {
+                    await _unitOfWork.LichLamViecRepository.CreateAsync(lichLamViec);
+                    return lichLamViec;
+                });
 
                 if (createdLichLamViec == null)
                 {
                     return ServiceResult.Failure("Không thể tạo lịch làm việc do lỗi hệ thống.");
                 }
 
-                // Map result to DTO
                 var result = _mapper.Map<LichLamViecDTO>(createdLichLamViec);
                 return ServiceResult.Success("Tạo lịch làm việc thành công.", result);
             }
@@ -57,14 +56,12 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             }
         }
 
-        /// <summary>
-        /// Retrieves all work schedules in the system.
-        /// </summary>
+
         public async Task<ServiceResult> GetAllLichLamViecAsync()
         {
             try
             {
-                var lichLamViecs = await _lichLamViecRepository.GetAllLichLamViecAsync();
+                var lichLamViecs = await _unitOfWork.LichLamViecRepository.GetAllAsync();
 
                 if (lichLamViecs == null || !lichLamViecs.Any())
                 {
@@ -80,9 +77,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             }
         }
 
-        /// <summary>
-        /// Retrieves work schedules for a specific employee.
-        /// </summary>
+
         public async Task<ServiceResult> GetLichLamViecByNhanVienAsync(Guid maNhanVien)
         {
             try
@@ -92,7 +87,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                     return ServiceResult.Failure("Mã nhân viên không hợp lệ.");
                 }
 
-                var lichLamViecs = await _lichLamViecRepository.GetLichLamViecByNhanVienAsync(maNhanVien);
+                var lichLamViecs = await _unitOfWork.LichLamViecRepository.GetLichLamViecByNhanVienAsync(maNhanVien);
 
                 if (lichLamViecs == null || !lichLamViecs.Any())
                 {
@@ -109,14 +104,12 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         }
 
 
-        /// <summary>
-        /// Retrieves all work in a specified date range.
-        /// </summary>
+
         public async Task<ServiceResult> GetLichLamViecByRangeAsync(DateOnly start, DateOnly end)
         {
             try
             {
-                var lichLamViecs = await _lichLamViecRepository.GetLichLamViecByRangeAsync(start, end);
+                var lichLamViecs = await _unitOfWork.LichLamViecRepository.GetLichLamViecByRangeAsync(start, end);
                 if (lichLamViecs == null || !lichLamViecs.Any())
                     return ServiceResult.Failure("Không có lịch làm việc trong khoảng thời gian này.");
 
@@ -137,7 +130,9 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                     return ServiceResult.Failure("Dữ liệu lịch làm việc không hợp lệ.");
 
                 var entity = _mapper.Map<LichLamViec>(lichLamViecDto);
-                var result = await _lichLamViecRepository.UpdateLichLamViecAsync(entity);
+                var result = await _unitOfWork.ExecuteTransactionAsync(async () => {
+                    return await _unitOfWork.LichLamViecRepository.UpdateAsync(entity);
+                });
 
                 if (!result)
                     return ServiceResult.Failure("Cập nhật lịch làm việc thất bại.");
@@ -154,7 +149,10 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var result = await _lichLamViecRepository.DeleteLichLamViecByIdAsync(maLichLamViec);
+                var result = await _unitOfWork.ExecuteTransactionAsync(async () => {
+                    return await _unitOfWork.LichLamViecRepository.DeleteAsync(maLichLamViec);
+                });
+
                 if (!result)
                     return ServiceResult.Failure("Xóa lịch làm việc thất bại hoặc không tìm thấy.");
 
@@ -167,53 +165,65 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         }
         public async Task<ServiceResult> GetLichLamViecByNhanVienAndRangeAsync(Guid maNhanVien, DateOnly start, DateOnly end)
         {
-            var all = await _lichLamViecRepository.GetLichLamViecByNhanVienAsync(maNhanVien);
+            var all = await _unitOfWork.LichLamViecRepository.GetLichLamViecByNhanVienAsync(maNhanVien);
+
             var filtered = all.Where(lv => lv.NgayLamViec >= start && lv.NgayLamViec <= end).ToList();
             if (!filtered.Any())
-                return ServiceResult.Failure("Không có lịch làm việc trong khoảng này.");
+                return ServiceResult.Success("Không có lịch làm việc trong khoảng này.");
             var dtos = _mapper.Map<List<LichLamViecDTO>>(filtered);
             return ServiceResult.Success("Lấy lịch làm việc thành công.", dtos);
         }
+
         public async Task<ServiceResult> SendNotiWorkSchedulesAsync(DateOnly start, DateOnly end)
         {
-            var nhanVienList = await _lichLamViecRepository.GetNhanVienByLichLamViecRangeAsync(start, end);
-            if (nhanVienList == null || !nhanVienList.Any())
-                return ServiceResult.Failure("Không có nhân viên nào có lịch làm việc trong khoảng thời gian này.");
-
-            int success = 0, fail = 0;
-
-            foreach (var nv in nhanVienList)
+            try
             {
-                if (string.IsNullOrWhiteSpace(nv.Email)) { fail++; continue; }
+                var lichLamViecList = await _unitOfWork.LichLamViecRepository.GetLichLamViecByRangeAsync(start, end);
 
-                // Lấy lịch làm việc của nhân viên trong khoảng ngày
-                var lichTrongKhoang = nv.LichLamViecs
-                    .Where(lv => lv.NgayLamViec >= start && lv.NgayLamViec <= end)
-                    .OrderBy(lv => lv.NgayLamViec)
+                if (!lichLamViecList?.Any() == true)
+                    return ServiceResult.Failure("Không có lịch làm việc nào trong khoảng thời gian này.");
+
+                var nhanVienGroups = lichLamViecList!
+                    .GroupBy(lv => lv.NhanVien)
+                    .Where(g => !string.IsNullOrWhiteSpace(g.Key?.Email))
                     .ToList();
 
-                if (!lichTrongKhoang.Any()) { fail++; continue; }
+                if (!nhanVienGroups.Any())
+                    return ServiceResult.Failure("Không có nhân viên nào có email để gửi thông báo.");
 
-                // Tạo nội dung email
-                var lichText = string.Join("\n", lichTrongKhoang.Select(lv =>
-                    $"- {lv.NgayLamViec:yyyy-MM-dd}: Ca {lv.CaLamViec?.TenCa } ({lv.CaLamViec?.GioBatDauCa:hh\\:mm} - {lv.CaLamViec?.GioKetThucCa:hh\\:mm})"
-                ));
+                int success = 0, fail = 0;
 
-                var subject = $"Lịch làm việc từ {start:yyyy-MM-dd} đến {end:yyyy-MM-dd}";
-                var body = $"Xin chào {nv.HoTen},\n\nBạn có lịch làm việc trong khoảng thời gian sau:\n{lichText}\n\nVui lòng đăng nhập để xem chi tiết hơn. Trân trọng - Quản lý nhân sự.";
-
-                try
+                foreach (var group in nhanVienGroups)
                 {
-                    await _sendEmailService.SendEmailByContentAsync(nv.Email, subject, body);
-                    success++;
+                    var nhanVien = group.Key;
+                    var lichTrongKhoang = group.OrderBy(lv => lv.NgayLamViec).ToList();
+
+                    try
+                    {
+                        var emailContent = EmailContentHelper.CreateWorkScheduleNotificationEmail(
+                            nhanVien.HoTen,
+                            start,
+                            end,
+                            lichTrongKhoang);
+
+                        var subject = EmailContentHelper.Subjects.WorkScheduleNotification;
+
+                        await _sendEmailService.SendEmailByContentAsync(nhanVien.Email, subject, emailContent);
+                        success++;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogError(ex, "Lỗi gửi email cho nhân viên {MaNhanVien}", nhanVien.MaNv);
+                        fail++;
+                    }
                 }
-                catch
-                {
-                    fail++;
-                }
+
+                return ServiceResult.Success($"Đã gửi email thành công cho {success} nhân viên, thất bại {fail}.");
             }
-
-            return ServiceResult.Success($"Đã gửi email thành công cho {success} nhân viên, thất bại {fail}.");
+            catch (Exception ex)
+            {
+                return ServiceResult.Failure($"Lỗi hệ thống khi gửi thông báo lịch làm việc: {ex.Message}");
+            }
         }
     }
 }

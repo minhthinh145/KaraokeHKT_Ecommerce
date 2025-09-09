@@ -4,9 +4,6 @@ using QLQuanKaraokeHKT.Core.Entities;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Services.Auth
 {
-    /// <summary>
-    /// Handles user registration logic
-    /// </summary>
     public interface IUserRegistrationService
     {
 

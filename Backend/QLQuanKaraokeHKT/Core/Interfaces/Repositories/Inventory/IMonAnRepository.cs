@@ -1,11 +1,11 @@
 ﻿using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Inventory
 {
-    public interface IMonAnRepository
+    public interface IMonAnRepository : IGenericRepository<MonAn,int>
     {
-        Task<MonAn> CreateMonAnAsync(MonAn monAn);
         Task<MonAn?> GetMonAnByMaVatLieuAsync(int maVatLieu);
-        Task<bool> UpdateSoLuongMonAnAsync(int maVatLieu, int soLuongMoi);
+        Task UpdateSoLuongByMaVatLieuAsync(int maVatLieu, int soLuongMoi);
     }
 }

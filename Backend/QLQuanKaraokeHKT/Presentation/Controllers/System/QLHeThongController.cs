@@ -4,6 +4,7 @@ using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
+using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
 using QLQuanKaraokeHKT.Presentation.Extensions;
 
 namespace QLQuanKaraokeHKT.Presentation.Controllers.System
@@ -19,12 +20,18 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.System
         private readonly IKhachHangAccountService _khachHangAccountService;
         private readonly IAccountManagementService _accountManagementService;
 
-        public QLHeThongController(IAdminAccountService adminAccountService, INhanVienAccountService nhanVienAccountService, IKhachHangAccountService khachHangAccountService, IAccountManagementService accountManagementService)
+        public QLHeThongController(
+            IAdminAccountService adminAccountService, 
+            INhanVienAccountService nhanVienAccountService, 
+            IKhachHangAccountService khachHangAccountService, 
+            IAccountManagementService accountManagementService
+            )
         {
             _adminAccountService = adminAccountService ?? throw new ArgumentNullException(nameof(adminAccountService));
             _nhanVienAccountService = nhanVienAccountService ?? throw new ArgumentNullException(nameof(nhanVienAccountService));
             _khachHangAccountService = khachHangAccountService ?? throw new ArgumentNullException(nameof(khachHangAccountService));
             _accountManagementService = accountManagementService ?? throw new ArgumentNullException(nameof(accountManagementService));
+
         }
 
 
@@ -165,7 +172,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.System
                 if (modelValidation != null)
                     return modelValidation;
 
-                var result = await _nhanVienAccountService.AddTaiKhoanForNhanVienAsync(request);
+                var result = await _nhanVienAccountService.ChangeTaiKhoanForNhanVienAsync(request);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)

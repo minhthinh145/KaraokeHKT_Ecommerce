@@ -1,4 +1,4 @@
-﻿using QLQuanKaraokeHKT.Core.Interfaces.Services.Room;
+﻿using QLQuanKaraokeHKT.Core.Interfaces.Services.Common;
 
 namespace QLQuanKaraokeHKT.Core.DTOs.QLPhongDTOs
 {

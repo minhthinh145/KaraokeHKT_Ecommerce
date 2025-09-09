@@ -2,14 +2,22 @@
 {
     public interface ISendEmailService
     {
-        /// <summary>
-        /// Send OTP to User
-        /// </summary>
-        /// <param name="toEmail">Email người nhận</param>
-        /// <param name="otpCode">Mã OTP cần gửi</param>
+        Task SendEmailByContentAsync(string toEmail, string subject, string content);
         Task SendOtpEmailAsync(string toEmail, string otpCode);
 
-        Task SendEmailByContentAsync(string toEmail, string subject, string content);
+        #region HRM
+        Task SendWelcomeEmployeeEmailAsync(string toEmail, string hoTen, string password);
+        Task SendEmployeeAccountUpdateEmailAsync(string toEmail, string hoTen, string? newPassword = null);
+        Task SendShiftChangeApprovalEmailAsync(string toEmail, string hoTen, bool approved, string fromShift, string toShift, DateOnly fromDate, DateOnly toDate, string? note = null);
+        Task SendEmployeeTerminationEmailAsync(string toEmail, string hoTen, DateTime terminationDate);
+        #endregion
 
+        #region Customer
+        #endregion
+
+        #region Auth/System
+        Task SendPasswordResetEmailAsync(string toEmail, string hoTen, string resetToken);
+        Task SendAccountLockedEmailAsync(string toEmail, string hoTen, string reason);
+        #endregion
     }
 }

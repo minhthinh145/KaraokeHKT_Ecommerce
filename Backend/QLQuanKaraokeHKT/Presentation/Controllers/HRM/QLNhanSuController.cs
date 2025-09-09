@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QLQuanKaraokeHKT.Application.Services.HRM;
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs;
 using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
@@ -13,11 +14,11 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
     [ApiController]
     public class QLNhanSuController : ControllerBase
     {
-        private readonly IQLNhanSuService _qlHeThongService;
+        private readonly IHRMOrchestrator _hRMOrchestrator;
 
-        public QLNhanSuController(IQLNhanSuService qlHeThongService)
+        public QLNhanSuController(IHRMOrchestrator hRMOrchestrator )
         {
-            _qlHeThongService = qlHeThongService ?? throw new ArgumentNullException(nameof(qlHeThongService));
+            _hRMOrchestrator = hRMOrchestrator ?? throw new ArgumentNullException(nameof(hRMOrchestrator));
         }
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
         {
             try
             {
-                var result = await _qlHeThongService.GetAllNhanVienAsync();
+                var result = await _hRMOrchestrator.GetAllNhanVienAsync();
                 return result.IsSuccess ? Ok(result) : NotFound(result);
             }
             catch (Exception ex)
@@ -46,7 +47,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
         /// <summary>
         /// Tạo mới nhân viên và tài khoản
         /// </summary>
-        /// <param name="request">Thông tin nhân viên và mật khẩu</param>
+        /// <param name="request">Thông tin nhân viên</param>
         /// <returns>Kết quả tạo nhân viên</returns>
         [HttpPost("nhanvien")]
         public async Task<IActionResult> AddNhanVienAndAccount([FromBody] AddNhanVienDTO request)
@@ -66,7 +67,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
                     });
                 }
 
-                var result = await _qlHeThongService.AddNhanVienAndAccountAsync(request, request.Email);
+                var result = await _hRMOrchestrator.AddNhanVienWithAccountWorkFlowAsync(request);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
@@ -103,7 +104,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
                     });
                 }
 
-                var result = await _qlHeThongService.UpdateNhanVienAsyncAndAccountAsync(nhanVienDto);
+                var result = await _hRMOrchestrator.UpdateNhanVienAsyncAndAccountAsync(nhanVienDto);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
@@ -137,7 +138,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
                     });
                 }
 
-                var result = await _qlHeThongService.UpdateNhanVienDaNghiViecAsync(maNhanVien, daNghiViec);
+                var result = await _hRMOrchestrator.UpdateNhanVienDaNghiViecAsync(maNhanVien, daNghiViec);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)

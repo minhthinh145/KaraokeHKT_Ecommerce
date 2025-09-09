@@ -3,6 +3,7 @@ using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.QLPhongDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces;
+using QLQuanKaraokeHKT.Core.Interfaces.Services.Common;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Room;
 
 namespace QLQuanKaraokeHKT.Application.Services.Room
@@ -10,13 +11,13 @@ namespace QLQuanKaraokeHKT.Application.Services.Room
     public class RoomOrchestrator : IRoomOrchestrator
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IRoomPricingService _pricingService;
+        private readonly IPricingService _pricingService;
         private readonly IMapper _mapper;
         private readonly ILogger<RoomOrchestrator> _logger;
 
         public RoomOrchestrator(
             IUnitOfWork unitOfWork,
-            IRoomPricingService pricingService,
+            IPricingService pricingService,
             IMapper mapper,
             ILogger<RoomOrchestrator> logger)
         {
@@ -82,7 +83,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Room
                     _mapper.Map(request, phongHat);
                     await _unitOfWork.PhongHatKaraokeRepository.UpdateAsync(phongHat);
 
-                    // 2. Update SanPhamDichVu
                     if (HasSanPhamChanges(request))
                     {
                         var sanPham = await _unitOfWork.SanPhamDichVuRepository.GetByIdAsync(phongHat.MaSanPham);
@@ -93,7 +93,6 @@ namespace QLQuanKaraokeHKT.Application.Services.Room
                         }
                     }
 
-                    // 3. Update pricing if requested
                     if (request.CapNhatGiaThue && request.DongGiaAllCa.HasValue)
                     {
                         await _pricingService.DisableCurrentPricesAsync(phongHat.MaSanPham);

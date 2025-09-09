@@ -21,7 +21,6 @@ export const getAllTaiKhoanNhanVien = async (): Promise<
   }
 };
 
-// ✅ GET /api/QLHeThong/taikhoan/khachhang
 export const getAllTaiKhoanKhachHang = async (): Promise<
   ApiResponse<KhachHangTaiKhoanDTO[]>
 > => {

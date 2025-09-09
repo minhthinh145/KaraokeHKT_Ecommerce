@@ -2,6 +2,7 @@
 using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.HRM;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
 
@@ -9,12 +10,12 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 {
     public class QuanLyTienLuongService : IQuanLyTienLuongService
     {
-        public readonly ILuongCaLamViecRepository _repo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public QuanLyTienLuongService(ILuongCaLamViecRepository repo, IMapper mapper)
+        public QuanLyTienLuongService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -25,7 +26,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             {
                 return ServiceResult.Failure("Không thể thêm lương ca làm việc vì dữ liệu không hợp lệ.");
             }
-            var resultCreate = await _repo.CreateLuongCaLamViecAsync(luongCaLamViec);
+            var resultCreate = await _unitOfWork.LuongCaLamViecRepository.CreateAsync(luongCaLamViec);
             if (resultCreate == null)
             {
                 return ServiceResult.Failure("Không thể thêm lương ca làm việc do lỗi hệ thống.");
@@ -35,7 +36,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 
         public async Task<ServiceResult> DeleteLuongCaLamViecAsync(int maLuongCaLamViec)
         {
-           var resultDelete = await _repo.DeleteLuongCaLamViecAsync(maLuongCaLamViec);
+           var resultDelete = await _unitOfWork.LuongCaLamViecRepository.DeleteAsync(maLuongCaLamViec);
             if (!resultDelete)
             {
                 return ServiceResult.Failure($"Không thể xóa lương ca làm việc với mã {maLuongCaLamViec} do không tồn tại.");
@@ -46,7 +47,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 
         public async Task<ServiceResult> GetAllLuongCaLamViecsAsync()
         {
-           var listLuongCaLamViec = await _repo.GetAllLuongCaLamViecsAsync();
+           var listLuongCaLamViec = await _unitOfWork.LuongCaLamViecRepository.GetAllAsync();
             if (listLuongCaLamViec == null || !listLuongCaLamViec.Any())
             {
                 return ServiceResult.Failure("Không có lương ca làm việc nào được tìm thấy.");
@@ -57,7 +58,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 
         public async Task<ServiceResult> GetLuongCaLamViecByIdAsync(int maLuongCaLamViec)
         {
-            var luongCaLamViec = await _repo.GetLuongCaLamViecByIdAsync(maLuongCaLamViec);
+            var luongCaLamViec = await _unitOfWork.LuongCaLamViecRepository.GetLuongCaLamViecByIdAsync(maLuongCaLamViec);
             if (luongCaLamViec == null)
             {
                 return ServiceResult.Failure($"Không tìm thấy lương ca làm việc với mã {maLuongCaLamViec}.");
@@ -69,7 +70,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
 
         public async Task<ServiceResult> GetLuongCaLamViecByMaCaAsync(int maCa)
         {
-            var luongCaLamViec = await _repo.GetLuongCaLamViecByMaCaAsync(maCa);
+            var luongCaLamViec = await _unitOfWork.LuongCaLamViecRepository.GetLuongCaLamViecByMaCaAsync(maCa);
             if (luongCaLamViec == null)
             {
                 return ServiceResult.Failure($"Không tìm thấy lương ca làm việc với mã ca {maCa}.");
@@ -85,7 +86,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             {
                 return ServiceResult.Failure("Không thể cập nhật lương ca làm việc vì dữ liệu không hợp lệ.");
             }
-            var resultUpdate = await _repo.UpdateLuongCaLamViecAsync(luongCaLamViec);
+            var resultUpdate = await _unitOfWork.LuongCaLamViecRepository.UpdateAsync(luongCaLamViec);
             if (resultUpdate == null)
             {
                 return ServiceResult.Failure("Không thể cập nhật lương ca làm việc do lỗi hệ thống.");

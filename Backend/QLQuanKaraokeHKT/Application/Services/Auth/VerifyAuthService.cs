@@ -1,10 +1,8 @@
 ﻿using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Core.Interfaces;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
-using QLQuanKaraokeHKT.Infrastructure;
 
 namespace QLQuanKaraokeHKT.Application.Services.Auth
 {

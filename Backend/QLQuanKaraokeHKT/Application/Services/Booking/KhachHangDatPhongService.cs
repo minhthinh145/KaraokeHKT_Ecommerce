@@ -6,6 +6,7 @@ using QLQuanKaraokeHKT.Core.DTOs.VNPayDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Booking;
+using QLQuanKaraokeHKT.Core.Interfaces.Services.Common;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Payment;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Room;
 
@@ -16,7 +17,7 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
         private readonly IUnitOfWork _unitOfWork;
         private readonly IVNPayService _vnPayService;
         private readonly IRoomOrchestrator _roomOrchestrator; 
-        private readonly IRoomPricingService _roomPricingService;
+        private readonly IPricingService _roomPricingService;
         private readonly IMapper _mapper;
         private readonly ILogger<KhachHangDatPhongService> _logger;
 
@@ -26,8 +27,8 @@ namespace QLQuanKaraokeHKT.Application.Services.Booking
             IVNPayService vnPayService,
             IMapper mapper,
             IUnitOfWork unitOfWork,
-            IRoomOrchestrator roomOrchestrator, 
-            IRoomPricingService roomPricingService, 
+            IRoomOrchestrator roomOrchestrator,
+            IPricingService roomPricingService, 
             ILogger<KhachHangDatPhongService> logger)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));

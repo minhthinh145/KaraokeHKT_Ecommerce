@@ -83,7 +83,7 @@ export interface LuongCaLamViecDTO {
 export interface CaLamViecDTO {
   maCa: number;
   tenCa: string;
-  gioBatDauCa: string; // hoặc TimeOnly nếu bạn đã custom type
+  gioBatDauCa: string;
   gioKetThucCa: string;
 }
 

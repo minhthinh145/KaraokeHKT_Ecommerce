@@ -9,10 +9,6 @@ using QLQuanKaraokeHKT.Infrastructure.Data;
 
 namespace QLQuanKaraokeHKT.Application.Services.Auth
 {
-    /// <summary>
-    /// User Profile Service - Migrated from TaiKhoanService
-    /// Handles ONLY profile-related operations
-    /// </summary>
     public class UserProfileService : IUserProfileService
     {
         private readonly IUnitOfWork _unitOfWork;

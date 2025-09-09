@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces;
@@ -7,9 +8,6 @@ using QLQuanKaraokeHKT.Infrastructure;
 
 namespace QLQuanKaraokeHKT.Application.Services.Auth
 {
-    /// <summary>
-    /// User Authentication Service: Handle user authentication logic
-    /// </summary>
     public class UserAuthenticationService : IUserAuthenticationService
     {
         private IUnitOfWork _unitOfWork;
@@ -112,6 +110,25 @@ namespace QLQuanKaraokeHKT.Application.Services.Auth
             {
                 _logger.LogError(ex, "Error generating login response for user: {UserId}", user?.Id);
                 throw;
+            }
+        }
+
+        public async Task<ServiceResult> IsEmailAvailableAsync(string email)
+        {
+            try
+            {
+                var hasOccupied = await _unitOfWork.IdentityRepository.CheckEmailExitsAsync(email);
+                if (hasOccupied)
+                {
+                    return ServiceResult.Failure("Email đã được sử dụng.");
+                }
+
+                return ServiceResult.Success("Email có thể sử dụng.");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error checking email existence: {Email}", email);
+                return ServiceResult.Failure("Lỗi hệ thống khi kiểm tra email.");
             }
         }
     }

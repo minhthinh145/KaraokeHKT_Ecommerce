@@ -30,7 +30,6 @@ export interface AddAdminAccountDTO {
   loaiTaiKhoan: string;
 }
 
-//update
 export interface UpdateAccountDTO {
   maTaiKhoan: string;
   newUserName: string;

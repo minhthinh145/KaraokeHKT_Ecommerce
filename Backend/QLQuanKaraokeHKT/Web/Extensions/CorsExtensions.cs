@@ -2,15 +2,14 @@ namespace QLQuanKaraokeHKT.Web.Extensions
 {
     public static class CorsExtensions
     {
-        public static IServiceCollection AddCustomCors(this IServiceCollection services)
+        public static IServiceCollection AddCustomCors(this IServiceCollection services, IConfiguration configuration )
         {
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowVercelAndBackend", policy =>
                 {
                     policy.WithOrigins(
-                        "https://ooad-karaoke-hkt-3kgx.vercel.app",
-                        "https://ooad-karaoke-hkt-3kgx-git-main-minhthinh145s-projects.vercel.app",
+                        configuration.GetValue<string>("DeployUrl:FrontendUrl")!,
                         "https://qlquankaraokehktt.runasp.net"
                     )
                     .AllowAnyHeader()
