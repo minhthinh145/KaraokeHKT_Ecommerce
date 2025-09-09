@@ -2,24 +2,14 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Inventory;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Inventory
 {
-    public class MonAnRepository : IMonAnRepository
+    public class MonAnRepository : GenericRepository<MonAn,int>,IMonAnRepository
     {
-        private readonly QlkaraokeHktContext _context;
 
-        public MonAnRepository(QlkaraokeHktContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
-
-        public async Task<MonAn> CreateMonAnAsync(MonAn monAn)
-        {
-            _context.MonAns.Add(monAn);
-            await _context.SaveChangesAsync();
-            return monAn;
-        }
+        public MonAnRepository(QlkaraokeHktContext context) : base(context) { }
 
         public async Task<MonAn?> GetMonAnByMaVatLieuAsync(int maVatLieu)
         {
@@ -28,16 +18,11 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Inventory
                 .FirstOrDefaultAsync(m => m.MaVatLieu == maVatLieu);
         }
 
-        public async Task<bool> UpdateSoLuongMonAnAsync(int maVatLieu, int soLuongMoi)
+        public async Task UpdateSoLuongByMaVatLieuAsync(int maVatLieu, int soLuongMoi)
         {
-            var monAn = await _context.MonAns
-                .FirstOrDefaultAsync(m => m.MaVatLieu == maVatLieu);
-
-            if (monAn == null) return false;
-
-            monAn.SoLuongConLai = soLuongMoi;
-            await _context.SaveChangesAsync();
-            return true;
+            var monAn = await GetMonAnByMaVatLieuAsync(maVatLieu);  
+            monAn!.SoLuongConLai = soLuongMoi;
+            await UpdateAsync(monAn);
         }
     }
 }

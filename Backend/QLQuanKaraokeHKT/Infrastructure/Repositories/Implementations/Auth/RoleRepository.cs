@@ -65,7 +65,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
             {
                 var currentRoles = await _userManager.GetRolesAsync(user);
 
-                // Xóa tất cả role hiện tại
                 if (currentRoles.Any())
                 {
                     var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);

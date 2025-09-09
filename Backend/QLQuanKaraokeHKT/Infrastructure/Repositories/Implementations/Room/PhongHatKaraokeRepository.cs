@@ -32,7 +32,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Room
         }
         #endregion
 
-        #region Read-Only Queries (NoTracking)
+        #region Read-Only Queries
         public override async Task<List<PhongHatKaraoke>> GetAllAsync()
         {
             try

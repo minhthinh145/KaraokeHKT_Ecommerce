@@ -66,25 +66,28 @@ namespace QLQuanKaraokeHKT.Infrastructure
         }
         private void InitializeRepositories()
         {
-            #region Auth & Account Management - Phase 1
+            #region Auth & Account Management
             IdentityRepository = new IdentityRepository(_userManager);
             RefreshTokenRepository = new RefreshTokenRepository(_context);
             MaOtpRepository = new MaOtpRepository(_context);
-            RoleRepository = new RoleRepository(_userManager,_roleManager,_context);
+            RoleRepository = new RoleRepository(_userManager, _roleManager, _context);
+            AccountManagementRepository = new AccountManagementRepository(_context, _userManager);
+            TaiKhoanQuanLyRepository = new TaiKhoanQuanLyRepository(IdentityRepository, _userManager);
+            SignUpRepository = new SignUpRepository(_context, _userManager);
             #endregion
 
-            #region Customer & Employee - Phase 1 (Base repositories)
-            KhachHangRepository = new KhachHangRepository(_context,IdentityRepository);
+            #region Customer & Employee
+            KhachHangRepository = new KhachHangRepository(_context, IdentityRepository);
             NhanVienRepository = new NhanVienRepository(_context);
             #endregion
 
-            #region Room Management - Phase 1
+            #region Room 
             LoaiPhongRepository = new LoaiPhongRepository(_context);
             PhongHatKaraokeRepository = new PhongHatKaraokeRepository(_context);
             PhongHatRepository = new PhongHatKaraokeRepository(_context);
             #endregion
 
-            #region Inventory & Pricing - Phase 1
+            #region Inventory & Pricing 
             SanPhamDichVuRepository = new SanPhamDichVuRepository(_context);
             VatLieuRepository = new VatLieuRepository(_context);
             GiaVatLieuRepository = new GiaVatLieuRepository(_context);
@@ -92,42 +95,21 @@ namespace QLQuanKaraokeHKT.Infrastructure
             MonAnRepository = new MonAnRepository(_context);
             #endregion
 
-            #region HRM - Phase 1 (Base repositories)
+            #region HRM
             CaLamViecRepository = new CaLamViecRepository(_context);
             LuongCaLamViecRepository = new LuongCaLamViecRepository(_context);
+            LichLamViecRepository = new LichLamViecRepository(_context);
+            YeuCauChuyenCaRepository = new YeuCauChuyenCaRepository(_context);
+
             #endregion
 
-            #region Booking System - Phase 1
+            #region Booking System 
             HoaDonRepository = new HoaDonRepository(_context);
             ChiTietHoaDonDichVuRepository = new ChiTietHoaDonDichVuRepository(_context);
             LichSuSuDungPhongRepository = new LichSuSuDungPhongRepository(_context);
-            #endregion
-
-            // ===== PHASE 2: Dependent Repositories =====
-
-            #region Auth & Account Management - Phase 2 (Depends on other repositories)
-            // AccountManagementRepository depends on UserManager only
-            AccountManagementRepository = new AccountManagementRepository(_context, _userManager);
-
-            // TaiKhoanQuanLyRepository depends on UserManager only  
-            TaiKhoanQuanLyRepository = new TaiKhoanQuanLyRepository(IdentityRepository, _userManager);
-
-            // SignUpRepository depends on UserManager only
-            SignUpRepository = new SignUpRepository(_context, _userManager);
-            #endregion
-
-            #region HRM - Phase 2 (Depends on NhanVienRepository)
-            // LichLamViecRepository depends on INhanVienRepository
-            LichLamViecRepository = new LichLamViecRepository(_context, NhanVienRepository);
-
-            // YeuCauChuyenCaRepository - check if it has dependencies
-            YeuCauChuyenCaRepository = new YeuCauChuyenCaRepository(_context);
-            #endregion
-
-            #region Booking System - Phase 2 (May have dependencies)
-            // ThuePhongRepository - check if it depends on other repositories
             ThuePhongRepository = new ThuePhongRepository(_context);
             #endregion
+
         }
         #region Transaction Management
         public async Task<int> SaveChangesAsync()

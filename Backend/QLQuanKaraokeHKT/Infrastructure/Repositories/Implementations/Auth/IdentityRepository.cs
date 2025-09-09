@@ -71,5 +71,10 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
                 return (false, new[] { $"Lỗi hệ thống: {ex.Message}" });
             }
         }
+      
+        public async Task<bool> CheckEmailExitsAsync(string email)
+        {
+           return await _userManager.FindByEmailAsync(email) != null;
+        }
     }
 }

@@ -2,45 +2,41 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.HRM;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.HRM
 {
-    public class YeuCauChuyenCaRepository : IYeuCauChuyenCaRepository
+    public class YeuCauChuyenCaRepository : GenericRepository<YeuCauChuyenCa, int>, IYeuCauChuyenCaRepository
     {
-        private readonly QlkaraokeHktContext _context;
 
-        public YeuCauChuyenCaRepository(QlkaraokeHktContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
+        public YeuCauChuyenCaRepository(QlkaraokeHktContext context) : base(context) { }
 
-        public async Task<YeuCauChuyenCa> CreateYeuCauChuyenCaAsync(YeuCauChuyenCa yeuCauChuyenCa)
+        #region Query Builder 
+        private IQueryable<YeuCauChuyenCa> BuidBaseQuery()
         {
-            _context.YeuCauChuyenCas.Add(yeuCauChuyenCa);
-            await _context.SaveChangesAsync();
-            return yeuCauChuyenCa;
-        }
-
-        public async Task<List<YeuCauChuyenCa>> GetAllYeuCauChuyenCaAsync()
-        {
-            return await _context.YeuCauChuyenCas
+            return _dbSet
                 .Include(y => y.LichLamViecGoc)
                     .ThenInclude(l => l.NhanVien)
                 .Include(y => y.LichLamViecGoc)
                     .ThenInclude(l => l.CaLamViec)
                 .Include(y => y.CaMoi)
+                .AsQueryable();
+
+        }
+        #endregion
+
+
+        #region Read-only Queries
+        public override async Task<List<YeuCauChuyenCa>> GetAllAsync()
+        {
+            return await BuidBaseQuery()
                 .OrderByDescending(y => y.NgayTaoYeuCau)
                 .ToListAsync();
         }
 
         public async Task<List<YeuCauChuyenCa>> GetYeuCauChuyenCaByNhanVienAsync(Guid maNhanVien)
         {
-            return await _context.YeuCauChuyenCas
-                .Include(y => y.LichLamViecGoc)
-                    .ThenInclude(l => l.NhanVien)
-                .Include(y => y.LichLamViecGoc)
-                    .ThenInclude(l => l.CaLamViec)
-                .Include(y => y.CaMoi)
+            return await BuidBaseQuery()
                 .Where(y => y.LichLamViecGoc.MaNhanVien == maNhanVien)
                 .OrderByDescending(y => y.NgayTaoYeuCau)
                 .ToListAsync();
@@ -48,61 +44,30 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.HRM
 
         public async Task<List<YeuCauChuyenCa>> GetYeuCauChuyenCaChuaPheDuyetAsync()
         {
-            return await _context.YeuCauChuyenCas
-                .Include(y => y.LichLamViecGoc)
-                    .ThenInclude(l => l.NhanVien)
-                .Include(y => y.LichLamViecGoc)
-                    .ThenInclude(l => l.CaLamViec)
-                .Include(y => y.CaMoi)
+            return await BuidBaseQuery()
                 .Where(y => !y.DaPheDuyet)
-                .OrderBy(y => y.NgayTaoYeuCau)
+                .OrderByDescending(y => y.NgayTaoYeuCau)
                 .ToListAsync();
         }
 
         public async Task<List<YeuCauChuyenCa>> GetYeuCauChuyenCaDaPheDuyetAsync()
         {
-            return await _context.YeuCauChuyenCas
-                .Include(y => y.LichLamViecGoc)
-                    .ThenInclude(l => l.NhanVien)
-                .Include(y => y.LichLamViecGoc)
-                    .ThenInclude(l => l.CaLamViec)
-                .Include(y => y.CaMoi)
+            return await BuidBaseQuery()
                 .Where(y => y.DaPheDuyet)
                 .OrderByDescending(y => y.NgayPheDuyet)
                 .ToListAsync();
         }
 
-        public async Task<YeuCauChuyenCa?> GetYeuCauChuyenCaByIdAsync(int maYeuCau)
+        public async override Task<YeuCauChuyenCa?> GetByIdAsync(int maYeuCau)
         {
-            return await _context.YeuCauChuyenCas
-                .Include(y => y.LichLamViecGoc)
-                    .ThenInclude(l => l.NhanVien)
-                .Include(y => y.LichLamViecGoc)
-                    .ThenInclude(l => l.CaLamViec)
+            return await BuidBaseQuery()
                 .Include(y => y.CaMoi)
                 .FirstOrDefaultAsync(y => y.MaYeuCau == maYeuCau);
         }
-
-        public async Task<bool> UpdateYeuCauChuyenCaAsync(YeuCauChuyenCa yeuCauChuyenCa)
-        {
-            var existing = await _context.YeuCauChuyenCas.FindAsync(yeuCauChuyenCa.MaYeuCau);
-            if (existing == null) return false;
-
-            existing.NgayLamViecMoi = yeuCauChuyenCa.NgayLamViecMoi;
-            existing.MaCaMoi = yeuCauChuyenCa.MaCaMoi;
-            existing.LyDoChuyenCa = yeuCauChuyenCa.LyDoChuyenCa;
-            existing.DaPheDuyet = yeuCauChuyenCa.DaPheDuyet;
-            existing.KetQuaPheDuyet = yeuCauChuyenCa.KetQuaPheDuyet;
-            existing.GhiChuPheDuyet = yeuCauChuyenCa.GhiChuPheDuyet;
-            existing.NgayPheDuyet = yeuCauChuyenCa.NgayPheDuyet;
-
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
+        #endregion
         public async Task<bool> PheDuyetYeuCauChuyenCaAsync(int maYeuCau, bool ketQuaPheDuyet, string? ghiChuPheDuyet)
         {
-            var yeuCau = await _context.YeuCauChuyenCas
+            var yeuCau = await _dbSet
                 .FirstOrDefaultAsync(y => y.MaYeuCau == maYeuCau);
 
             if (yeuCau == null || yeuCau.DaPheDuyet) return false;
@@ -112,7 +77,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.HRM
             yeuCau.GhiChuPheDuyet = ghiChuPheDuyet;
             yeuCau.NgayPheDuyet = DateTime.Now;
 
-            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -123,15 +87,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.HRM
                               l.NgayLamViec == ngayLamViec &&
                               l.MaCa == maCa);
         }
-
-        public async Task<bool> DeleteYeuCauChuyenCaAsync(int maYeuCau)
-        {
-            var yeuCau = await _context.YeuCauChuyenCas.FindAsync(maYeuCau);
-            if (yeuCau == null) return false;
-
-            _context.YeuCauChuyenCas.Remove(yeuCau);
-            await _context.SaveChangesAsync();
-            return true;
-        }
     }
+
 }

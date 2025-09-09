@@ -69,7 +69,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Inventory
                     if (giaTheoCa != null) return giaTheoCa;
                 }
 
-                // Fallback về giá chung (MaCa = null)
                 return await query
                     .Where(g => g.MaCa == null)
                     .OrderByDescending(g => g.NgayApDung)

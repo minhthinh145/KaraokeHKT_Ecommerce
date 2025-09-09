@@ -23,7 +23,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
                 var user = await _userManager.FindByIdAsync(maTaiKhoan.ToString());
                 if (user == null)
                 {
-                    return false; // Tài khoản không tồn tại
+                    return false; 
                 }
 
                 user.LockoutEnabled = true;
@@ -49,7 +49,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
                     return false;
                 }
 
-                // Unlock tài khoản
                 user.LockoutEnabled = false;
                 user.LockoutEnd = null;
                 user.daBiKhoa = false;

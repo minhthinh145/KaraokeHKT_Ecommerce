@@ -2,48 +2,37 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Inventory;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Inventory
 {
-    public class GiaVatLieuRepository : IGiaVatLieuRepository
+    public class GiaVatLieuRepository : GenericRepository<GiaVatLieu,int>,IGiaVatLieuRepository
     {
-        private readonly QlkaraokeHktContext _context;
 
-        public GiaVatLieuRepository(QlkaraokeHktContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
+        public GiaVatLieuRepository(QlkaraokeHktContext context) : base(context) { }
 
-        public async Task<GiaVatLieu> CreateGiaVatLieuAsync(GiaVatLieu giaVatLieu)
+        public async Task DisableCurrentPricesAsync(int maVatLieu, string newTrangThai)
         {
-            _context.GiaVatLieus.Add(giaVatLieu);
-            await _context.SaveChangesAsync();
-            return giaVatLieu;
+            var giaHienTai = await GetGiaHienTaiByMaVatLieuAsync(maVatLieu);
+
+            giaHienTai!.TrangThai = newTrangThai;
+
+            await UpdateAsync(giaHienTai);
         }
 
         public async Task<GiaVatLieu?> GetGiaHienTaiByMaVatLieuAsync(int maVatLieu)
         {
-            return await _context.GiaVatLieus
+            return await _dbSet
                 .Where(g => g.MaVatLieu == maVatLieu && g.TrangThai == "HieuLuc")
-                .OrderByDescending(g => g.NgayApDung)
                 .FirstOrDefaultAsync();
         }
 
         public async Task<List<GiaVatLieu>> GetGiaVatLieuByMaVatLieuAsync(int maVatLieu)
         {
-            return await _context.GiaVatLieus
+            return await _dbSet
                 .Where(g => g.MaVatLieu == maVatLieu)
                 .OrderByDescending(g => g.NgayApDung)
                 .ToListAsync();
-        }
-
-        public async Task<bool> UpdateGiaVatLieuStatusAsync(int maGiaVatLieu, string trangThai)
-        {
-            var gia = await _context.GiaVatLieus.FindAsync(maGiaVatLieu);
-            if (gia == null) return false;
-            gia.TrangThai = trangThai;
-            await _context.SaveChangesAsync();
-            return true;
-        }
+        }     
     }
 }
