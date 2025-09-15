@@ -55,6 +55,8 @@ namespace QLQuanKaraokeHKT.Infrastructure
         public ILichLamViecRepository LichLamViecRepository { get; private set; } = null!;
         public ILuongCaLamViecRepository LuongCaLamViecRepository { get; private set; } = null!;
         public IYeuCauChuyenCaRepository YeuCauChuyenCaRepository { get; private set; } = null!;
+
+        public IPhongHatForCustomerViewRepository PhongHatForCustomerViewRepository { get; private set; } = null!;
         #endregion
         public UnitOfWork(QlkaraokeHktContext context, UserManager<TaiKhoan> userManager, RoleManager<VaiTro> roleManager)
         {
@@ -70,14 +72,14 @@ namespace QLQuanKaraokeHKT.Infrastructure
             IdentityRepository = new IdentityRepository(_userManager);
             RefreshTokenRepository = new RefreshTokenRepository(_context);
             MaOtpRepository = new MaOtpRepository(_context);
-            RoleRepository = new RoleRepository(_userManager, _roleManager, _context);
-            AccountManagementRepository = new AccountManagementRepository(_context, _userManager);
+            RoleRepository = new RoleRepository(_userManager, _roleManager);
+            AccountManagementRepository = new AccountManagementRepository(_userManager);
             TaiKhoanQuanLyRepository = new TaiKhoanQuanLyRepository(IdentityRepository, _userManager);
             SignUpRepository = new SignUpRepository(_context, _userManager);
             #endregion
 
             #region Customer & Employee
-            KhachHangRepository = new KhachHangRepository(_context, IdentityRepository);
+            KhachHangRepository = new KhachHangRepository(_context);
             NhanVienRepository = new NhanVienRepository(_context);
             #endregion
 
@@ -108,6 +110,10 @@ namespace QLQuanKaraokeHKT.Infrastructure
             ChiTietHoaDonDichVuRepository = new ChiTietHoaDonDichVuRepository(_context);
             LichSuSuDungPhongRepository = new LichSuSuDungPhongRepository(_context);
             ThuePhongRepository = new ThuePhongRepository(_context);
+            #endregion
+
+            #region Views
+            PhongHatForCustomerViewRepository = new PhongHatForCustomerViewRepository(_context);
             #endregion
 
         }

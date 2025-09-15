@@ -25,19 +25,19 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             _logger = logger;
         }
 
-
         public async Task<ServiceResult> CreateLichLamViecAsync(AddLichLamViecDTO addLichLamViecDto)
         {
             try
             {
                 if (addLichLamViecDto == null)
-                {   
+                {
                     return ServiceResult.Failure("Thông tin lịch làm việc không hợp lệ.");
                 }
 
                 var lichLamViec = _mapper.Map<LichLamViec>(addLichLamViecDto);
 
-                var createdLichLamViec = await _unitOfWork.ExecuteTransactionAsync(async () => {
+                var createdLichLamViec = await _unitOfWork.ExecuteTransactionAsync(async () =>
+                {   
                     await _unitOfWork.LichLamViecRepository.CreateAsync(lichLamViec);
                     return lichLamViec;
                 });
@@ -55,7 +55,6 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                 return ServiceResult.Failure($"Lỗi hệ thống khi tạo lịch làm việc: {ex.Message}");
             }
         }
-
 
         public async Task<ServiceResult> GetAllLichLamViecAsync()
         {
@@ -76,7 +75,6 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                 return ServiceResult.Failure($"Lỗi hệ thống khi lấy danh sách lịch làm việc: {ex.Message}");
             }
         }
-
 
         public async Task<ServiceResult> GetLichLamViecByNhanVienAsync(Guid maNhanVien)
         {
@@ -103,8 +101,6 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
             }
         }
 
-
-
         public async Task<ServiceResult> GetLichLamViecByRangeAsync(DateOnly start, DateOnly end)
         {
             try
@@ -126,16 +122,26 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
+                _logger.LogInformation("Bắt đầu cập nhật lịch làm việc: {@LichLamViecDto}", lichLamViecDto);
                 if (lichLamViecDto == null)
                     return ServiceResult.Failure("Dữ liệu lịch làm việc không hợp lệ.");
 
-                var entity = _mapper.Map<LichLamViec>(lichLamViecDto);
-                var result = await _unitOfWork.ExecuteTransactionAsync(async () => {
-                    return await _unitOfWork.LichLamViecRepository.UpdateAsync(entity);
+                var result = await _unitOfWork.ExecuteTransactionAsync(async () =>
+                {
+                    var existingEntity = await _unitOfWork.LichLamViecRepository.GetByIdAsync(lichLamViecDto.MaLichLamViec);
+                    if (existingEntity == null)
+                        throw new InvalidOperationException("Không tìm thấy lịch làm việc cần cập nhật.");
+
+                    _mapper.Map(lichLamViecDto, existingEntity);
+
+                    _logger.LogInformation("Cập nhật entity - MaLichLamViec: {MaLichLamViec}, NgayLamViec: {NgayLamViec}, MaNhanVien: {MaNhanVien}",
+                        existingEntity.MaLichLamViec, existingEntity.NgayLamViec, existingEntity.MaNhanVien);
+
+                    return await _unitOfWork.LichLamViecRepository.UpdateAsync(existingEntity);
                 });
 
                 if (!result)
-                    return ServiceResult.Failure("Cập nhật lịch làm việc thất bại.");
+                    return ServiceResult.Failure("Cập nhật lịch làm việc thất bại." );
 
                 return ServiceResult.Success("Cập nhật lịch làm việc thành công.");
             }
@@ -149,7 +155,8 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
         {
             try
             {
-                var result = await _unitOfWork.ExecuteTransactionAsync(async () => {
+                var result = await _unitOfWork.ExecuteTransactionAsync(async () =>
+                {
                     return await _unitOfWork.LichLamViecRepository.DeleteAsync(maLichLamViec);
                 });
 
@@ -163,6 +170,7 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                 return ServiceResult.Failure($"Lỗi hệ thống khi xóa lịch làm việc: {ex.Message}");
             }
         }
+
         public async Task<ServiceResult> GetLichLamViecByNhanVienAndRangeAsync(Guid maNhanVien, DateOnly start, DateOnly end)
         {
             var all = await _unitOfWork.LichLamViecRepository.GetLichLamViecByNhanVienAsync(maNhanVien);

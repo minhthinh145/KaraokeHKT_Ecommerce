@@ -1,7 +1,7 @@
 ﻿using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Common;
-
+using QLQuanKaraokeHKT.Shared.Models.Pricing;
 namespace QLQuanKaraokeHKT.Application.Services.Common
 {
     public class PricingService : IPricingService
@@ -73,6 +73,80 @@ namespace QLQuanKaraokeHKT.Application.Services.Common
                 _logger.LogError(ex, "Lỗi khi lấy giá hiện tại cho sản phẩm {MaSanPham}", maSanPham);
                 return new List<GiaDichVu>();
             }
+        }
+
+        public async Task<CustomerPricingInfo> GetCustomerPricingInfoAsync(int maSanPham)
+        {
+            try
+            {
+                var currentPrices = await GetCurrentPricesAsync(maSanPham);
+                
+                if (!currentPrices.Any())
+                {
+                    return new CustomerPricingInfo { GiaThueHienTai = 0, CoGiaTheoCa = false };
+                }
+
+                var pricingInfo = new CustomerPricingInfo();
+
+                // Check if có giá chung (MaCa == null)
+                var flatRate = currentPrices.FirstOrDefault(g => g.MaCa == null);
+                if (flatRate != null)
+                {
+                    pricingInfo.GiaThueHienTai = flatRate.DonGia;
+                    pricingInfo.CoGiaTheoCa = false;
+                    return pricingInfo;
+                }
+
+                // Có giá theo ca - lấy theo tên ca
+                pricingInfo.CoGiaTheoCa = true;
+                
+                foreach (var price in currentPrices.Where(p => p.MaCaNavigation != null))
+                {
+                    switch (price.MaCaNavigation.TenCa)
+                    {
+                        case "Ca 1":
+                            pricingInfo.GiaThueCa1 = price.DonGia;
+                            break;
+                        case "Ca 2":
+                            pricingInfo.GiaThueCa2 = price.DonGia;
+                            break;
+                        case "Ca 3":
+                            pricingInfo.GiaThueCa3 = price.DonGia;
+                            break;
+                    }
+                }
+
+                // Set giá hiện tại theo ca hiện tại
+                pricingInfo.GiaThueHienTai = GetCurrentCaPriceFromCaPrices(pricingInfo);
+
+                return pricingInfo;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi lấy thông tin giá cho khách hàng {MaSanPham}", maSanPham);
+                return new CustomerPricingInfo { GiaThueHienTai = 0, CoGiaTheoCa = false };
+            }
+        }
+
+        public async Task<decimal> GetCurrentCaPriceAsync(int maSanPham)
+        {
+            var pricingInfo = await GetCustomerPricingInfoAsync(maSanPham);
+            return pricingInfo.GiaThueHienTai;
+        }
+
+        private decimal GetCurrentCaPriceFromCaPrices(CustomerPricingInfo pricingInfo)
+        {
+            if (!pricingInfo.CoGiaTheoCa)
+                return pricingInfo.GiaThueHienTai;
+
+            var currentHour = DateTime.Now.Hour;
+            
+            return currentHour switch
+            {
+                >= 6 and < 12 => pricingInfo.GiaThueCa1 ?? 0,   // Ca 1: 6h-12h
+                >= 12 and < 18 => pricingInfo.GiaThueCa2 ?? 0,  // Ca 2: 12h-18h  
+                _ => pricingInfo.GiaThueCa3 ?? 0                 // Ca 3: 18h-6h
+            };
         }
 
         private async Task ApplyFlatRatePricingAsync(int maSanPham, IPricingConfig config)

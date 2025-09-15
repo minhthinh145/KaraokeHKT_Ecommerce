@@ -34,7 +34,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
             if (chiTiets.Any())
             {
                 _context.ChiTietHoaDonDichVus.RemoveRange(chiTiets);
-                await _context.SaveChangesAsync();
             }
 
             return true;

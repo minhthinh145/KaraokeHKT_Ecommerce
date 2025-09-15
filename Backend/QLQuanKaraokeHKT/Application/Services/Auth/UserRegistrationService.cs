@@ -8,10 +8,6 @@ using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
 
 namespace QLQuanKaraokeHKT.Application.Services.Auth
 {
-    /// <summary>
-    /// User Registration Service
-    /// Handles ONLY registration-related operations
-    /// </summary>
     public class UserRegistrationService : IUserRegistrationService
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -9,13 +9,8 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Customer
 {
     public class KhachHangRepository : GenericRepository<KhachHang,Guid>,IKhachHangRepository
     {
-        private readonly IIdentityRepository _identityRepository;
 
-        public KhachHangRepository(QlkaraokeHktContext context,IIdentityRepository identityRepository) : base(context)
-        {
-            _identityRepository = identityRepository ?? throw new ArgumentNullException(nameof(identityRepository));
-        }
-
+        public KhachHangRepository(QlkaraokeHktContext context) : base(context) { }
 
         public override async Task<List<KhachHang>> GetAllAsync()
         {

@@ -29,6 +29,7 @@ namespace QLQuanKaraokeHKT.Application.Mappings.HRM
                 .ForMember(dest => dest.TenNhanVien, opt => opt.MapFrom(src => src.NhanVien.HoTen))
                 .ForMember(dest => dest.LoaiNhanVien, opt => opt.MapFrom(src => src.NhanVien.LoaiNhanVien))
                 .ReverseMap();
+    
         }
 
         private void CreateLuongMappings()
@@ -37,7 +38,6 @@ namespace QLQuanKaraokeHKT.Application.Mappings.HRM
 
             CreateMap<LuongCaLamViecDTO, LuongCaLamViec>()
                 .ReverseMap();
-
         }
 
         private void CreateYeuCauChuyenCaMappings()

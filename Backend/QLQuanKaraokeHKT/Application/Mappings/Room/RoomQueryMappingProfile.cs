@@ -63,7 +63,6 @@ namespace QLQuanKaraokeHKT.Application.Mappings.Room
                 .ForMember(dest => dest.TenLoaiPhong, opt => opt.MapFrom(src => src.MaLoaiPhongNavigation.TenLoaiPhong))
                 .ForMember(dest => dest.SucChua, opt => opt.MapFrom(src => src.MaLoaiPhongNavigation.SucChua))
                 .ForMember(dest => dest.HinhAnhPhong, opt => opt.MapFrom(src => src.MaSanPhamNavigation.HinhAnhSanPham))
-                .ForMember(dest => dest.Available, opt => opt.MapFrom(src => src.IsAvailableForBooking))
                 .ForMember(dest => dest.GiaThueHienTai, opt => opt.MapFrom(src =>
                     GetCurrentPriceSimple(src.MaSanPhamNavigation.GiaDichVus)));
         }

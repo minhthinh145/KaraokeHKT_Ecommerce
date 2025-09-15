@@ -53,6 +53,10 @@ namespace QLQuanKaraokeHKT.Core.Interfaces
         IYeuCauChuyenCaRepository YeuCauChuyenCaRepository { get; }
         #endregion
 
+        #region ViewModel Repositories
+        IPhongHatForCustomerViewRepository PhongHatForCustomerViewRepository { get; }
+        #endregion
+
         #region Transaction Management
         Task<int> SaveChangesAsync();
         Task BeginTransactionAsync();
@@ -61,5 +65,7 @@ namespace QLQuanKaraokeHKT.Core.Interfaces
         Task ExecuteTransactionAsync(Func<Task> action);
         Task<T> ExecuteTransactionAsync<T>(Func<Task<T>> action);
         #endregion
+
+    
     }
 }

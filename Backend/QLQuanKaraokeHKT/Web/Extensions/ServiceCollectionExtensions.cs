@@ -17,7 +17,6 @@ using QLQuanKaraokeHKT.Application.Services.Payment;
 using QLQuanKaraokeHKT.Application.Services.Room;
 using QLQuanKaraokeHKT.Core.Interfaces;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth;
-using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Customer;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Auth;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Common;
@@ -29,6 +28,7 @@ using QLQuanKaraokeHKT.Core.Interfaces.Services.Inventory;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Payment;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.Room;
 using QLQuanKaraokeHKT.Infrastructure;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth;
 
 namespace QLQuanKaraokeHKT.Web.Extensions
 {
@@ -55,36 +55,25 @@ namespace QLQuanKaraokeHKT.Web.Extensions
                     cfg.AddProfile<AccountMappingProfile>();
                     
                 });
+            //add repo missing (temp)
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 
             // VNPay Configuration
             services.Configure<VNPayConfig>(configuration.GetSection("VNPay"));
+            services.AddScoped<IPaymentService, VNPayPaymentService>();
+            services.AddScoped<IPaymentFactory, PaymentFactory>();
+
 
             // UnitOfWork
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IPricingService, PricingService>();
             services.AddScoped<ICoreAccountService, CoreAccountService>();
-
             services.AddScoped<ITokenService, TokenService>();
-
-            #region Repository Registrations (for services that don't use UnitOfWork yet)
-
-            // Register repositories via UnitOfWork factory pattern
-            services.AddScoped<IRefreshTokenRepository>(serviceProvider =>
-                serviceProvider.GetRequiredService<IUnitOfWork>().RefreshTokenRepository);
-
-            services.AddScoped<IIdentityRepository>(serviceProvider =>
-                serviceProvider.GetRequiredService<IUnitOfWork>().IdentityRepository);
-
-            services.AddScoped<IKhachHangRepository>(serviceProvider =>
-                serviceProvider.GetRequiredService<IUnitOfWork>().KhachHangRepository);
-
-            services.AddScoped<IMaOtpRepository>(serviceProvider =>
-                serviceProvider.GetRequiredService<IUnitOfWork>().MaOtpRepository);
-
-            #endregion
-
+            services.AddScoped<IPaymentService>(provider => provider.GetService<VNPayPaymentService>()!);
+            services.AddScoped<IMaOtpService, MaOtpService>();
+            services.AddScoped<ISendEmailService, SendEmailService>();
 
             // Authentication Services
             services.AddScoped<IVerifyAuthService, VerifyAuthService>();
@@ -102,7 +91,7 @@ namespace QLQuanKaraokeHKT.Web.Extensions
 
             // Business Services
             services.AddScoped<IKhachHangService, KhachHangService>();
-            //services.AddScoped<IKhachHangDatPhongService, KhachHangDatPhongService>();
+            services.AddScoped<IRoomQueryService, RoomQueryService>();
 
             // HRM Services
             services.AddScoped<IHRMOrchestrator, HRMOrchestrator>();
@@ -118,14 +107,13 @@ namespace QLQuanKaraokeHKT.Web.Extensions
             services.AddScoped<IQLLoaiPhongService, QLLoaiPhongService>();
             services.AddScoped<IRoomOrchestrator, RoomOrchestrator>();
             // Payment Services
-            services.AddScoped<IVNPayService, VNPayService>();
 
             // External Services
-            services.AddScoped<IMaOtpService, MaOtpService>();
-            services.AddScoped<ISendEmailService, SendEmailService>();
+      
+            //services.AddScoped<IKhachHangDatPhongService, KhachHangDatPhongService>();
 
             // Background Services
-         //   services.AddHostedService<AutoBookingService>();
+            //   services.AddHostedService<AutoBookingService>();
 
             return services;
         }

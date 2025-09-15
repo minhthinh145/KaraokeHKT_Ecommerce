@@ -17,7 +17,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
 
         public async Task<RefreshToken?> FindByTokenAsync(string token)
         {
-            return await _context.RefreshTokens
+            return await _dbSet
                 .FirstOrDefaultAsync(rt => rt.ChuoiRefreshToken == token);
         }
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using QLQuanKaraokeHKT.Core.DTOs.BookingDTOs;
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Entities.Views;
 
 namespace QLQuanKaraokeHKT.Application.Mappings.Booking
 {
@@ -25,6 +26,8 @@ namespace QLQuanKaraokeHKT.Application.Mappings.Booking
                 .ForMember(dest => dest.TongTien, opt => opt.Ignore())
                 .ForMember(dest => dest.HanThanhToan, opt => opt.Ignore())
                 .ForMember(dest => dest.UrlThanhToan, opt => opt.Ignore());
+            CreateMap<PhongHatForCustomerView, PhongHatForCustomerDTO>();
+
         }
 
         private void CreateBookingHistoryMappings()

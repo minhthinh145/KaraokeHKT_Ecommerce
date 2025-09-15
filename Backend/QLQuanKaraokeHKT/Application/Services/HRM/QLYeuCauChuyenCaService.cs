@@ -159,7 +159,6 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                     if (!pheDuyetResult)
                         throw new InvalidOperationException("Phê duyệt yêu cầu chuyển ca thất bại.");
 
-                    // NẾU DUYỆT -> CẬP NHẬT LỊCH LÀM VIỆC
                     if (pheDuyetDto.KetQuaPheDuyet)
                     {
                         var updateResult = await _unitOfWork.LichLamViecRepository.UpdateLichLamViecForYeuCauChuyenCaAsync(
@@ -171,7 +170,6 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                             throw new InvalidOperationException("Cập nhật lịch làm việc thất bại. Có thể bị xung đột lịch làm việc.");
                     }
 
-                    // Gửi email thông báo
                     await _sendEmailService.SendShiftChangeApprovalEmailAsync(
                                                 yeuCau.LichLamViecGoc.NhanVien.Email,
                         yeuCau.LichLamViecGoc.NhanVien.HoTen,
@@ -183,7 +181,6 @@ namespace QLQuanKaraokeHKT.Application.Services.HRM
                         pheDuyetDto.GhiChuPheDuyet
                     );
 
-                    // Return data for success response
                     return new
                     {
                         pheDuyetDto.MaYeuCau,

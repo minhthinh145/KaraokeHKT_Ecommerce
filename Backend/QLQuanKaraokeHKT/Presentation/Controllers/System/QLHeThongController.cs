@@ -4,7 +4,7 @@ using QLQuanKaraokeHKT.Core.Common;
 using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
 using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
+using QLQuanKaraokeHKT.Core.Interfaces.Services.Core;
 using QLQuanKaraokeHKT.Presentation.Extensions;
 
 namespace QLQuanKaraokeHKT.Presentation.Controllers.System
@@ -19,11 +19,13 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.System
         private readonly INhanVienAccountService _nhanVienAccountService;
         private readonly IKhachHangAccountService _khachHangAccountService;
         private readonly IAccountManagementService _accountManagementService;
+        private readonly ICoreAccountService _coreAccountService;
 
         public QLHeThongController(
             IAdminAccountService adminAccountService, 
             INhanVienAccountService nhanVienAccountService, 
             IKhachHangAccountService khachHangAccountService, 
+            ICoreAccountService coreAccountService,
             IAccountManagementService accountManagementService
             )
         {
@@ -31,6 +33,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.System
             _nhanVienAccountService = nhanVienAccountService ?? throw new ArgumentNullException(nameof(nhanVienAccountService));
             _khachHangAccountService = khachHangAccountService ?? throw new ArgumentNullException(nameof(khachHangAccountService));
             _accountManagementService = accountManagementService ?? throw new ArgumentNullException(nameof(accountManagementService));
+            _coreAccountService = coreAccountService ?? throw new ArgumentNullException( nameof(coreAccountService));
 
         }
 
@@ -235,11 +238,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.System
                 });
             }
         }
-        /// <summary>
-        /// Khóa tài khoản theo mã tài khoản
-        /// </summary>
-        /// <param name="maTaiKhoan">Mã tài khoản cần khóa</param>
-        /// <returns>Kết quả khóa tài khoản</returns>
+
         [HttpPut("taikhoan/{maTaiKhoan}/lock")]
         public async Task<IActionResult> LockAccount(Guid maTaiKhoan)
         {
@@ -254,7 +253,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.System
                     });
                 }
 
-                var result = await _accountManagementService.LockAccountByMaTaiKhoanAsync(maTaiKhoan);
+                var result = await _coreAccountService.MarkAccountAsLockOrUnlockAsync(maTaiKhoan,isLock: true);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
@@ -287,7 +286,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.System
                     });
                 }
 
-                var result = await _accountManagementService.UnlockAccountByMaTaiKhoanAsync(maTaiKhoan);
+                var result = await _coreAccountService.MarkAccountAsLockOrUnlockAsync(maTaiKhoan, isLock: false);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)

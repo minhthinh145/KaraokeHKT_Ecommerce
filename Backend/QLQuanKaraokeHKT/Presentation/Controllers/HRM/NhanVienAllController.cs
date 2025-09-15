@@ -11,7 +11,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Yêu cầu đăng nhập
+    [Authorize] 
     public class NhanVienAllController : ControllerBase
     {
         private readonly IQLYeuCauChuyenCaService _yeuCauChuyenCaService;
@@ -54,9 +54,6 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
 
         #region Lịch làm việc
 
-        /// <summary>
-        /// Xem lịch làm việc của nhân viên
-        /// </summary>
         [HttpGet("lich-lam-viec/{maNhanVien}")]
         [Authorize(Roles = $"{ApplicationRole.NhanVienTiepTan},{ApplicationRole.NhanVienKho},{ApplicationRole.NhanVienPhucVu},{ApplicationRole.QuanLyNhanSu}")]
         public async Task<IActionResult> GetLichLamViecByNhanVienAsync(Guid maNhanVien)
@@ -226,9 +223,7 @@ namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
             }
         }
 
-        /// <summary>
-        /// Phê duyệt yêu cầu chuyển ca (Quản lý)
-        /// </summary>
+
         [HttpPut("yeu-cau-chuyen-ca/approve")]
         [Authorize(Roles = ApplicationRole.QuanLyNhanSu)]
         public async Task<IActionResult> PheDuyetYeuCauChuyenCaAsync([FromBody] PheDuyetYeuCauChuyenCaDTO pheDuyetDto)

@@ -3,7 +3,7 @@ using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth
 {
-    public interface IAccountManagementRepository : IGenericRepository<TaiKhoan,Guid>   
+    public interface IAccountManagementRepository
     {
         Task<bool> LockAccountAsync(Guid maTaIkhoan);
 
@@ -12,8 +12,5 @@ namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth
         Task<bool> DeleteUserAsync(TaiKhoan user);
 
         Task<bool> DeleteUserByIdAsync(Guid userId);
-
-        Task<bool> DeleteUserWithRelatedDataAsync(TaiKhoan user);
-
     }
 }

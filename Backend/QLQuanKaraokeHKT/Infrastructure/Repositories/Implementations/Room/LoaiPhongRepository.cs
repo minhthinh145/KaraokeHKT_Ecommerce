@@ -15,14 +15,14 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Room
 
         public override async Task<List<LoaiPhongHatKaraoke>> GetAllAsync()
         {
-            return await _context.LoaiPhongHatKaraokes
+            return await _dbSet
                 .OrderByDescending(lp => lp.SucChua)
                 .ToListAsync();
         }
 
         public async Task<bool> HasPhongHatKaraokeAsync(int maLoaiPhong)
         {
-            return await _context.PhongHatKaraokes
+            return await _dbSet
                 .AnyAsync(p => p.MaLoaiPhong == maLoaiPhong);
         }
     }

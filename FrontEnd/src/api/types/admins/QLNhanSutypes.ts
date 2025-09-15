@@ -1,17 +1,14 @@
-// 🎯 Base Response Interface (reuse existing)
 
-// 🎯 Nhân viên DTO cho QL Nhân Sự (khác với QLHeThong)
 export interface NhanVienDTO {
-  maNv: string; // Guid from C# -> string
+  maNv: string;
   hoTen: string;
   email: string;
-  ngaySinh: string; // DateOnly from C# -> string (optional)
+  ngaySinh: string;
   soDienThoai?: string;
   loaiNhanVien?: string;
-  daNghiViec?: boolean; // Thêm trường này nếu chưa có
+  daNghiViec?: boolean;
 }
 
-// 🎯 QL Nhân Sự State Types
 export interface QLNhanSuState {
   nhanVien: {
     data: NhanVienDTO[];
@@ -32,7 +29,6 @@ export interface QLNhanSuState {
   };
 }
 
-// 🎯 Filter Options cho QL Nhân Sự
 export interface QLNhanSuFilterOption {
   value: string;
   label: string;
@@ -48,7 +44,6 @@ export const QL_NHAN_SU_FILTER_OPTIONS: QLNhanSuFilterOption[] = [
   { value: "QuanLyPhongHat", label: "Quản lý phòng hát" },
 ];
 
-// 🎯 Form validation interface
 export interface AddNhanVienFormData {
   hoTen: string;
   soDienThoai: string;

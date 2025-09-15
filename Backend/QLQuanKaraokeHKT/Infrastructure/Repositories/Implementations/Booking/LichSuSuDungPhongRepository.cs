@@ -16,7 +16,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
 
         public async Task<List<LichSuSuDungPhong>> GetLichSuByKhachHangAsync(Guid maKhachHang)
         {
-            return await _context.LichSuSuDungPhongs
+            return await _dbSet
                 .Where(ls => ls.MaKhachHang == maKhachHang)
                 .OrderByDescending(ls => ls.ThoiGianBatDau)
                 .ToListAsync();
@@ -24,7 +24,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
 
         public async Task<List<LichSuSuDungPhong>> GetLichSuWithDetailsAsync(Guid maKhachHang)
         {
-            return await _context.LichSuSuDungPhongs
+            return await _dbSet
                 .Include(ls => ls.MaPhongNavigation)
                     .ThenInclude(p => p.MaSanPhamNavigation)
                 .Include(ls => ls.MaHoaDonNavigation)
@@ -36,7 +36,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
 
         public async Task<LichSuSuDungPhong> GetLichSuByIdAsync(int idLichSu)
         {
-            return await _context.LichSuSuDungPhongs
+            return await _dbSet
                 .Include(ls => ls.MaPhongNavigation)
                 .Include(ls => ls.MaHoaDonNavigation)
                 .Include(ls => ls.MaKhachHangNavigation)
@@ -46,14 +46,14 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
 
         public async Task<LichSuSuDungPhong> CreateLichSuAsync(LichSuSuDungPhong lichSu)
         {
-            _context.LichSuSuDungPhongs.Add(lichSu);
+            _dbSet.Add(lichSu);
             await _context.SaveChangesAsync();
             return lichSu;
         }
 
         public async Task<LichSuSuDungPhong> GetLichSuByMaThuePhongAsync(Guid maThuePhong)
         {
-           var LichSu = await _context.LichSuSuDungPhongs
+           var LichSu = await _dbSet
                 .Include(ls => ls.MaPhongNavigation)
                 .Include(ls => ls.MaHoaDonNavigation)
                 .Include(ls => ls.MaKhachHangNavigation)

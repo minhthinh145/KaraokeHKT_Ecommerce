@@ -1,11 +1,10 @@
 ﻿using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Booking
 {
-    public interface IThuePhongRepository
+    public interface IThuePhongRepository : IGenericRepository<ThuePhong, Guid>
     {
-        Task<ThuePhong> CreateThuePhongAsync(ThuePhong thuePhong);
-        Task<ThuePhong?> GetThuePhongByIdAsync(Guid maThuePhong);
         Task<List<ThuePhong>> GetThuePhongByKhachHangAsync(Guid maKhachHang);
         Task<List<ThuePhong>> GetThuePhongByKhachHangWithDetailsAsync(Guid maKhachHang);
         Task<bool> UpdateTrangThaiAsync(Guid maThuePhong, string trangThai);

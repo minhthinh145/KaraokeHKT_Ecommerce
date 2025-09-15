@@ -19,28 +19,7 @@ namespace QLQuanKaraokeHKT.Application.Services.AccountManagement
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-        }   
-        public async Task<ServiceResult> LockAccountByMaTaiKhoanAsync(Guid maTaiKhoan)
-        {
-            var result = await _unitOfWork.AccountManagementRepository.LockAccountAsync(maTaiKhoan);
-            if (result)
-            {
-                return ServiceResult.Success("Tài khoản đã bị khóa thành công.");
-            }
-            return ServiceResult.Failure("Không thể khóa tài khoản. Vui lòng kiểm tra lại mã tài khoản hoặc trạng thái tài khoản.");
-
-        }
-
-        public async Task<ServiceResult> UnlockAccountByMaTaiKhoanAsync(Guid maTaiKhoan)
-        {
-            var result = await _unitOfWork.AccountManagementRepository.UnlockAccountAsync(maTaiKhoan);
-            if (result)
-            {
-                return ServiceResult.Success("Tài khoản đã được mở khóa thành công.");
-            }
-            return ServiceResult.Failure("Không thể mở khóa tài khoản. Vui lòng kiểm tra lại mã tài khoản hoặc trạng thái tài khoản.");
-        }
-
+        }  
         public async Task<ServiceResult> GetAllLoaiTaiKhoanAsync()
         {
             var result = RoleHelper.GetAllRoleCodes();

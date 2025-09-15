@@ -7,11 +7,11 @@ using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
 {
-    public class RoleRepository : GenericRepository<VaiTro,Guid>,IRoleRepository
+    public class RoleRepository : IRoleRepository
     {
         private readonly UserManager<TaiKhoan> _userManager;
         private readonly RoleManager<VaiTro> _roleManager;
-        public RoleRepository(UserManager<TaiKhoan> userManager, RoleManager<VaiTro> roleManager, QlkaraokeHktContext context) : base(context)
+        public RoleRepository(UserManager<TaiKhoan> userManager, RoleManager<VaiTro> roleManager)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));

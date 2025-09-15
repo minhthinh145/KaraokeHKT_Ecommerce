@@ -2,44 +2,39 @@
 using QLQuanKaraokeHKT.Core.Entities;
 using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Booking;
 using QLQuanKaraokeHKT.Infrastructure.Data;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
 {
-    public class ThuePhongRepository : IThuePhongRepository
+    public class ThuePhongRepository : GenericRepository<ThuePhong, Guid>, IThuePhongRepository
     {
-        private readonly QlkaraokeHktContext _context;
 
-        public ThuePhongRepository(QlkaraokeHktContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
+        public ThuePhongRepository(QlkaraokeHktContext context) : base(context) { }
 
-        public async Task<ThuePhong> CreateThuePhongAsync(ThuePhong thuePhong)
+        #region BaseQuery
+        private IQueryable<ThuePhong> BuildBaseQuery()
         {
-            thuePhong.MaThuePhong = Guid.NewGuid();
-            _context.ThuePhongs.Add(thuePhong);
-            await _context.SaveChangesAsync();
-            return thuePhong;
-        }
-
-        public async Task<ThuePhong?> GetThuePhongByIdAsync(Guid maThuePhong)
-        {
-            return await _context.ThuePhongs
-                .Include(t => t.MaKhachHangNavigation)
+            return _dbSet
+                   .Include(t => t.MaKhachHangNavigation)
                 .Include(t => t.MaPhongNavigation)
                     .ThenInclude(p => p.MaSanPhamNavigation)
                 .Include(t => t.MaPhongNavigation)
-                    .ThenInclude(p => p.MaLoaiPhongNavigation)
+                    .ThenInclude(p => p.MaLoaiPhongNavigation);
+        }
+        #endregion
+
+
+
+
+        public override async Task<ThuePhong?> GetByIdAsync(Guid maThuePhong)
+        {
+            return await BuildBaseQuery()
                 .FirstOrDefaultAsync(t => t.MaThuePhong == maThuePhong);
         }
 
         public async Task<List<ThuePhong>> GetThuePhongByKhachHangAsync(Guid maKhachHang)
         {
-            return await _context.ThuePhongs
-                .Include(t => t.MaPhongNavigation)
-                    .ThenInclude(p => p.MaSanPhamNavigation)
-                .Include(t => t.MaPhongNavigation)
-                    .ThenInclude(p => p.MaLoaiPhongNavigation)
+            return await BuildBaseQuery()
                 .Where(t => t.MaKhachHang == maKhachHang)
                 .OrderByDescending(t => t.ThoiGianBatDau)
                 .ToListAsync();
@@ -51,7 +46,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
             if (thuePhong == null) return false;
 
             thuePhong.TrangThai = trangThai;
-            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -61,7 +55,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
             if (thuePhong == null) return false;
 
             thuePhong.ThoiGianKetThuc = thoiGianKetThuc;
-            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -76,7 +69,7 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
         {
             var thoiGianKetThuc = thoiGianBatDau.AddHours(soGio);
 
-            var conflictBooking = await _context.ThuePhongs
+            var conflictBooking = await _dbSet
                 .Where(t => t.MaPhong == maPhong &&
                            (t.TrangThai == "DaThanhToan" || t.TrangThai == "DangSuDung") &&
                            t.ThoiGianBatDau < thoiGianKetThuc && t.ThoiGianKetThuc > thoiGianBatDau)
@@ -85,13 +78,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
             return !conflictBooking;
         }
 
-
-        public async Task<LichSuSuDungPhong> CreateLichSuSuDungPhongAsync(LichSuSuDungPhong lichSu)
-        {
-            _context.LichSuSuDungPhongs.Add(lichSu);
-            await _context.SaveChangesAsync();
-            return lichSu;
-        }
 
         public async Task<bool> UpdateLichSuSuDungPhongAsync(Guid maKhachHang, int maPhong, DateTime thoiGianKetThuc)
         {
@@ -122,14 +108,10 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
 
         public async Task<List<ThuePhong>> GetThuePhongByKhachHangWithDetailsAsync(Guid maKhachHang)
         {
-          var thuePhongs = await _context.ThuePhongs
-                .Include(t => t.MaPhongNavigation)
-                    .ThenInclude(p => p.MaSanPhamNavigation)
-                .Include(t => t.MaPhongNavigation)
-                    .ThenInclude(p => p.MaLoaiPhongNavigation)
-                .Where(t => t.MaKhachHang == maKhachHang)
-                .OrderByDescending(t => t.ThoiGianBatDau)
-                .ToListAsync();
+            var thuePhongs = await BuildBaseQuery()
+                  .Where(t => t.MaKhachHang == maKhachHang)
+                  .OrderByDescending(t => t.ThoiGianBatDau)
+                  .ToListAsync();
             return thuePhongs;
         }
 
@@ -138,7 +120,6 @@ namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Booking
             var thuePhong = await _context.ThuePhongs.FindAsync(maThuePhong);
             if (thuePhong == null) return false;
             thuePhong.MaHoaDon = maHoaDon;
-            await _context.SaveChangesAsync();
             return true;
         }
     }

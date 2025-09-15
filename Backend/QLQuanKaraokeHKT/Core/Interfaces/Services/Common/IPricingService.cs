@@ -1,4 +1,5 @@
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Shared.Models.Pricing;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Services.Common
 {
@@ -7,6 +8,8 @@ namespace QLQuanKaraokeHKT.Core.Interfaces.Services.Common
         Task ApplyPricingConfigAsync(int maSanPham, IPricingConfig pricingConfig);
         Task DisableCurrentPricesAsync(int maSanPham);
         Task<List<GiaDichVu>> GetCurrentPricesAsync(int maSanPham);
+        Task<CustomerPricingInfo> GetCustomerPricingInfoAsync(int maSanPham);
+        Task<decimal> GetCurrentCaPriceAsync(int maSanPham);
     }
 
     public interface IPricingConfig
@@ -20,3 +23,4 @@ namespace QLQuanKaraokeHKT.Core.Interfaces.Services.Common
         string TrangThaiGia { get; }
     }
 }
+

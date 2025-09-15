@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using QLQuanKaraokeHKT.Core.Entities;
+using QLQuanKaraokeHKT.Core.Entities.Views;
 using System;
 using System.Collections.Generic;
 
@@ -46,6 +47,7 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
     public virtual DbSet<LichLamViec> LichLamViecs { get; set; }
     public virtual DbSet<LuongCaLamViec> LuongCaLamViecs { get; set; }
     public virtual DbSet<YeuCauChuyenCa> YeuCauChuyenCas { get; set; }
+    public DbSet<PhongHatForCustomerView> PhongHatForCustomerViews { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -648,6 +650,11 @@ public partial class QlkaraokeHktContext : IdentityDbContext<TaiKhoan, VaiTro, G
             entity.Property(e => e.moTa).HasColumnName("moTa");
         });
 
+        modelBuilder.Entity<PhongHatForCustomerView>(entity =>
+        {
+            entity.ToView("vw_PhongHatForCustomer");
+            entity.HasNoKey();
+        });
 
         modelBuilder.Entity<ThuePhong>(entity =>
         {

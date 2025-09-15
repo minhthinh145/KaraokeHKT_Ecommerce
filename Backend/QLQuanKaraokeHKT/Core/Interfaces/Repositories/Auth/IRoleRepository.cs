@@ -3,7 +3,7 @@ using QLQuanKaraokeHKT.Core.Interfaces.Repositories.Base;
 
 namespace QLQuanKaraokeHKT.Core.Interfaces.Repositories.Auth
 {
-    public interface IRoleRepository : IGenericRepository<VaiTro, Guid>
+    public interface IRoleRepository
     {
         Task<bool> RoleExistsAsync(string roleName);
 
