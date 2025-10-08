@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
-import type { PhongHatForCustomerDTO } from "../../../api/customer/bookingApi";
+import type { PhongHatForCustomerDTO } from "../../../api";
 
 export const selectBookingState = (s: RootState) => s.customer.booking;
 
@@ -24,4 +24,20 @@ export const selectFilteredRooms = createSelector(
             return matchQ && matchType;
         });
     }
+);
+
+// New selectors for paged data
+export const selectAvailableRoomsPaged = createSelector(
+    [selectBookingState],
+    (bookingState) => bookingState.rooms
+);
+
+export const selectAvailableRoomsLoading = createSelector(
+    [selectBookingState],
+    (bookingState) => bookingState.availableRoomsLoading
+);
+
+export const selectAvailableRoomsError = createSelector(
+    [selectBookingState],
+    (bookingState) => bookingState.availableRoomsError
 );

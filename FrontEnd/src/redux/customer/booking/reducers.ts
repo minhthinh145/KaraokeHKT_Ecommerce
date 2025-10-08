@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { BookingState } from "./types";
-import type { PhongHatForCustomerDTO } from "../../../api/customer/bookingApi";
+import type { PhongHatForCustomerDTO } from "../../../api";
 
 export const bookingReducers = {
     setSearchQuery(state: BookingState, { payload }: PayloadAction<string>) {
@@ -31,7 +31,7 @@ export const bookingReducers = {
     closeInvoice(state: BookingState) {
         state.ui.showInvoiceModal = false;
         state.lastInvoice = null;
-        state.paymentResult = null;
+        //state.paymentResult = null;
     },
     resetRedirect(state: BookingState) {
         state.ui.bookingRedirectUrl = null;

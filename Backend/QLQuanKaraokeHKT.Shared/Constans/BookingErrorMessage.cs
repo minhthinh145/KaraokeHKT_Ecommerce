@@ -2,6 +2,6 @@
 {
     public static class BookingErrorMessage
     {
-        public const string RoomNotAvailable = "The selected room is not available for the chosen time slot.";
+        public const string NoExitsAvailableRoom = "Không thể lấy danh sách phòng hát";
     }
 }

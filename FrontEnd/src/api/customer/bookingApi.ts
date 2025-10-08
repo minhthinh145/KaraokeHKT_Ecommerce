@@ -1,8 +1,8 @@
 import axiosInstance from "../axiosConfig";
 import type { ApiResponse } from "../types";
+import type { PhongHatForCustomerDTO, LichSuDatPhongDTO, DatPhongResponseDTO } from "../types";
 const BASE = "KhachHangBooking";
 
-// STEP 1 DTO (create booking - invoice draft)
 export interface TaoHoaDonPhongResponseDTO {
     maThuePhong: string;
     maHoaDon: string;
@@ -64,73 +64,37 @@ export interface RePayResponse {
     tongTien: number;
 }
 
-export interface PhongHatForCustomerDTO {
-    maPhong: number;
-    tenPhong: string;
-    tenLoaiPhong: string;
-    sucChua: number;
-    hinhAnhPhong?: string;
-    giaThueHienTai: number;
-    available: boolean;
-    moTa?: string;
-}
-
-export interface DatPhongResponseDTO {
-    maThuePhong: string;
-    maHoaDon: string;
-    tenPhong: string;
-    thoiGianBatDau: string;
-    thoiGianKetThucDuKien: string;
-    tongTien: number;
-    trangThai: string;
-    ngayTao: string;
-    hanThanhToan?: string;
-    urlThanhToan?: string;
-}
-
-export interface LichSuDatPhongDTO {
-    maThuePhong: string;
-    maPhong: number;
-    tenPhong: string;
-    hinhAnhPhong?: string | null;
-    tenLoaiPhong?: string | null;
-    thoiGianBatDau: string;
-    thoiGianKetThuc?: string | null;
-    soGioSuDung: number;
-    trangThai: "ChuaThanhToan" | "DaThanhToan" | "DangSuDung" | "DaHoanThanh" | "DaHuy" | "HetHanThanhToan";
-    tongTien: number;
-    ngayTao: string;
-    ngayThanhToan?: string | null;
-    maHoaDon?: string | null;
-    tenHoaDon?: string | null;
-    moTaHoaDon?: string | null;
-    hanThanhToan?: string | null;
-    daHetHanThanhToan: boolean;
-    tenKhachHang?: string | null;
-    emailKhachHang?: string | null;
-    coTheThanhToanLai: boolean;
-    coTheHuy: boolean;
-    coTheXacNhanThanhToan: boolean;
-    phutConLaiDeThanhToan?: number | null;
+// Added: paged result
+export interface PagedResult<T> {
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
+    totalCount: number;
+    hasPrevious: boolean;
+    hasNext: boolean;
+    items: T[];
 }
 
 // Helper build message
 const errMsg = (e: any, fallback: string) =>
     e?.response?.data?.message || fallback;
 
-export const getAvailableRooms = async (): Promise<
-    ApiResponse<PhongHatForCustomerDTO[] | null>
-> => {
+export const getAvailableRooms = async (
+    pageNumber: number = 1,
+    pageSize: number = 12
+): Promise<ApiResponse<PagedResult<PhongHatForCustomerDTO> | null>> => {
     try {
-        const res =
-            await axiosInstance.get<ApiResponse<PhongHatForCustomerDTO[] | null>>(
-                `${BASE}/available-rooms`
-            );
+        const res = await axiosInstance.get<
+            ApiResponse<PagedResult<PhongHatForCustomerDTO> | null>
+        >(`${BASE}/available-rooms`, {
+            params: { pageNumber, pageSize },
+        });
         return res.data;
     } catch (e: any) {
-        throw new Error(errMsg(e, "Có lỗi xảy ra khi lấy phòng khả dụng"));
+        throw new Error(errMsg(e, "Có lỗi xảy ra khi lấy phòng khả dụng (phân trang)"));
     }
 };
+
 
 export const getRoomsByType = async (
     maLoaiPhong: number

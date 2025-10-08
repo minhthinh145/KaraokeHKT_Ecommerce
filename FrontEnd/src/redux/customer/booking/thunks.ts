@@ -14,9 +14,9 @@ import {
     getUnpaidBookings,
     rePayBookingApi,
     type RePayResponse,
-    type LichSuDatPhongDTO,
     mapHistoryDto,
 } from "../../../api/customer/bookingApi";
+import type { LichSuDatPhongDTO } from "../../../api";
 
 export const fetchAvailableRooms = createAsyncThunk(
     "booking/fetchAvailableRooms",
@@ -143,3 +143,21 @@ export const rePayBooking = createAsyncThunk<
         return rejectWithValue(e.message);
     }
 });
+
+export const fetchAvailableRoomsPaged = createAsyncThunk(
+    "customerBooking/fetchAvailableRoomsPaged",
+    async (_: void, { getState, rejectWithValue }) => {
+        try {
+            const state: any = getState();
+            const {
+                availableRoomsPage: pageNumber,
+                availableRoomsPageSize: pageSize,
+            } = state.customerBooking;
+            const res = await getAvailableRooms(pageNumber, pageSize);
+            if (!res.isSuccess) return rejectWithValue(res.message || "Lỗi");
+            return res.data;
+        } catch (e: any) {
+            return rejectWithValue(e.message || "Lỗi không xác định");
+        }
+    }
+);
