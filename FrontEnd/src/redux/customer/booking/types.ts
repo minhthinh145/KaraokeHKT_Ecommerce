@@ -1,63 +1,85 @@
-import type { PhongHatForCustomerDTO, LichSuDatPhongDTO, DatPhongResponseDTO } from "../../../api/customer/bookingApi";
-import type {
-    TaoHoaDonPhongResponseDTO,
-    ConfirmPaymentResponse,
-} from "../../../api/customer/bookingApi";
-import type { RePayResponse } from "../../../api/customer/bookingApi";
+import type { PhongHatForCustomerDTO } from "../../../api";
+import type { PagedResult } from "../../../api/customer/bookingApi";
 
-export interface BookingUISlice {
+export interface BookingUIState {
     searchQuery: string;
+    filterLoaiPhong: number | null;
     selectedRoom: PhongHatForCustomerDTO | null;
     showBookingModal: boolean;
-    filterLoaiPhong: number | null;
+    showInvoiceModal: boolean;
     durationHours: number;
     note: string;
-    bookingRedirectUrl: string | null; // đổi
+    bookingRedirectUrl: string | null;
 }
 
 export interface BookingState {
+    // Original data array (for compatibility)
     data: PhongHatForCustomerDTO[];
-    history: LichSuDatPhongDTO[];
+
+    // Paged data from new API
+    rooms: PagedResult<PhongHatForCustomerDTO> | null;
+
+    // History
+    history: any[];
+
+    // Unpaid bookings
+    unpaid: any[];
+
+    // Loading states
     loading: boolean;
-    historyLoading: boolean;
     bookingCreating: boolean;
+    historyLoading: boolean;
     confirmingPayment: boolean;
-    cancelLoading: boolean;
-    error: string | null;
-    total: number;
-    ui: BookingUISlice & {
-        showInvoiceModal: boolean;
-    };
-    lastInvoice?: TaoHoaDonPhongResponseDTO | null;
-    paymentResult?: ConfirmPaymentResponse | null;
-    unpaid: LichSuDatPhongDTO[];
     unpaidLoading: boolean;
+
+    // Error states
+    error: string | null;
+
+    // UI state
+    ui: BookingUIState;
+
+    // Pagination for new API
+    availableRoomsPaged: any;
+    availableRoomsLoading: boolean;
+    availableRoomsError: string | null;
+    availableRoomsPage: number;
+    availableRoomsPageSize: number;
+
+    // Other states
+    invoice: any;
+    lastInvoice: any;
+    paymentUrl: string | null;
     rePayLoading: boolean;
 }
 
 export const initialBookingState: BookingState = {
     data: [],
+    rooms: null,
     history: [],
+    unpaid: [],
     loading: false,
-    historyLoading: false,
     bookingCreating: false,
+    historyLoading: false,
     confirmingPayment: false,
-    cancelLoading: false,
+    unpaidLoading: false,
     error: null,
-    total: 0,
     ui: {
         searchQuery: "",
+        filterLoaiPhong: null,
         selectedRoom: null,
         showBookingModal: false,
         showInvoiceModal: false,
-        filterLoaiPhong: null,
         durationHours: 2,
         note: "",
-        bookingRedirectUrl: null, // thêm
+        bookingRedirectUrl: null,
     },
+    availableRoomsPaged: null,
+    availableRoomsLoading: false,
+    availableRoomsError: null,
+    availableRoomsPage: 1,
+    availableRoomsPageSize: 10,
+    invoice: null,
     lastInvoice: null,
-    paymentResult: null,
-    unpaid: [],
-    unpaidLoading: false,
+    paymentUrl: null,
     rePayLoading: false,
 };

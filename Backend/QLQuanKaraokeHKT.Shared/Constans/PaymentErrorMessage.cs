@@ -19,7 +19,6 @@
         public const string QueryStatusFailed = "Không thể truy vấn trạng thái thanh toán";
         public const string PaymentProcessingError = "Có lỗi xảy ra trong quá trình xử lý thanh toán";
         public const string InvalidRequestData = "Thông tin yêu cầu không hợp lệ";
-
         public static class Success
         {
             public const string UrlCreated = "Tạo liên kết thanh toán thành công";

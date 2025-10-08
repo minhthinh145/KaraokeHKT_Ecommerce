@@ -11,6 +11,7 @@ import {
   message,
   DatePicker,
   TimePicker,
+  Pagination,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useBooking } from "../../hooks/customer/useBooking";
@@ -18,19 +19,26 @@ import { RoomCard } from "../../components/customer/booking/RoomCard";
 import { CustomerLayout } from "../../components/customer/CustomerLayout";
 import { InvoicePreview } from "../../components/customer/booking/InvoicePreview";
 import type { DatPhongDTO } from "../../api/customer/bookingApi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchAvailableRoomsPaged,
+  setAvailableRoomsPage,
+} from "../../redux/customer/booking";
+import {
+  selectAvailableRoomsPaged,
+  selectAvailableRoomsLoading,
+} from "../../redux/customer/booking/selectors";
 
 export const BookingPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const {
-    filteredRooms,
     ui,
-    loading,
     bookingCreating,
     confirmingPayment,
     invoice,
     paymentUrl,
     actions: {
-      refresh,
       create,
       confirm,
       setSearchQuery,
@@ -40,11 +48,25 @@ export const BookingPage: React.FC = () => {
       setDurationHours,
       setNote,
     },
-  } = useBooking({ autoLoad: true });
+  } = useBooking({ autoLoad: true }); // Tắt autoLoad vì dùng redux
+  const roomsPaged = useSelector(selectAvailableRoomsPaged);
+  const loading = useSelector(selectAvailableRoomsLoading);
+
+  // Debug logging
+  console.log("roomsPaged:", roomsPaged);
+  console.log("loading:", loading);
 
   const [form] = Form.useForm();
 
-  const roomsDisplay = filteredRooms;
+  // Load dữ liệu phòng từ BE (đã phân trang) - chỉ load 1 lần khi mount
+  useEffect(() => {
+    dispatch(fetchAvailableRoomsPaged() as any);
+  }, [dispatch]);
+
+  // Làm mới dữ liệu
+  const refresh = () => {
+    dispatch(fetchAvailableRoomsPaged() as any);
+  };
 
   // Helpers chặn chọn ngày quá khứ
   const disabledDate = (current: dayjs.Dayjs) =>
@@ -227,21 +249,37 @@ export const BookingPage: React.FC = () => {
                 <div className="py-32 flex justify-center">
                   <Spin size="large" />
                 </div>
-              ) : roomsDisplay.length === 0 ? (
+              ) : !roomsPaged?.items || roomsPaged.items.length === 0 ? (
                 <Empty
                   description={
                     <span className="text-blue-200">
-                      Không có phòng phù hợp
+                      Không có phòng phù hợp. Debug:{" "}
+                      {JSON.stringify(roomsPaged)}
                     </span>
                   }
                   className="py-16"
                 />
               ) : (
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {roomsDisplay.map((r) => (
-                    <RoomCard key={r.maPhong} room={r} onBook={openBooking} />
-                  ))}
-                </div>
+                <>
+                  <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {roomsPaged.items.map((r: any) => (
+                      <RoomCard key={r.maPhong} room={r} onBook={openBooking} />
+                    ))}
+                  </div>
+                  {roomsPaged.totalCount > roomsPaged.pageSize && (
+                    <div className="mt-10 flex justify-center">
+                      <Pagination
+                        current={roomsPaged.currentPage}
+                        pageSize={roomsPaged.pageSize}
+                        total={roomsPaged.totalCount}
+                        showSizeChanger={false}
+                        onChange={(page) =>
+                          dispatch(setAvailableRoomsPage(page) as any)
+                        }
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

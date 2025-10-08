@@ -7,3 +7,4 @@ export * from "./admins/QLHeThongtypes";
 export * from "./admins/QLNhanSutypes";
 export * from "./admins/QLKhotypes";
 export * from "./admins/QLPhong";
+export * from "./customer"
