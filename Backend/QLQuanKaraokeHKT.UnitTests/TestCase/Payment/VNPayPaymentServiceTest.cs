@@ -1,8 +1,8 @@
-﻿using AutoFixture;
+﻿﻿using AutoFixture;
 using FluentAssertions;
-using QLQuanKaraokeHKT.Application.Services.Payment;
-using QLQuanKaraokeHKT.Core.DTOs.PaymentDTOs;
-using QLQuanKaraokeHKT.Core.Enums;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Payment;
+using QLQuanKaraokeHKT.Application.DTOs.PaymentDTOs;
+using QLQuanKaraokeHKT.Shared.Enums;
 using QLQuanKaraokeHKT.Shared.Constants;
 using QLQuanKaraokeHKT.UnitTests.Extension;
 using Xunit;

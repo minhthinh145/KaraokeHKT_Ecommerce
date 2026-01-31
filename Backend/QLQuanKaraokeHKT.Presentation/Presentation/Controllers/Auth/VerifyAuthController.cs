@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QLQuanKaraokeHKT.Application.Services.Auth;
-using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Auth;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
+using QLQuanKaraokeHKT.Application.DTOs.AuthDTOs;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Auth;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.External;
 
 namespace QLQuanKaraokeHKT.Presentation.Controllers.Auth
 {

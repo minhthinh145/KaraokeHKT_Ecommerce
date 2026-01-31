@@ -5,27 +5,32 @@ using QLQuanKaraokeHKT.Application.Mappings.Customer;
 using QLQuanKaraokeHKT.Application.Mappings.HRM;
 using QLQuanKaraokeHKT.Application.Mappings.Inventory;
 using QLQuanKaraokeHKT.Application.Mappings.Room;
-using QLQuanKaraokeHKT.Application.Services.AccountManagement;
-using QLQuanKaraokeHKT.Application.Services.Auth;
-using QLQuanKaraokeHKT.Application.Services.Common;
-using QLQuanKaraokeHKT.Application.Services.Core;
-using QLQuanKaraokeHKT.Application.Services.Customer;
-using QLQuanKaraokeHKT.Application.Services.External;
-using QLQuanKaraokeHKT.Application.Services.HRM;
-using QLQuanKaraokeHKT.Application.Services.Inventory;
-using QLQuanKaraokeHKT.Application.Services.Payment;
-using QLQuanKaraokeHKT.Application.Services.Room;
 using QLQuanKaraokeHKT.Application.Repositories.Auth;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Auth;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Common;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Core;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Customer;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.External;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Inventory;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Payment;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Room;
+using QLQuanKaraokeHKT.Infrastructure.Repositories;
+using QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth;
+using QLQuanKaraokeHKT.Application;
+// Service Interfaces
+using QLQuanKaraokeHKT.Application.Services.Interfaces.AccountManagement;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Auth;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Common;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Core;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Customer;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.External;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.HRM;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Inventory;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Payment;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Room;
+// Service Implementations
+using QLQuanKaraokeHKT.Application.Services.Implementations.AccountManagement;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Auth;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Common;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Core;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Customer;
+using QLQuanKaraokeHKT.Application.Services.Implementations.External;
+using QLQuanKaraokeHKT.Application.Services.Implementations.HRM;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Inventory;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Payment;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Room;
 
 
 namespace QLQuanKaraokeHKT.Web.Extensions

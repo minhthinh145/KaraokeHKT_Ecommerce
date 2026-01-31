@@ -1,0 +1,9 @@
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj(1,2): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 2.
+
+Build FAILED.
+
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj(1,2): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 2.
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:01.20

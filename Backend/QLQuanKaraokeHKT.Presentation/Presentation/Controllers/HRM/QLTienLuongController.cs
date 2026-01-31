@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
+using QLQuanKaraokeHKT.Application.DTOs.QLNhanSuDTOs;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.HRM;
 
 namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM
 {

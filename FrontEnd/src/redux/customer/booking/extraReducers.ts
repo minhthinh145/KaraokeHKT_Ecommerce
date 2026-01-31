@@ -1,5 +1,5 @@
-import { ActionReducerMapBuilder, PayloadAction } from "@reduxjs/toolkit";
-import { BookingState } from "./types";
+import type { ActionReducerMapBuilder, PayloadAction } from "@reduxjs/toolkit";
+import type { BookingState } from "./types";
 import {
     fetchBookingHistory,
     fetchUnpaidBookings,

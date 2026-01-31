@@ -1,10 +1,10 @@
-﻿using FluentAssertions;
+﻿﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using QLQuanKaraokeHKT.Application.Services.Payment;
-using QLQuanKaraokeHKT.Core.Enums;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Payment;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Payment;
+using QLQuanKaraokeHKT.Shared.Enums;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Payment;
 using QLQuanKaraokeHKT.Shared.Constants;
 using QLQuanKaraokeHKT.UnitTests.Extension;
 using Xunit;

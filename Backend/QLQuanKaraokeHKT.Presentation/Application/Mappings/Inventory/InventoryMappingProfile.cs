@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using QLQuanKaraokeHKT.Core.DTOs.QLKhoDTOs;
+using QLQuanKaraokeHKT.Application.DTOs.QLKhoDTOs;
 using QLQuanKaraokeHKT.Domain.Entities;
 
 namespace QLQuanKaraokeHKT.Application.Mappings.Inventory

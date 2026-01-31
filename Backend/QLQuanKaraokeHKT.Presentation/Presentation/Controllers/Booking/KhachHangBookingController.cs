@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QLQuanKaraokeHKT.Core.DTOs.BookingDTOs;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Booking;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Room;
+using QLQuanKaraokeHKT.Application.DTOs.BookingDTOs;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Booking;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Room;
 using QLQuanKaraokeHKT.Presentation.Extensions;
 
 namespace QLQuanKaraokeHKT.Presentation.Controllers.Booking

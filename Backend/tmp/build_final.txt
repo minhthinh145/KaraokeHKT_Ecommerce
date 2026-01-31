@@ -1,0 +1,14 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  QLQuanKaraokeHKT.Domain -> /mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Domain/bin/Debug/net8.0/QLQuanKaraokeHKT.Domain.dll
+  QLQuanKaraokeHKT.Shared -> /mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Shared/bin/Debug/net8.0/QLQuanKaraokeHKT.Shared.dll
+  QLQuanKaraokeHKT.Application -> /mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Application/bin/Debug/net8.0/QLQuanKaraokeHKT.Application.dll
+  QLQuanKaraokeHKT.Infrastructure -> /mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/bin/Debug/net8.0/QLQuanKaraokeHKT.Infrastructure.dll
+  QLQuanKaraokeHKT.Presentation -> /mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Presentation/bin/Debug/net8.0/QLQuanKaraokeHKT.Presentation.dll
+  QLQuanKaraokeHKT.UnitTests -> /mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.UnitTests/bin/Debug/net8.0/QLQuanKaraokeHKT.UnitTests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.66

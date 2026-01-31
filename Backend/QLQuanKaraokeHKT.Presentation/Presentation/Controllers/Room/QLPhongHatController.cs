@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QLQuanKaraokeHKT.Core.Common;
-using QLQuanKaraokeHKT.Core.DTOs.QLPhongDTOs;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Room;
+using QLQuanKaraokeHKT.Shared.Constants;
+using QLQuanKaraokeHKT.Application.DTOs.QLPhongDTOs;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Room;
+using QLQuanKaraokeHKT.Application.Services;
 using System.ComponentModel.DataAnnotations;
 
 namespace QLQuanKaraokeHKT.Presentation.Controllers.Room

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,11 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using QLQuanKaraokeHKT.Application.Services.Payment;
-using QLQuanKaraokeHKT.Core.Interfaces;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Common;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Payment;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Room;
+using QLQuanKaraokeHKT.Application;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Payment;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Common;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Payment;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Room;
 using QLQuanKaraokeHKT.Infrastructure.Data;
 
 namespace QLQuanKaraokeHKT.UnitTests

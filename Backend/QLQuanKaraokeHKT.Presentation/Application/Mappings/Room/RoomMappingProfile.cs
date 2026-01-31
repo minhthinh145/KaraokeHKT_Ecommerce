@@ -1,5 +1,5 @@
 using AutoMapper;
-using QLQuanKaraokeHKT.Core.DTOs.QLPhongDTOs;
+using QLQuanKaraokeHKT.Application.DTOs.QLPhongDTOs;
 using QLQuanKaraokeHKT.Domain.Entities;
 
 namespace QLQuanKaraokeHKT.Application.Mappings.Room

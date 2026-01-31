@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QLQuanKaraokeHKT.Core.Common;
-using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.AccountManagement;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
+using QLQuanKaraokeHKT.Shared.Constants;
+using QLQuanKaraokeHKT.Application.DTOs.QLNhanSuDTOs;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.AccountManagement;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.HRM;
 using QLQuanKaraokeHKT.Presentation.Extensions;
 using System.Security.Claims;
 

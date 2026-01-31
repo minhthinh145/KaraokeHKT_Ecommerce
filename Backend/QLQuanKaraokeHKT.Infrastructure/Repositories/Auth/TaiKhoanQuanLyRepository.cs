@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QLQuanKaraokeHKT.Domain.Entities;
 using QLQuanKaraokeHKT.Application.Repositories.Auth;
+using QLQuanKaraokeHKT.Shared.Constants;
 
 namespace QLQuanKaraokeHKT.Infrastructure.Repositories.Implementations.Auth
 {

@@ -4,7 +4,7 @@ import { Tag, Button, Avatar, Tabs, Progress, message } from "antd";
 import { CustomerLayout } from "../../components/customer/CustomerLayout";
 import { useBooking } from "../../hooks/customer/useBooking";
 import { GenericQLTable } from "../../components/admins/uiForAll/GenericQLTable";
-import type { LichSuDatPhongDTO } from "../../api/customer/bookingApi";
+import type { LichSuDatPhongDTO } from "../../api/types";
 
 export const BookingHistoryPage: React.FC = () => {
   const {
@@ -147,7 +147,7 @@ export const BookingHistoryPage: React.FC = () => {
         render: (v: string) => dayjs(v).format("DD/MM/YYYY HH:mm"),
       },
     ],
-    []
+    [],
   );
 
   // reuse columns variable (WITHOUT actions)
@@ -204,7 +204,7 @@ export const BookingHistoryPage: React.FC = () => {
     <GenericQLTable<LichSuDatPhongDTO>
       data={unpaid.filter(
         (x: LichSuDatPhongDTO) =>
-          x.trangThai === "ChuaThanhToan" || x.trangThai === "HetHanThanhToan"
+          x.trangThai === "ChuaThanhToan" || x.trangThai === "HetHanThanhToan",
       )}
       loading={unpaidLoading}
       columns={baseColumns as any}

@@ -1,0 +1,20 @@
+  Determining projects to restore...
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.UnitTests/QLQuanKaraokeHKT.UnitTests.csproj : warning NU1603: QLQuanKaraokeHKT.UnitTests depends on Microsoft.Extensions.Logging.Abstractions (>= 8.0.18) but Microsoft.Extensions.Logging.Abstractions 8.0.18 was not found. Microsoft.Extensions.Logging.Abstractions 9.0.0 was resolved instead. [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.UnitTests/QLQuanKaraokeHKT.UnitTests.csproj : warning NU1603: QLQuanKaraokeHKT.UnitTests depends on Microsoft.Extensions.Options (>= 8.0.18) but Microsoft.Extensions.Options 8.0.18 was not found. Microsoft.Extensions.Options 9.0.0 was resolved instead. [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj : error NU1605: Warning As Error: Detected package downgrade: Microsoft.EntityFrameworkCore from 8.0.20 to 8.0.18. Reference the package directly from the project to select a different version.  [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj : error NU1605:  QLQuanKaraokeHKT.Infrastructure -> QLQuanKaraokeHKT.Domain -> Microsoft.EntityFrameworkCore (>= 8.0.20)  [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj : error NU1605:  QLQuanKaraokeHKT.Infrastructure -> Microsoft.EntityFrameworkCore (>= 8.0.18) [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+  Failed to restore /mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj (in 1.8 sec).
+  5 of 6 projects are up-to-date for restore.
+
+Build FAILED.
+
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.UnitTests/QLQuanKaraokeHKT.UnitTests.csproj : warning NU1603: QLQuanKaraokeHKT.UnitTests depends on Microsoft.Extensions.Logging.Abstractions (>= 8.0.18) but Microsoft.Extensions.Logging.Abstractions 8.0.18 was not found. Microsoft.Extensions.Logging.Abstractions 9.0.0 was resolved instead. [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.UnitTests/QLQuanKaraokeHKT.UnitTests.csproj : warning NU1603: QLQuanKaraokeHKT.UnitTests depends on Microsoft.Extensions.Options (>= 8.0.18) but Microsoft.Extensions.Options 8.0.18 was not found. Microsoft.Extensions.Options 9.0.0 was resolved instead. [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj : error NU1605: Warning As Error: Detected package downgrade: Microsoft.EntityFrameworkCore from 8.0.20 to 8.0.18. Reference the package directly from the project to select a different version.  [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj : error NU1605:  QLQuanKaraokeHKT.Infrastructure -> QLQuanKaraokeHKT.Domain -> Microsoft.EntityFrameworkCore (>= 8.0.20)  [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Infrastructure/QLQuanKaraokeHKT.Infrastructure.csproj : error NU1605:  QLQuanKaraokeHKT.Infrastructure -> Microsoft.EntityFrameworkCore (>= 8.0.18) [/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.sln]
+    2 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:09.01

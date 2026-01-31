@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: karaoke-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - karaoke-network
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong@Passw0rd" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # Backend API (.NET 8)
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: karaoke-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=QLKaraokeHKT;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
+      - JWT__ValidAudience=User
+      - JWT__ValidIssuer=http://localhost:8080
+      - JWT__Secret=ThisisSecretABcasjgfewgheroijgerjhpoerjievwjofjeokbjgkrejgbkrejporeogoprjgijrbig34ỵ923750137b5n23bjtokewjfioj2beb2ihiob2h3iroh23bihio
+      - DeployUrl__FrontendUrl=http://localhost:3000
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - karaoke-network
+    restart: unless-stopped
+
+  # Frontend (React + Vite)
+  frontend:
+    build:
+      context: ./FrontEnd
+      dockerfile: Dockerfile
+    container_name: karaoke-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - karaoke-network
+    restart: unless-stopped
+
+networks:
+  karaoke-network:
+    driver: bridge
+
+volumes:
+  sqlserver_data:

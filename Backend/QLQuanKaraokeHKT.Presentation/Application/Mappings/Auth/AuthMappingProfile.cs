@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using QLQuanKaraokeHKT.Core.Common;
-using QLQuanKaraokeHKT.Core.DTOs;
-using QLQuanKaraokeHKT.Core.DTOs.AuthDTOs;
-using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
+﻿﻿using AutoMapper;
+using QLQuanKaraokeHKT.Shared.Constants;
+using QLQuanKaraokeHKT.Application.DTOs;
+using QLQuanKaraokeHKT.Application.DTOs.AuthDTOs;
+using QLQuanKaraokeHKT.Application.DTOs.QLHeThongDTOs;
 using QLQuanKaraokeHKT.Domain.Entities;
 
 namespace QLQuanKaraokeHKT.Application.Mappings.Auth

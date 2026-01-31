@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using QLQuanKaraokeHKT.Core.Common;
-using QLQuanKaraokeHKT.Core.DTOs.QLKhoDTOs;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.Inventory;
+using QLQuanKaraokeHKT.Shared.Constants;
+using QLQuanKaraokeHKT.Application.DTOs.QLKhoDTOs;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Inventory;
 
 namespace QLQuanKaraokeHKT.Presentation.Controllers.Inventory
 {

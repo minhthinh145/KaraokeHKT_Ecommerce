@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,8 +9,10 @@
 		<ProjectReference Include="..\QLQuanKaraokeHKT.Application\QLQuanKaraokeHKT.Application.csproj" />
 		<ProjectReference Include="..\QLQuanKaraokeHKT.Domain\QLQuanKaraokeHKT.Domain.csproj" />
 		<ProjectReference Include="..\QLQuanKaraokeHKT.Shared\QLQuanKaraokeHKT.Shared.csproj" />
-
-
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.20" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.20" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.20" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 	</ItemGroup>
 		
 </Project>

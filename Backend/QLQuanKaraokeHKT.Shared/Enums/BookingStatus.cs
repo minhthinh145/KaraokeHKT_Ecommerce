@@ -23,4 +23,31 @@ namespace QLQuanKaraokeHKT.Shared.Enums
         Maintenance = 3,
         OutOfService = 4
     }
+
+    public static class BookingStatusExtensions
+    {
+        public static string GetDisplayName(this BookingStatus status)
+        {
+            return status switch
+            {
+                BookingStatus.Pending => "Chờ thanh toán",
+                BookingStatus.DangSuDung => "Đang sử dụng",
+                BookingStatus.DaKetThuc => "Đã kết thúc",
+                BookingStatus.DaHuy => "Đã hủy",
+                _ => "Không xác định"
+            };
+        }
+
+        public static string GetDisplayName(this InvoiceStatus status)
+        {
+            return status switch
+            {
+                InvoiceStatus.ChuaThanhToan => "Chưa thanh toán",
+                InvoiceStatus.DaThanhToan => "Đã thanh toán",
+                InvoiceStatus.DaHuy => "Đã hủy",
+                InvoiceStatus.HetHanThanhToan => "Hết hạn thanh toán",
+                _ => "Không xác định"
+            };
+        }
+    }
 }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using QLQuanKaraokeHKT.Core.DTOs.BookingDTOs;
+using QLQuanKaraokeHKT.Application.DTOs.BookingDTOs;
 using QLQuanKaraokeHKT.Domain.Entities;
 using QLQuanKaraokeHKT.Domain.Entities.Views;
 

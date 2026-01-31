@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QLQuanKaraokeHKT.Application.Services.HRM;
-using QLQuanKaraokeHKT.Core.Common;
-using QLQuanKaraokeHKT.Core.DTOs;
-using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
-using QLQuanKaraokeHKT.Core.Interfaces.Services.HRM;
+using QLQuanKaraokeHKT.Shared.Constants;
+using QLQuanKaraokeHKT.Application.DTOs;
+using QLQuanKaraokeHKT.Application.DTOs.QLNhanSuDTOs;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.HRM;
 using QLQuanKaraokeHKT.Presentation.Extensions;
 
 namespace QLQuanKaraokeHKT.Presentation.Controllers.HRM

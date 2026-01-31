@@ -10,6 +10,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using Moq.Protected;
+using QLQuanKaraokeHKT.Application.Helpers;
+using QLQuanKaraokeHKT.Application.Services.Implementations.Payment;
+using QLQuanKaraokeHKT.Application.Services.Interfaces.Payment;
+using QLQuanKaraokeHKT.Shared.Enums;
 
 namespace QLQuanKaraokeHKT.UnitTests.Extension
 {

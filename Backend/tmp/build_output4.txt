@@ -1,0 +1,13 @@
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.UnitTests/QLQuanKaraokeHKT.UnitTests.csproj(1,1): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 1.
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Domain/QLQuanKaraokeHKT.Domain.csproj(1,1): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 1.
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Presentation/QLQuanKaraokeHKT.Presentation.csproj(1,1): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 1.
+
+Build FAILED.
+
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.UnitTests/QLQuanKaraokeHKT.UnitTests.csproj(1,1): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 1.
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Domain/QLQuanKaraokeHKT.Domain.csproj(1,1): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 1.
+/mnt/data/OOAD_Project/Backend/QLQuanKaraokeHKT.Presentation/QLQuanKaraokeHKT.Presentation.csproj(1,1): error MSB4025: The project file could not be loaded. Data at the root level is invalid. Line 1, position 1.
+    0 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:01.12

@@ -19,9 +19,9 @@
 		<!-- Testing framework packages -->
 		<PackageReference Include="AutoFixture" Version="4.18.1" />
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.18" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.18" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.18" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.20" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
 		<PackageReference Include="Moq" Version="4.20.70" />
 	</ItemGroup>
 

@@ -1,7 +1,7 @@
 using AutoMapper;
-using QLQuanKaraokeHKT.Core.DTOs;
-using QLQuanKaraokeHKT.Core.DTOs.QLHeThongDTOs;
-using QLQuanKaraokeHKT.Core.DTOs.QLNhanSuDTOs;
+using QLQuanKaraokeHKT.Application.DTOs;
+using QLQuanKaraokeHKT.Application.DTOs.QLHeThongDTOs;
+using QLQuanKaraokeHKT.Application.DTOs.QLNhanSuDTOs;
 using QLQuanKaraokeHKT.Domain.Entities;
 
 namespace QLQuanKaraokeHKT.Application.Mappings.Customer

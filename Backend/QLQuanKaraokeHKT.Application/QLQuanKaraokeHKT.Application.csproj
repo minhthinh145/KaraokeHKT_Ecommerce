@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,6 +10,11 @@
 		<ProjectReference Include="..\QLQuanKaraokeHKT.Shared\QLQuanKaraokeHKT.Shared.csproj" />
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="MailKit" Version="4.13.0" />
-
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.20" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.1" />
 	</ItemGroup>
 </Project>
